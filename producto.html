@@ -59,7 +59,7 @@
             <!-- 1. GALERÍA DE IMÁGENES -->
             <div class="w-full lg:w-1/2">
                 <!-- Imagen Principal -->
-                <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4 group cursor-zoom-in" onclick="openLightbox()">
+                <div id="main-image-container" class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4 group cursor-zoom-in" onclick="openLightbox(event)">
                     <span class="absolute top-4 left-4 bg-white text-black text-[11px] font-bold px-3 py-1.5 uppercase rounded z-10 shadow-sm">Nuevo</span>
                     <img id="main-image" src="https://lh3.googleusercontent.com/d/1YK-Le08TnFUyghoB6FPF7JCP385MaD-i=w1000?authuser=0" alt="UGREEN HITUNE T6" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                     
@@ -324,7 +324,7 @@
 
         // Navegar en la imagen principal con las flechas
         function navigateMainImage(e, direction) {
-            e.stopPropagation(); // Evitar que se abra el lightbox al hacer clic en las flechas
+            if (e && e.stopPropagation) e.stopPropagation(); // Evitar que se abra el lightbox
             let newIndex = currentImageIndex + direction;
             if (newIndex < 0) newIndex = galleryImages.length - 1;
             if (newIndex >= galleryImages.length) newIndex = 0;
@@ -332,7 +332,9 @@
         }
 
         // --- Funciones del Lightbox (Zoom de imágenes) ---
-        function openLightbox() {
+        function openLightbox(e) {
+            if (isSwipingMain) return; // Evitar abrir si el usuario estaba deslizando
+
             const lightbox = document.getElementById('lightbox');
             
             // Setear la imagen actual
@@ -374,6 +376,42 @@
             resetZoom();
         }
 
+        // --- Lógica de Swipe para la Imagen Principal (Móviles) ---
+        const mainImageContainer = document.getElementById('main-image-container');
+        let mainTouchStartX = 0;
+        let isSwipingMain = false;
+
+        if (mainImageContainer) {
+            mainImageContainer.addEventListener('touchstart', (e) => {
+                mainTouchStartX = e.changedTouches[0].screenX;
+                isSwipingMain = false;
+            }, {passive: true});
+
+            mainImageContainer.addEventListener('touchmove', (e) => {
+                let currentX = e.changedTouches[0].screenX;
+                // Si el dedo se mueve horizontalmente, es un swipe (evita clics accidentales)
+                if (Math.abs(currentX - mainTouchStartX) > 15) {
+                    isSwipingMain = true;
+                }
+            }, {passive: true});
+
+            mainImageContainer.addEventListener('touchend', (e) => {
+                let mainTouchEndX = e.changedTouches[0].screenX;
+                const threshold = 40; // Distancia mínima para el swipe
+
+                if (mainTouchStartX - mainTouchEndX > threshold) {
+                    // Swipe Izquierda (Siguiente)
+                    navigateMainImage(null, 1);
+                } else if (mainTouchEndX - mainTouchStartX > threshold) {
+                    // Swipe Derecha (Anterior)
+                    navigateMainImage(null, -1);
+                }
+                
+                // Limpiar flag después del clic automático de touchend
+                setTimeout(() => { isSwipingMain = false; }, 50);
+            });
+        }
+
         // --- Lógica de Zoom y Gestos (Pinch-to-zoom para móviles) ---
         let currentScale = 1;
         let touchStartDist = 0;
@@ -382,6 +420,10 @@
         let isDragging = false;
         let startX = 0, startY = 0;
         let translateX = 0, translateY = 0;
+
+        // Variables para Swipe dentro del Lightbox
+        let lbSwipeStartX = 0;
+        let isLbSwiping = false;
 
         function toggleZoom(e) {
             e.stopPropagation(); 
@@ -439,18 +481,26 @@
             if (e.touches.length === 2) {
                 isPinching = true;
                 isDragging = false;
+                isLbSwiping = false;
                 touchStartDist = Math.hypot(
                     e.touches[0].clientX - e.touches[1].clientX,
                     e.touches[0].clientY - e.touches[1].clientY
                 );
                 initialScale = currentScale;
                 lightboxImgNode.style.transition = 'none'; // Quitar transición para que siga a los dedos
-            } else if (e.touches.length === 1 && currentScale > 1) {
-                isDragging = true;
-                isPinching = false;
-                startX = e.touches[0].clientX - translateX;
-                startY = e.touches[0].clientY - translateY;
-                lightboxImgNode.style.transition = 'none';
+            } else if (e.touches.length === 1) {
+                if (currentScale > 1) {
+                    isDragging = true;
+                    isPinching = false;
+                    isLbSwiping = false;
+                    startX = e.touches[0].clientX - translateX;
+                    startY = e.touches[0].clientY - translateY;
+                    lightboxImgNode.style.transition = 'none';
+                } else {
+                    // Estado normal (scale 1), listo para swipe
+                    isLbSwiping = true;
+                    lbSwipeStartX = e.touches[0].clientX;
+                }
             }
         });
 
@@ -477,6 +527,18 @@
         });
 
         lightboxImgNode.addEventListener('touchend', (e) => {
+            // Lógica de Swipe en Lightbox para cambiar imagen
+            if (isLbSwiping && e.changedTouches.length === 1 && currentScale === 1) {
+                let lbSwipeEndX = e.changedTouches[0].clientX;
+                const threshold = 40;
+                if (lbSwipeStartX - lbSwipeEndX > threshold) {
+                    navigateLightbox(1);
+                } else if (lbSwipeEndX - lbSwipeStartX > threshold) {
+                    navigateLightbox(-1);
+                }
+                isLbSwiping = false;
+            }
+
             if (e.touches.length < 2) isPinching = false;
             if (e.touches.length === 0) isDragging = false;
             
