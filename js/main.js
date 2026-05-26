@@ -135,7 +135,7 @@ function initApp() {
                                     </div>
                                     <div class="flex-1">
                                         <p class="text-sm font-bold text-gray-800 leading-tight">Silla de Comedor Nórdica</p>
-                                        <p class="text-[13px] text-gray-500 mt-0.5">$90.00</p>
+                                        <p class="text-[13px] text-gray-500 mt-0.5">90.00 Bs.</p>
                                     </div>
                                 </li>
                                 <li class="flex gap-4 items-center hover:bg-gray-50 p-2 rounded cursor-pointer transition pb-2">
@@ -144,7 +144,7 @@ function initApp() {
                                     </div>
                                     <div class="flex-1">
                                         <p class="text-sm font-bold text-gray-800 leading-tight">Lámpara Colgante Moderna</p>
-                                        <p class="text-[13px] text-gray-500 mt-0.5"><span class="line-through text-gray-400 mr-1">$45.00</span>$35.00</p>
+                                        <p class="text-[13px] text-gray-500 mt-0.5"><span class="line-through text-gray-400 mr-1">45.00 Bs.</span>35.00 Bs.</p>
                                     </div>
                                 </li>
                             </ul>
@@ -178,6 +178,48 @@ function initApp() {
     // Inicializar para ambas barras de búsqueda
     setupSearch('desktop-search', 'desktop-search-results');
     setupSearch('mobile-search', 'mobile-search-results');
+
+    // --- Lógica de Finalizar Compra por WhatsApp ---
+    const checkoutBtn = document.getElementById('checkout-btn');
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => {
+            const items = document.querySelectorAll('.cart-item');
+            if(items.length === 0) {
+                // En caso de que el carrito esté vacío
+                return;
+            }
+
+            let message = "¡Hola Arelyshop! 👋 Quiero finalizar mi pedido:\n\n";
+            let total = 0;
+
+            items.forEach(item => {
+                // Leemos los datos inyectados en los atributos data-* de HTML
+                const name = item.dataset.name || "Producto";
+                const sku = item.dataset.sku || "SKU";
+                const price = parseFloat(item.dataset.price || 0);
+                const qty = parseInt(item.dataset.qty || 1);
+                const url = item.dataset.url || window.location.href;
+
+                const itemTotal = price * qty;
+                total += itemTotal;
+
+                message += `➡️ ${qty}x ${name} (${sku})\n`;
+                message += `Precio: ${price.toFixed(2)} Bs.\n`;
+                message += `🔗 ${url}\n\n`;
+            });
+
+            message += `-----------------------------------\n`;
+            message += `Total del Pedido: ${total.toFixed(2)} Bs.\n\n`;
+            message += `Espero las instrucciones para el pago y envío. ¡Gracias!`;
+
+            // Enlace de WhatsApp con número asignado
+            const phone = "59167500044";
+            const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            
+            // Abrir en nueva pestaña
+            window.open(whatsappUrl, '_blank');
+        });
+    }
 }
 
 // Ejecutar inmediatamente (ya que este archivo se inyecta y se llama una vez que todo el HTML ya está cargado mediante fetch)
