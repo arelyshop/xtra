@@ -1,11 +1,4 @@
-// Este archivo se cargará una vez que el index.html haya inyectado header.html y footer.html
-// No es necesario usar DOMContentLoaded porque lo cargamos dinámicamente, pero lo dejamos por seguridad
-document.addEventListener('DOMContentLoaded', initApp);
-// Si DOMContentLoaded ya se disparó antes de cargar el script (muy probable con Fetch), ejecutamos directo:
-if (document.readyState === 'interactive' || document.readyState === 'complete') {
-    initApp();
-}
-
+// Esta función encapsula toda la lógica para inicializarla inmediatamente después de cargar los parciales HTML
 function initApp() {
     // Referencias del Menú Móvil
     const mobileBtn = document.getElementById('mobile-menu-btn');
@@ -30,59 +23,66 @@ function initApp() {
 
     // --- Lógica del Menú Móvil ---
     function toggleMenu() {
-        if(!mobileMenu) return;
+        if (!mobileMenu || !mobileOverlay) return;
         const isActive = mobileMenu.classList.contains('mobile-menu-active');
         
         if (isActive) {
             mobileMenu.classList.remove('mobile-menu-active');
             mobileMenu.classList.add('mobile-menu-inactive');
+            // Ocultar gradualmente el overlay
             mobileOverlay.classList.remove('opacity-100', 'pointer-events-auto');
             mobileOverlay.classList.add('opacity-0', 'pointer-events-none');
-            document.body.style.overflow = 'auto';
+            document.body.style.overflow = 'auto'; // Permitir scroll
         } else {
             mobileMenu.classList.remove('mobile-menu-inactive');
             mobileMenu.classList.add('mobile-menu-active');
+            // Mostrar gradualmente el overlay
             mobileOverlay.classList.remove('opacity-0', 'pointer-events-none');
             mobileOverlay.classList.add('opacity-100', 'pointer-events-auto');
-            document.body.style.overflow = 'hidden';
+            document.body.style.overflow = 'hidden'; // Bloquear scroll de fondo
         }
     }
 
-    if(mobileBtn) mobileBtn.addEventListener('click', toggleMenu);
-    if(closeBtn) closeBtn.addEventListener('click', toggleMenu);
-    if(mobileOverlay) mobileOverlay.addEventListener('click', toggleMenu);
+    if (mobileBtn) mobileBtn.addEventListener('click', toggleMenu);
+    if (closeBtn) closeBtn.addEventListener('click', toggleMenu);
+    if (mobileOverlay) mobileOverlay.addEventListener('click', toggleMenu);
 
     // --- Lógica del Carrito Lateral ---
     function toggleCart(e) {
         if(e) e.preventDefault();
-        if(!sideCart) return;
+        if (!sideCart || !sideDrawerOverlay) return;
         const isActive = sideCart.classList.contains('cart-active');
+        
         if (isActive) {
             sideCart.classList.remove('cart-active');
             sideCart.classList.add('cart-inactive');
+            // Ocultar gradualmente el overlay
             sideDrawerOverlay.classList.remove('opacity-100', 'pointer-events-auto');
             sideDrawerOverlay.classList.add('opacity-0', 'pointer-events-none');
             document.body.style.overflow = 'auto';
         } else {
             sideCart.classList.remove('cart-inactive');
             sideCart.classList.add('cart-active');
+            // Mostrar gradualmente el overlay
             sideDrawerOverlay.classList.remove('opacity-0', 'pointer-events-none');
             sideDrawerOverlay.classList.add('opacity-100', 'pointer-events-auto');
             document.body.style.overflow = 'hidden';
         }
     }
 
-    if(cartBtn) cartBtn.addEventListener('click', toggleCart);
-    if(closeCartBtn) closeCartBtn.addEventListener('click', toggleCart);
-    if(sideDrawerOverlay) sideDrawerOverlay.addEventListener('click', toggleCart);
+    if (cartBtn) cartBtn.addEventListener('click', toggleCart);
+    if (closeCartBtn) closeCartBtn.addEventListener('click', toggleCart);
+    if (sideDrawerOverlay) sideDrawerOverlay.addEventListener('click', toggleCart);
 
     // --- Lógica del Login Modal ---
     function openLogin(e) {
         if(e) e.preventDefault();
+        // Si el menú móvil está abierto, lo cerramos
         if(mobileMenu && mobileMenu.classList.contains('mobile-menu-active')) toggleMenu();
 
-        if(loginModal) {
+        if (loginModal && loginModalContent) {
             loginModal.classList.remove('hidden');
+            // Animación suave de aparición
             setTimeout(() => {
                 loginModalContent.classList.remove('scale-95', 'opacity-0');
                 loginModalContent.classList.add('scale-100', 'opacity-100');
@@ -92,7 +92,7 @@ function initApp() {
     }
 
     function closeLogin() {
-        if(!loginModalContent) return;
+        if (!loginModalContent || !loginModal) return;
         loginModalContent.classList.remove('scale-100', 'opacity-100');
         loginModalContent.classList.add('scale-95', 'opacity-0');
         setTimeout(() => {
@@ -101,11 +101,11 @@ function initApp() {
         }, 500);
     }
 
-    if(userBtn) userBtn.addEventListener('click', openLogin);
-    if(dealerLoginBtn) dealerLoginBtn.addEventListener('click', openLogin);
-    if(mobileUserBtn) mobileUserBtn.addEventListener('click', openLogin);
-    if(closeLoginBtn) closeLoginBtn.addEventListener('click', closeLogin);
-    if(loginModalOverlay) loginModalOverlay.addEventListener('click', closeLogin);
+    if (userBtn) userBtn.addEventListener('click', openLogin);
+    if (dealerLoginBtn) dealerLoginBtn.addEventListener('click', openLogin);
+    if (mobileUserBtn) mobileUserBtn.addEventListener('click', openLogin);
+    if (closeLoginBtn) closeLoginBtn.addEventListener('click', closeLogin);
+    if (loginModalOverlay) loginModalOverlay.addEventListener('click', closeLogin);
 
     // --- Lógica del Cajón de Búsqueda Fija (Autocomplete Async) ---
     function setupSearch(inputId, resultsId) {
@@ -120,8 +120,10 @@ function initApp() {
             const val = e.target.value.trim();
             if(val.length > 0) {
                 results.classList.remove('hidden');
+                // Mostrar spinner de carga inicial
                 results.innerHTML = '<div class="p-8 text-center text-gray-400"><i class="fa-solid fa-circle-notch spin-anim text-2xl"></i></div>';
                 
+                // Simular petición de resultados (como async-search)
                 timeout = setTimeout(() => {
                     results.innerHTML = `
                         <div class="p-4 text-left">
@@ -151,6 +153,7 @@ function initApp() {
                             <h4 class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">Sugerencias</h4>
                             <ul class="text-[13px] text-gray-600 space-y-2 mb-3 px-2">
                                 <li><a href="#" class="hover:text-black hover:underline"><span class="font-bold text-black">${val}</span> en Muebles</a></li>
+                                <li><a href="#" class="hover:text-black hover:underline"><span class="font-bold text-black">${val}</span> en Iluminación</a></li>
                             </ul>
                             
                             <a href="#" class="mt-4 bg-gray-50 text-sm font-bold text-gray-800 hover:bg-gray-100 text-center block w-full py-2.5 rounded transition border border-gray-200">
@@ -158,12 +161,13 @@ function initApp() {
                             </a>
                         </div>
                     `;
-                }, 500); 
+                }, 500); // Retraso simulado de 500ms
             } else {
                 results.classList.add('hidden');
             }
         });
 
+        // Cerrar el cajón al hacer clic fuera del input y del cajón
         document.addEventListener('click', (e) => {
             if(!input.contains(e.target) && !results.contains(e.target)) {
                 results.classList.add('hidden');
@@ -171,6 +175,10 @@ function initApp() {
         });
     }
 
+    // Inicializar para ambas barras de búsqueda
     setupSearch('desktop-search', 'desktop-search-results');
     setupSearch('mobile-search', 'mobile-search-results');
 }
+
+// Ejecutar inmediatamente (ya que este archivo se inyecta y se llama una vez que todo el HTML ya está cargado mediante fetch)
+initApp();
