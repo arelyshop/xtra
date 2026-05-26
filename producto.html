@@ -238,7 +238,7 @@
     <div id="footer-container"></div>
 
     <!-- MODAL LIGHTBOX DE GALERÍA -->
-    <div id="lightbox" class="fixed inset-0 bg-white/95 backdrop-blur-sm z-[100] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300" onclick="if(event.target === this) closeLightbox()">
+    <div id="lightbox" class="fixed inset-0 bg-white/95 backdrop-blur-sm z-[100] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300 touch-none" onclick="if(event.target === this) closeLightbox()">
         <!-- Botón Cerrar -->
         <button onclick="closeLightbox()" class="absolute top-4 right-4 sm:top-8 sm:right-8 w-10 h-10 sm:w-12 sm:h-12 bg-white border border-gray-200 text-black hover:bg-gray-100 rounded-full flex items-center justify-center text-xl z-50 shadow-sm transition"><i class="fa-solid fa-xmark"></i></button>
         
@@ -248,7 +248,7 @@
         <!-- Contenedor Imagen Zoom -->
         <div class="relative w-full max-w-6xl h-[80vh] flex items-center justify-center overflow-hidden group" onclick="if(event.target === this) closeLightbox()">
             <!-- La imagen es ahora el único elemento con la función y el cursor de zoom -->
-            <img id="lightbox-img" src="" alt="Vista ampliada" onclick="toggleZoom(event)" class="max-w-full max-h-full object-contain transition-transform duration-300 transform scale-100 origin-center select-none cursor-zoom-in relative z-20">
+            <img id="lightbox-img" src="" alt="Vista ampliada" onclick="toggleZoom(event)" class="max-w-full max-h-full object-contain transition-transform duration-300 origin-center select-none cursor-zoom-in relative z-20" style="transform: translate(0px, 0px) scale(1);">
             
             <!-- Hint overlay (Desaparece al hacer zoom o al salir el hover) -->
             <div id="zoom-hint" class="absolute bottom-8 bg-black/80 text-white px-5 py-2.5 rounded-full text-sm font-medium tracking-wide opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none shadow-lg z-30">
@@ -374,26 +374,39 @@
             resetZoom();
         }
 
+        // --- Lógica de Zoom y Gestos (Pinch-to-zoom para móviles) ---
+        let currentScale = 1;
+        let touchStartDist = 0;
+        let initialScale = 1;
+        let isPinching = false;
+        let isDragging = false;
+        let startX = 0, startY = 0;
+        let translateX = 0, translateY = 0;
+
         function toggleZoom(e) {
-            e.stopPropagation(); // Evita que el clic en la imagen cierre el modal
+            e.stopPropagation(); 
+            // En celulares, ignorar el zoom con "un clic" para forzar al usuario a usar los dos dedos (pinch)
+            if (e.pointerType === 'touch') return;
+            
             const img = document.getElementById('lightbox-img');
             const hint = document.getElementById('zoom-hint');
             isZoomed = !isZoomed;
             
             if (isZoomed) {
-                // Aplicar Zoom
-                img.classList.remove('scale-100', 'cursor-zoom-in');
-                img.classList.add('scale-[2.5]', 'cursor-zoom-out');
+                currentScale = 2.5;
+                img.classList.replace('cursor-zoom-in', 'cursor-zoom-out');
                 
                 // Ocultar texto de ayuda
                 if(hint) hint.classList.add('opacity-0');
                 if(hint) hint.classList.remove('group-hover:opacity-100');
                 
-                // Calcular origen del transform basado estrictamente en el marco de la imagen
+                // Calcular origen basado estrictamente en el marco de la imagen (Solo PC)
                 const rect = img.getBoundingClientRect();
                 const x = ((e.clientX - rect.left) / rect.width) * 100;
                 const y = ((e.clientY - rect.top) / rect.height) * 100;
+                
                 img.style.transformOrigin = `${x}% ${y}%`;
+                img.style.transform = `translate(0px, 0px) scale(${currentScale})`;
             } else {
                 resetZoom();
             }
@@ -401,20 +414,78 @@
 
         function resetZoom() {
             isZoomed = false;
+            currentScale = 1;
+            translateX = 0;
+            translateY = 0;
+            
             const img = document.getElementById('lightbox-img');
             const hint = document.getElementById('zoom-hint');
             
             if(img) {
-                img.classList.remove('scale-[2.5]', 'cursor-zoom-out');
-                img.classList.add('scale-100', 'cursor-zoom-in');
-                img.style.transformOrigin = 'center center';
+                img.classList.replace('cursor-zoom-out', 'cursor-zoom-in');
+                img.style.transform = 'translate(0px, 0px) scale(1)';
+                setTimeout(() => { img.style.transformOrigin = 'center center'; }, 300);
             }
             if(hint) {
-                // Restaurar visibilidad del texto de ayuda en hover
                 hint.classList.remove('opacity-0');
                 hint.classList.add('group-hover:opacity-100');
             }
         }
+
+        // Escuchar gestos en pantallas táctiles
+        const lightboxImgNode = document.getElementById('lightbox-img');
+
+        lightboxImgNode.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 2) {
+                isPinching = true;
+                isDragging = false;
+                touchStartDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                initialScale = currentScale;
+                lightboxImgNode.style.transition = 'none'; // Quitar transición para que siga a los dedos
+            } else if (e.touches.length === 1 && currentScale > 1) {
+                isDragging = true;
+                isPinching = false;
+                startX = e.touches[0].clientX - translateX;
+                startY = e.touches[0].clientY - translateY;
+                lightboxImgNode.style.transition = 'none';
+            }
+        });
+
+        lightboxImgNode.addEventListener('touchmove', (e) => {
+            if (isPinching && e.touches.length === 2) {
+                e.preventDefault(); // Impide comportamientos no deseados
+                const currentDist = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                currentScale = Math.min(Math.max(1, initialScale * (currentDist / touchStartDist)), 4);
+                lightboxImgNode.style.transformOrigin = 'center center';
+                lightboxImgNode.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+                
+                const hint = document.getElementById('zoom-hint');
+                if(hint) hint.classList.add('opacity-0');
+                
+            } else if (isDragging && e.touches.length === 1) {
+                e.preventDefault();
+                translateX = e.touches[0].clientX - startX;
+                translateY = e.touches[0].clientY - startY;
+                lightboxImgNode.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+            }
+        });
+
+        lightboxImgNode.addEventListener('touchend', (e) => {
+            if (e.touches.length < 2) isPinching = false;
+            if (e.touches.length === 0) isDragging = false;
+            
+            lightboxImgNode.style.transition = 'transform 0.3s ease-out'; // Regresar transición suave
+            
+            if (currentScale <= 1) {
+                resetZoom();
+            }
+        });
 
         // Navegación por teclado en el Lightbox
         document.addEventListener('keydown', (e) => {
