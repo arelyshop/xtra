@@ -1,6 +1,75 @@
-<div id="header-container"></div>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARELYSHOP.COM - E-commerce</title>
+    <!-- Usamos Tailwind CSS para emular el diseño de manera rápida y limpia -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para los iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#111827',
+                        secondary: '#f3f4f6',
+                        accent: '#2563eb'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos personalizados menores para la transición del menú */
+        .mobile-menu-active { transform: translateX(0%); }
+        .mobile-menu-inactive { transform: translateX(-100%); }
+        
+        /* Clases para el Carrito Lateral (Side Cart) */
+        .cart-active { transform: translateX(0%); }
+        .cart-inactive { transform: translateX(100%); }
+        
+        /* Ocultar barra de desplazamiento en el top bar */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-<!-- Contenido Principal de la página -->
-<main class="h-[150vh] bg-gray-50 p-8">...</main>
+        /* Efecto spinner para carga de búsqueda */
+        @keyframes spin-search { 100% { transform: rotate(360deg); } }
+        .spin-anim { animation: spin-search 0.75s linear infinite; }
+    </style>
+</head>
+<body class="bg-white text-gray-800 font-sans antialiased">
 
-<div id="footer-container"></div>
+    <!-- Aquí se inyectará automáticamente el header.html -->
+    <div id="header-container"></div>
+
+    <!-- Contenido Principal de la página -->
+    <main class="h-[150vh] bg-gray-50 p-8">
+        <div class="max-w-7xl mx-auto border-4 border-dashed border-gray-300 rounded-xl h-96 flex items-center justify-center text-gray-400">
+            <p>Contenido principal del sitio web...</p>
+        </div>
+    </main>
+
+    <!-- Aquí se inyectará automáticamente el footer.html -->
+    <div id="footer-container"></div>
+
+    <!-- Script para cargar el Header, Footer y luego la lógica principal -->
+    <script>
+        // Cargar componentes dinámicamente (Ideal para GitHub + Netlify)
+        Promise.all([
+            fetch('header.html').then(res => res.text()),
+            fetch('footer.html').then(res => res.text())
+        ]).then(([headerHtml, footerHtml]) => {
+            // 1. Inyectar el HTML
+            document.getElementById('header-container').innerHTML = headerHtml;
+            document.getElementById('footer-container').innerHTML = footerHtml;
+            
+            // 2. Cargar main.js DESPUÉS de que el DOM esté listo y el header exista
+            const script = document.createElement('script');
+            script.src = 'js/main.js';
+            document.body.appendChild(script);
+        }).catch(err => console.error('Error cargando componentes:', err));
+    </script>
+</body>
+</html>
