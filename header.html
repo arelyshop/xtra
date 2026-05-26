@@ -22,10 +22,6 @@
         </ul>
         <div class="flex space-x-6">
             <a href="#" class="hover:text-black font-medium transition">Customer service</a>
-            <div class="flex space-x-4 items-center border-l pl-6 border-gray-300">
-                <button class="hover:text-black flex items-center gap-1">ES <i class="fa-solid fa-chevron-down text-[10px]"></i></button>
-                <button class="hover:text-black flex items-center gap-1">EUR <i class="fa-solid fa-chevron-down text-[10px]"></i></button>
-            </div>
         </div>
     </div>
 </div>
@@ -64,16 +60,15 @@
             </div>
 
             <!-- Iconos de Usuario y Carrito (Derecha) -->
-            <div class="flex items-center justify-end gap-5 lg:w-1/4 w-1/3">
+            <div class="flex items-center justify-end gap-5 lg:w-1/3 w-1/3">
                 
-                <!-- Botón de Login (JSON: button_text: "Dealer login") -->
-                <a href="#" id="dealer-login-btn" class="hidden xl:block text-[14px] font-medium hover:underline">
-                    Dealer login
-                </a>
-
-                <a href="#" id="user-btn" class="text-[22px] text-gray-700 hover:text-black relative group hidden sm:block">
-                    <i class="fa-regular fa-user"></i>
-                    <span class="absolute top-10 right-0 w-max bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition pointer-events-none">Account</span>
+                <!-- Contacto WhatsApp (Reemplaza Login) -->
+                <a href="https://wa.me/59100000000" target="_blank" class="hidden sm:flex items-center gap-2.5 group mr-2">
+                    <img src="images/whatsapp-icon.svg" alt="WhatsApp" class="w-8 h-8 group-hover:scale-110 transition-transform">
+                    <div class="flex flex-col text-left">
+                        <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wider leading-none mb-0.5">Contáctanos</span>
+                        <span class="text-[13px] font-bold text-gray-900 leading-none group-hover:text-[#128c7e] transition-colors">por WhatsApp!</span>
+                    </div>
                 </a>
                 
                 <a href="#" id="cart-btn" class="text-[22px] text-gray-700 hover:text-black relative group flex items-center gap-2 cursor-pointer">
@@ -201,11 +196,8 @@
 
     <!-- Acciones extra móviles -->
     <div class="p-4 bg-gray-50 mt-auto">
-        <a href="#" id="mobile-user-btn" class="flex items-center gap-3 py-2 text-sm text-gray-600 hover:text-black">
-            <i class="fa-regular fa-user"></i> Mi Cuenta
-        </a>
-        <a href="#" class="flex items-center gap-3 py-2 text-sm text-gray-600 hover:text-black">
-            <i class="fa-solid fa-globe"></i> Idioma: Español
+        <a href="https://wa.me/59100000000" target="_blank" class="flex items-center gap-3 py-2 text-sm text-gray-800 font-bold hover:text-[#128c7e]">
+            <img src="images/whatsapp-icon.svg" alt="WhatsApp" class="w-6 h-6"> Contáctanos por WhatsApp!
         </a>
     </div>
 </div>
@@ -272,35 +264,5 @@
         <button class="w-full bg-primary text-white py-3 rounded-md font-bold hover:bg-gray-800 transition">
             Finalizar Compra
         </button>
-    </div>
-</div>
-
-<!-- 7. Modal de Inicio de Sesión (Login Dropdown) -->
-<div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
-    <div id="login-modal-overlay" class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-500"></div>
-    <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-md p-8 m-4 z-10 transform scale-95 opacity-0 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" id="login-modal-content">
-        <button id="close-login-btn" class="absolute top-4 right-4 text-gray-500 hover:text-black">
-            <i class="fa-solid fa-xmark text-xl"></i>
-        </button>
-        <h2 class="text-2xl font-bold mb-6 text-center">Iniciar Sesión</h2>
-        <form>
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1" for="email">Correo Electrónico *</label>
-                <input class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-black" type="email" id="email" placeholder="tu@email.com" required>
-            </div>
-            <div class="mb-6">
-                <div class="flex justify-between items-center mb-1">
-                    <label class="block text-sm font-medium text-gray-700" for="password">Contraseña *</label>
-                    <a href="#" class="text-xs text-blue-600 hover:underline">¿Olvidaste tu contraseña?</a>
-                </div>
-                <input class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-black" type="password" id="password" placeholder="••••••••" required>
-            </div>
-            <button type="submit" class="w-full bg-primary text-white py-2 rounded-md font-bold hover:bg-gray-800 transition mb-4">
-                Entrar
-            </button>
-            <p class="text-sm text-center text-gray-600">
-                ¿No tienes una cuenta? <a href="#" class="font-bold hover:underline">Regístrate</a>
-            </p>
-        </form>
     </div>
 </div>
