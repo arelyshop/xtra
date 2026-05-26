@@ -224,8 +224,8 @@
     </header>
 
     <!-- 5. Menú Lateral Móvil (Drawer) -->
-    <div id="mobile-menu-overlay" class="fixed inset-0 bg-black/50 z-40 opacity-0 pointer-events-none transition-opacity duration-300"></div>
-    <div id="mobile-menu" class="fixed top-0 left-0 w-4/5 max-w-sm h-full bg-white z-50 mobile-menu-inactive transition-transform duration-300 shadow-xl overflow-y-auto">
+    <div id="mobile-menu-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-all duration-500"></div>
+    <div id="mobile-menu" class="fixed top-0 left-0 w-4/5 max-w-sm h-full bg-white z-50 mobile-menu-inactive transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-2xl overflow-y-auto">
         <div class="p-4 border-b flex justify-between items-center">
             <span class="font-bold text-lg">MENÚ</span>
             <button id="close-mobile-btn" class="text-gray-500 hover:text-black text-2xl">
@@ -254,8 +254,8 @@
     </div>
 
     <!-- 6. Carrito Lateral (Side Cart) - Implementado desde theme.liquid -->
-    <div id="side-drawer-overlay" class="fixed inset-0 bg-black/50 z-40 opacity-0 pointer-events-none transition-opacity duration-300"></div>
-    <div id="side-cart" class="fixed top-0 right-0 w-4/5 max-w-sm h-full bg-white z-50 cart-inactive transition-transform duration-300 shadow-2xl flex flex-col">
+    <div id="side-drawer-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-all duration-500"></div>
+    <div id="side-cart" class="fixed top-0 right-0 w-4/5 max-w-sm h-full bg-white z-50 cart-inactive transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-2xl flex flex-col">
         <div class="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
             <h2 class="font-bold text-lg flex items-center gap-2">
                 <i class="fa-solid fa-cart-shopping"></i> Tu Carrito (3)
@@ -320,8 +320,8 @@
 
     <!-- 7. Modal de Inicio de Sesión (Login Dropdown) -->
     <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
-        <div id="login-modal-overlay" class="absolute inset-0 bg-black bg-opacity-50 transition-opacity"></div>
-        <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-md p-8 m-4 z-10 transform scale-95 opacity-0 transition-all duration-300" id="login-modal-content">
+        <div id="login-modal-overlay" class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-500"></div>
+        <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-md p-8 m-4 z-10 transform scale-95 opacity-0 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" id="login-modal-content">
             <button id="close-login-btn" class="absolute top-4 right-4 text-gray-500 hover:text-black">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
@@ -525,7 +525,7 @@
                 setTimeout(() => {
                     loginModal.classList.add('hidden');
                     document.body.style.overflow = 'auto';
-                }, 300);
+                }, 500);
             }
 
             userBtn.addEventListener('click', openLogin);
