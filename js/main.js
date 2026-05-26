@@ -1,4 +1,12 @@
-document.addEventListener('DOMContentLoaded', () => {
+// Este archivo se cargará una vez que el index.html haya inyectado header.html y footer.html
+// No es necesario usar DOMContentLoaded porque lo cargamos dinámicamente, pero lo dejamos por seguridad
+document.addEventListener('DOMContentLoaded', initApp);
+// Si DOMContentLoaded ya se disparó antes de cargar el script (muy probable con Fetch), ejecutamos directo:
+if (document.readyState === 'interactive' || document.readyState === 'complete') {
+    initApp();
+}
+
+function initApp() {
     // Referencias del Menú Móvil
     const mobileBtn = document.getElementById('mobile-menu-btn');
     const closeBtn = document.getElementById('close-mobile-btn');
@@ -165,4 +173,4 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setupSearch('desktop-search', 'desktop-search-results');
     setupSearch('mobile-search', 'mobile-search-results');
-});
+}
