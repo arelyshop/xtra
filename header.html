@@ -1,9 +1,9 @@
-<!-- 1. Barra de Anuncios -->
+<!-- 1. Barra de Anuncios (Basado en 'announcement-block-1' del JSON) -->
 <div class="bg-gray-900 text-white text-center py-2 px-4 text-[13px] font-medium tracking-wide">
     🚀 <strong>50% OFF</strong> ALL INTERIOR PRODUCTS
 </div>
 
-<!-- 2. Top Bar -->
+<!-- 2. Top Bar (USPs / Propuestas de Valor del JSON) -->
 <div class="bg-gray-50 text-gray-600 py-2.5 border-b border-gray-200 hidden md:block text-[13px]">
     <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
         <ul class="flex space-x-8">
@@ -66,7 +66,7 @@
             <!-- Iconos de Usuario y Carrito (Derecha) -->
             <div class="flex items-center justify-end gap-5 lg:w-1/4 w-1/3">
                 
-                <!-- Botón de Login -->
+                <!-- Botón de Login (JSON: button_text: "Dealer login") -->
                 <a href="#" id="dealer-login-btn" class="hidden xl:block text-[14px] font-medium hover:underline">
                     Dealer login
                 </a>
@@ -108,27 +108,43 @@
                     <a href="#">Home</a>
                 </li>
                 
-                <!-- Mega Menú Avanzado -->
+                <!-- Mega Menú Avanzado (Recreando header-menu.liquid con dropdown_images y promo_banners) -->
                 <li class="py-4 border-b-2 border-transparent hover:border-black hover:text-black cursor-pointer transition group">
                     <a href="#">Catalog <i class="fa-solid fa-chevron-down text-[10px] ml-1 opacity-50"></i></a>
+                    
+                    <!-- Contenedor del Mega Menú -->
                     <div class="absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-50">
                         <div class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-4 gap-8">
+                            
+                            <!-- Columna de Enlaces 1 con Imágenes Dropdown (show_dropdown_images) -->
                             <div>
-                                <h3 class="font-bold text-black mb-4 uppercase text-[11px] tracking-wider text-gray-500">Furniture</h3>
+                                <h3 class="font-bold text-black mb-4 uppercase text-[11px] tracking-wider text-gray-500">
+                                    Furniture
+                                </h3>
                                 <ul class="space-y-4 text-gray-600 text-[14px]">
                                     <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=S" class="rounded w-7 h-7 object-cover border border-gray-200"> Sofas & Armchairs</a></li>
                                     <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=C" class="rounded w-7 h-7 object-cover border border-gray-200"> Chairs</a></li>
+                                    <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=B" class="rounded w-7 h-7 object-cover border border-gray-200"> Beds</a></li>
+                                    <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=S" class="rounded w-7 h-7 object-cover border border-gray-200"> Storage</a></li>
                                 </ul>
                             </div>
+
+                            <!-- Columna de Enlaces 2 -->
                             <div>
-                                <h3 class="font-bold text-black mb-4 uppercase text-[11px] tracking-wider text-gray-500">Lighting</h3>
+                                <h3 class="font-bold text-black mb-4 uppercase text-[11px] tracking-wider text-gray-500">
+                                    Lighting
+                                </h3>
                                 <ul class="space-y-4 text-gray-600 text-[14px]">
                                     <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=C" class="rounded w-7 h-7 object-cover border border-gray-200"> Ceiling Lights</a></li>
+                                    <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=T" class="rounded w-7 h-7 object-cover border border-gray-200"> Table Lamps</a></li>
+                                    <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=O" class="rounded w-7 h-7 object-cover border border-gray-200"> Outdoor</a></li>
                                 </ul>
                             </div>
+
+                            <!-- Promo Banners (Basado en el bloque layout: columns) -->
                             <div class="col-span-2 grid grid-cols-2 gap-6">
                                 <div class="relative rounded-lg overflow-hidden flex-1 group/promo cursor-pointer h-64 shadow-md">
-                                    <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Promo" class="w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700">
+                                    <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Promo Muebles" class="w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700">
                                     <div class="absolute inset-0 bg-black bg-opacity-10 transition group-hover/promo:bg-opacity-20"></div>
                                     <div class="absolute inset-0 p-5 flex flex-col justify-end text-white">
                                         <h4 class="text-lg font-bold mb-1">Nordic Collection</h4>
@@ -136,7 +152,7 @@
                                     </div>
                                 </div>
                                 <div class="relative rounded-lg overflow-hidden flex-1 group/promo cursor-pointer h-64 shadow-md">
-                                    <img src="https://images.unsplash.com/photo-1507149833265-60c372daea22?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Promo" class="w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700">
+                                    <img src="https://images.unsplash.com/photo-1507149833265-60c372daea22?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Promo Iluminación" class="w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700">
                                     <div class="absolute inset-0 bg-black bg-opacity-10 transition group-hover/promo:bg-opacity-20"></div>
                                     <div class="absolute inset-0 p-5 flex flex-col justify-end text-white">
                                         <h4 class="text-lg font-bold mb-1">Lighting Sale</h4>
@@ -144,12 +160,19 @@
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </li>
-                <li class="py-4 border-b-2 border-transparent hover:border-black hover:text-black cursor-pointer transition"><a href="#">Collections</a></li>
-                <li class="py-4 border-b-2 border-transparent hover:border-black hover:text-black cursor-pointer transition"><a href="#">About Us</a></li>
+                
                 <li class="py-4 border-b-2 border-transparent hover:border-black hover:text-black cursor-pointer transition">
+                    <a href="#">Collections</a>
+                </li>
+                <li class="py-4 border-b-2 border-transparent hover:border-black hover:text-black cursor-pointer transition">
+                    <a href="#">About Us</a>
+                </li>
+                <li class="py-4 border-b-2 border-transparent hover:border-black hover:text-black cursor-pointer transition">
+                    <!-- sale_highlight_item implementation -->
                     <a href="#" class="bg-red-600 text-white px-2.5 py-1 rounded-sm text-[11px] font-bold uppercase tracking-wider shadow-sm">Sale</a>
                 </li>
             </ul>
@@ -166,14 +189,28 @@
             <i class="fa-solid fa-xmark"></i>
         </button>
     </div>
+
+    <!-- Links Móviles -->
     <ul class="text-gray-800 text-base font-medium">
         <li class="border-b"><a href="#" class="block p-4 hover:bg-gray-50">Inicio</a></li>
         <li class="border-b"><a href="#" class="block p-4 hover:bg-gray-50 flex justify-between">Catálogo <i class="fa-solid fa-chevron-right text-sm text-gray-400"></i></a></li>
+        <li class="border-b"><a href="#" class="block p-4 hover:bg-gray-50 flex justify-between">Colecciones <i class="fa-solid fa-chevron-right text-sm text-gray-400"></i></a></li>
+        <li class="border-b"><a href="#" class="block p-4 hover:bg-gray-50">Sobre Nosotros</a></li>
         <li class="border-b bg-red-50"><a href="#" class="block p-4 text-red-600">Ofertas (Sale)</a></li>
     </ul>
+
+    <!-- Acciones extra móviles -->
+    <div class="p-4 bg-gray-50 mt-auto">
+        <a href="#" id="mobile-user-btn" class="flex items-center gap-3 py-2 text-sm text-gray-600 hover:text-black">
+            <i class="fa-regular fa-user"></i> Mi Cuenta
+        </a>
+        <a href="#" class="flex items-center gap-3 py-2 text-sm text-gray-600 hover:text-black">
+            <i class="fa-solid fa-globe"></i> Idioma: Español
+        </a>
+    </div>
 </div>
 
-<!-- 6. Carrito Lateral (Side Cart) -->
+<!-- 6. Carrito Lateral (Side Cart) - Implementado desde theme.liquid -->
 <div id="side-drawer-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-all duration-500"></div>
 <div id="side-cart" class="fixed top-0 right-0 w-4/5 max-w-sm h-full bg-white z-50 cart-inactive transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-2xl flex flex-col">
     <div class="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
@@ -184,28 +221,61 @@
             <i class="fa-solid fa-xmark"></i>
         </button>
     </div>
+    
+    <!-- Productos en el carrito -->
     <div class="flex-1 overflow-y-auto p-4 space-y-4">
-        <!-- Contenido del carrito (items) -->
+        <!-- Item 1 -->
         <div class="flex gap-4 border-b border-gray-100 pb-4">
             <div class="w-20 h-20 bg-gray-200 rounded object-cover flex items-center justify-center text-gray-400">
                 <i class="fa-solid fa-image text-2xl"></i>
             </div>
             <div class="flex-1">
-                <h3 class="text-sm font-bold">Silla de Comedor</h3>
+                <h3 class="text-sm font-bold">Silla de Comedor Nórdica</h3>
+                <p class="text-xs text-gray-500 mt-1">Gris / Madera</p>
                 <div class="flex justify-between items-center mt-2">
+                    <div class="flex items-center border border-gray-300 rounded">
+                        <button class="px-2 py-1 text-gray-600 hover:bg-gray-100">-</button>
+                        <span class="px-2 text-sm font-medium">2</span>
+                        <button class="px-2 py-1 text-gray-600 hover:bg-gray-100">+</button>
+                    </div>
                     <span class="font-bold text-sm">$90.00</span>
                 </div>
             </div>
         </div>
+        <!-- Item 2 -->
+        <div class="flex gap-4 border-b border-gray-100 pb-4">
+            <div class="w-20 h-20 bg-gray-200 rounded object-cover flex items-center justify-center text-gray-400">
+                <i class="fa-solid fa-image text-2xl"></i>
+            </div>
+            <div class="flex-1">
+                <h3 class="text-sm font-bold">Lámpara Colgante Moderna</h3>
+                <p class="text-xs text-gray-500 mt-1">Negro Mate</p>
+                <div class="flex justify-between items-center mt-2">
+                    <div class="flex items-center border border-gray-300 rounded">
+                        <button class="px-2 py-1 text-gray-600 hover:bg-gray-100">-</button>
+                        <span class="px-2 text-sm font-medium">1</span>
+                        <button class="px-2 py-1 text-gray-600 hover:bg-gray-100">+</button>
+                    </div>
+                    <span class="font-bold text-sm">$35.00</span>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Footer del Carrito -->
     <div class="p-4 border-t border-gray-200 bg-gray-50">
+        <div class="flex justify-between text-base font-bold mb-4">
+            <span>Subtotal</span>
+            <span>$125.00</span>
+        </div>
+        <p class="text-xs text-gray-500 text-center mb-4">Los impuestos y gastos de envío se calculan en la pantalla de pago.</p>
         <button class="w-full bg-primary text-white py-3 rounded-md font-bold hover:bg-gray-800 transition">
             Finalizar Compra
         </button>
     </div>
 </div>
 
-<!-- 7. Modal de Inicio de Sesión -->
+<!-- 7. Modal de Inicio de Sesión (Login Dropdown) -->
 <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
     <div id="login-modal-overlay" class="absolute inset-0 bg-black/40 backdrop-blur-sm transition-opacity duration-500"></div>
     <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-md p-8 m-4 z-10 transform scale-95 opacity-0 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]" id="login-modal-content">
@@ -215,12 +285,22 @@
         <h2 class="text-2xl font-bold mb-6 text-center">Iniciar Sesión</h2>
         <form>
             <div class="mb-4">
-                <input class="w-full border border-gray-300 rounded-md py-2 px-3" type="email" placeholder="tu@email.com" required>
+                <label class="block text-sm font-medium text-gray-700 mb-1" for="email">Correo Electrónico *</label>
+                <input class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-black" type="email" id="email" placeholder="tu@email.com" required>
             </div>
             <div class="mb-6">
-                <input class="w-full border border-gray-300 rounded-md py-2 px-3" type="password" placeholder="••••••••" required>
+                <div class="flex justify-between items-center mb-1">
+                    <label class="block text-sm font-medium text-gray-700" for="password">Contraseña *</label>
+                    <a href="#" class="text-xs text-blue-600 hover:underline">¿Olvidaste tu contraseña?</a>
+                </div>
+                <input class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-black" type="password" id="password" placeholder="••••••••" required>
             </div>
-            <button type="submit" class="w-full bg-primary text-white py-2 rounded-md font-bold">Entrar</button>
+            <button type="submit" class="w-full bg-primary text-white py-2 rounded-md font-bold hover:bg-gray-800 transition mb-4">
+                Entrar
+            </button>
+            <p class="text-sm text-center text-gray-600">
+                ¿No tienes una cuenta? <a href="#" class="font-bold hover:underline">Regístrate</a>
+            </p>
         </form>
     </div>
 </div>
