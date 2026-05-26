@@ -32,9 +32,7 @@
         @keyframes spin-search { 100% { transform: rotate(360deg); } }
         .spin-anim { animation: spin-search 0.75s linear infinite; }
         
-        /* Estilos específicos de Colección (Hover en productos para Quick Buy) */
-        .product-card .quick-buy-btn { transform: translateY(10px); opacity: 0; transition: all 0.3s ease; }
-        .product-card:hover .quick-buy-btn { transform: translateY(0); opacity: 1; }
+        /* Estilos específicos de Colección */
         .product-card:hover .product-img { transform: scale(1.05); }
     </style>
 </head>
@@ -163,7 +161,7 @@
 
                     <p class="hidden sm:block text-[14px] text-gray-500">Mostrando 1 - 12 de 62 productos</p>
                     
-                    <div class="flex items-center gap-4 w-full sm:w-auto justify-between">
+                    <div class="hidden sm:flex items-center gap-4 w-full sm:w-auto justify-between">
                         <!-- Select Ordenar -->
                         <div class="flex items-center gap-2">
                             <label class="text-[13px] text-gray-600 hidden sm:block">Ordenar por:</label>
@@ -186,20 +184,9 @@
                     
                     <!-- Producto 1 -->
                     <div class="product-card group relative flex flex-col cursor-pointer">
-                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-[4/5] mb-4">
+                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
                             <span class="absolute top-2 left-2 bg-white text-black text-[10px] font-bold px-2 py-1 uppercase rounded z-10 shadow-sm">Nuevo</span>
                             <img src="https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Silla" class="product-img w-full h-full object-cover transition-transform duration-700">
-                            
-                            <!-- Botón Compra Rápida (Desktop Hover) -->
-                            <div class="absolute bottom-4 left-4 right-4 quick-buy-btn hidden lg:block z-10">
-                                <button class="w-full bg-white/90 backdrop-blur text-black font-bold text-sm py-2.5 rounded shadow-lg hover:bg-black hover:text-white transition-colors border border-gray-100">
-                                    Añadir al carrito
-                                </button>
-                            </div>
-                            <!-- Botón Móvil (Siempre visible en el contenedor de imagen inferior derecha) -->
-                            <button class="lg:hidden absolute bottom-2 right-2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-black z-10">
-                                <i class="fa-solid fa-cart-plus"></i>
-                            </button>
                         </div>
                         <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline">Silla de Comedor Nórdica</h3>
                         <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1">Madera / Tapizado Gris</p>
@@ -210,15 +197,9 @@
 
                     <!-- Producto 2 -->
                     <div class="product-card group relative flex flex-col cursor-pointer">
-                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-[4/5] mb-4">
+                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
                             <span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 uppercase rounded z-10 shadow-sm">Oferta</span>
                             <img src="https://images.unsplash.com/photo-1507149833265-60c372daea22?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Lámpara" class="product-img w-full h-full object-cover transition-transform duration-700">
-                            <div class="absolute bottom-4 left-4 right-4 quick-buy-btn hidden lg:block z-10">
-                                <button class="w-full bg-white/90 backdrop-blur text-black font-bold text-sm py-2.5 rounded shadow-lg hover:bg-black hover:text-white transition-colors border border-gray-100">
-                                    Añadir al carrito
-                                </button>
-                            </div>
-                            <button class="lg:hidden absolute bottom-2 right-2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-black z-10"><i class="fa-solid fa-cart-plus"></i></button>
                         </div>
                         <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline">Lámpara Colgante Moderna</h3>
                         <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1">Negro Mate</p>
@@ -230,14 +211,8 @@
 
                     <!-- Producto 3 -->
                     <div class="product-card group relative flex flex-col cursor-pointer">
-                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-[4/5] mb-4">
+                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
                             <img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Sofá" class="product-img w-full h-full object-cover transition-transform duration-700">
-                            <div class="absolute bottom-4 left-4 right-4 quick-buy-btn hidden lg:block z-10">
-                                <button class="w-full bg-white/90 backdrop-blur text-black font-bold text-sm py-2.5 rounded shadow-lg hover:bg-black hover:text-white transition-colors border border-gray-100">
-                                    Seleccionar Opciones
-                                </button>
-                            </div>
-                            <button class="lg:hidden absolute bottom-2 right-2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-black z-10"><i class="fa-solid fa-cart-plus"></i></button>
                         </div>
                         <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline">Sofá Minimalista 3 Plazas</h3>
                         <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1">Varios colores disponibles</p>
@@ -254,14 +229,8 @@
 
                     <!-- Producto 4 -->
                     <div class="product-card group relative flex flex-col cursor-pointer">
-                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-[4/5] mb-4">
+                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
                             <img src="https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Mesa" class="product-img w-full h-full object-cover transition-transform duration-700">
-                            <div class="absolute bottom-4 left-4 right-4 quick-buy-btn hidden lg:block z-10">
-                                <button class="w-full bg-white/90 backdrop-blur text-black font-bold text-sm py-2.5 rounded shadow-lg hover:bg-black hover:text-white transition-colors border border-gray-100">
-                                    Añadir al carrito
-                                </button>
-                            </div>
-                            <button class="lg:hidden absolute bottom-2 right-2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-black z-10"><i class="fa-solid fa-cart-plus"></i></button>
                         </div>
                         <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline">Mesa de Centro de Roble</h3>
                         <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1">Acabado Natural</p>
@@ -272,14 +241,8 @@
 
                     <!-- Producto 5 -->
                     <div class="product-card group relative flex flex-col cursor-pointer">
-                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-[4/5] mb-4">
+                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
                             <img src="https://images.unsplash.com/photo-1505843513577-22bb7d21e455?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Silla Oficina" class="product-img w-full h-full object-cover transition-transform duration-700">
-                            <div class="absolute bottom-4 left-4 right-4 quick-buy-btn hidden lg:block z-10">
-                                <button class="w-full bg-white/90 backdrop-blur text-black font-bold text-sm py-2.5 rounded shadow-lg hover:bg-black hover:text-white transition-colors border border-gray-100">
-                                    Añadir al carrito
-                                </button>
-                            </div>
-                            <button class="lg:hidden absolute bottom-2 right-2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-black z-10"><i class="fa-solid fa-cart-plus"></i></button>
                         </div>
                         <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline">Silla de Oficina Ergonómica</h3>
                         <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1">Negro Mate / Malla</p>
@@ -290,15 +253,9 @@
 
                     <!-- Producto 6 -->
                     <div class="product-card group relative flex flex-col cursor-pointer">
-                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-[4/5] mb-4">
+                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
                             <span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 uppercase rounded z-10 shadow-sm">Oferta</span>
                             <img src="https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Estantería" class="product-img w-full h-full object-cover transition-transform duration-700">
-                            <div class="absolute bottom-4 left-4 right-4 quick-buy-btn hidden lg:block z-10">
-                                <button class="w-full bg-white/90 backdrop-blur text-black font-bold text-sm py-2.5 rounded shadow-lg hover:bg-black hover:text-white transition-colors border border-gray-100">
-                                    Añadir al carrito
-                                </button>
-                            </div>
-                            <button class="lg:hidden absolute bottom-2 right-2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-black z-10"><i class="fa-solid fa-cart-plus"></i></button>
                         </div>
                         <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline">Estantería Flotante</h3>
                         <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1">Madera Blanca</p>
