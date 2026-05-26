@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Silla de Comedor Nórdica - ARELYSHOP.COM</title>
+    <!-- Usamos Tailwind CSS para emular el diseño de manera rápida y limpia -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para los iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#111827',
+                        secondary: '#f3f4f6',
+                        accent: '#2563eb'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos base heredados */
+        .mobile-menu-active { transform: translateX(0%); }
+        .mobile-menu-inactive { transform: translateX(-100%); }
+        .cart-active { transform: translateX(0%); }
+        .cart-inactive { transform: translateX(100%); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes spin-search { 100% { transform: rotate(360deg); } }
+        .spin-anim { animation: spin-search 0.75s linear infinite; }
+        
+        /* Estilos de Producto */
+        .thumb-active { border-color: #111827 !important; opacity: 1 !important; }
+        .accordion-content { transition: max-height 0.3s ease-in-out; max-height: 0; overflow: hidden; }
+        .accordion-active .accordion-content { max-height: 500px; }
+        .accordion-active .fa-chevron-down { transform: rotate(180deg); }
+    </style>
+</head>
+<body class="bg-white text-gray-800 font-sans antialiased">
+
+    <!-- Inyección automática del Header -->
+    <div id="header-container"></div>
+
+    <!-- Contenido Principal: Página de Producto -->
+    <main class="max-w-7xl mx-auto px-4 py-6 lg:py-10">
+        
+        <!-- Migas de pan (Breadcrumbs) -->
+        <nav class="text-[13px] text-gray-500 mb-6 flex items-center gap-2">
+            <a href="index.html" class="hover:text-black hover:underline">Inicio</a>
+            <i class="fa-solid fa-chevron-right text-[9px]"></i>
+            <a href="colecciones.html" class="hover:text-black hover:underline">Sillas & Sillones</a>
+            <i class="fa-solid fa-chevron-right text-[9px]"></i>
+            <span class="text-gray-900 font-medium">Silla de Comedor Nórdica</span>
+        </nav>
+
+        <!-- Layout del Producto -->
+        <div class="flex flex-col lg:flex-row gap-10 lg:gap-16">
+            
+            <!-- 1. GALERÍA DE IMÁGENES (Referencia: main-product-gallery.liquid) -->
+            <div class="w-full lg:w-1/2">
+                <!-- Imagen Principal -->
+                <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4 group cursor-zoom-in">
+                    <span class="absolute top-4 left-4 bg-white text-black text-[11px] font-bold px-3 py-1.5 uppercase rounded z-10 shadow-sm">Nuevo</span>
+                    <img id="main-image" src="https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Silla de Comedor Nórdica" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                </div>
+                
+                <!-- Miniaturas (Thumbnails) -->
+                <div class="grid grid-cols-4 gap-3">
+                    <button onclick="changeMainImage(this, 'https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')" class="thumbnail-btn thumb-active relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-100 hover:opacity-100 transition">
+                        <img src="https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 1">
+                    </button>
+                    <button onclick="changeMainImage(this, 'https://images.unsplash.com/photo-1592078615290-033ee584e267?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')" class="thumbnail-btn relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition">
+                        <img src="https://images.unsplash.com/photo-1592078615290-033ee584e267?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 2">
+                    </button>
+                    <button onclick="changeMainImage(this, 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')" class="thumbnail-btn relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition">
+                        <img src="https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 3">
+                    </button>
+                    <!-- Video o Modelo 3D Placeholder -->
+                    <button class="relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition flex items-center justify-center text-gray-500">
+                        <i class="fa-solid fa-play text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. INFORMACIÓN DEL PRODUCTO (Referencia: main-product.liquid) -->
+            <div class="w-full lg:w-1/2 flex flex-col">
+                
+                <!-- Valoraciones y Marca -->
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-[12px] font-bold uppercase tracking-wider text-gray-500">NordicHome</span>
+                    <div class="flex items-center gap-1 text-[13px] text-yellow-500">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star-half-stroke"></i>
+                        <a href="#reviews" class="text-gray-500 ml-1 hover:text-black underline">(14 reseñas)</a>
+                    </div>
+                </div>
+
+                <!-- Título y Precio -->
+                <h1 class="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 mb-3">Silla de Comedor Nórdica</h1>
+                <div class="flex items-end gap-3 mb-6">
+                    <span class="text-2xl font-bold text-black">Bs. 90.00</span>
+                    <span class="text-base text-gray-400 line-through mb-0.5">Bs. 120.00</span>
+                    <span class="text-[12px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded mb-1">Ahorras Bs. 30.00</span>
+                </div>
+
+                <!-- Barra de Urgencia / Stock (Referencia: urgency block) -->
+                <div class="bg-gray-50 border border-gray-100 p-4 rounded-lg mb-6">
+                    <p class="text-[14px] text-gray-800 mb-2 font-medium"><i class="fa-solid fa-fire text-orange-500 mr-1"></i> ¡Date prisa! Solo quedan <strong>5</strong> artículos en stock.</p>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <!-- Barra con gradiente especificada en el JSON -->
+                        <div class="bg-gradient-to-r from-red-500 to-yellow-400 h-2 rounded-full" style="width: 15%"></div>
+                    </div>
+                </div>
+
+                <!-- Descripción Corta -->
+                <p class="text-[15px] text-gray-600 mb-6 leading-relaxed">
+                    Silla de diseño minimalista y ergonómico. Fabricada con madera de roble macizo y asiento tapizado en tela transpirable. Ideal para comedores modernos o estudios.
+                </p>
+
+                <!-- Selección de Variantes -->
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="font-bold text-[14px] text-gray-900">Color: <span id="color-name" class="font-normal text-gray-600">Gris Claro</span></span>
+                    </div>
+                    <div class="flex flex-wrap gap-3">
+                        <!-- Color Swatches -->
+                        <button onclick="selectColor(this, 'Gris Claro')" class="w-10 h-10 rounded-full bg-gray-300 border-2 border-white ring-2 ring-black focus:outline-none transition" title="Gris Claro"></button>
+                        <button onclick="selectColor(this, 'Negro Carbón')" class="w-10 h-10 rounded-full bg-gray-800 border-2 border-white ring-1 ring-gray-300 focus:outline-none transition" title="Negro Carbón"></button>
+                        <button onclick="selectColor(this, 'Mostaza')" class="w-10 h-10 rounded-full bg-yellow-600 border-2 border-white ring-1 ring-gray-300 focus:outline-none transition" title="Mostaza"></button>
+                    </div>
+                </div>
+
+                <!-- Controles de Compra (Quantity + Buttons) -->
+                <div class="flex flex-col sm:flex-row gap-4 mb-8">
+                    <!-- Selector de Cantidad -->
+                    <div class="flex items-center border border-gray-300 rounded h-12 w-full sm:w-32 bg-white">
+                        <button onclick="updateQty(-1)" class="w-10 h-full flex justify-center items-center text-gray-500 hover:text-black hover:bg-gray-50 transition"><i class="fa-solid fa-minus text-xs"></i></button>
+                        <input type="number" id="qty-input" value="1" min="1" class="flex-1 h-full text-center text-[15px] font-bold border-none focus:ring-0 p-0 m-0 w-full">
+                        <button onclick="updateQty(1)" class="w-10 h-full flex justify-center items-center text-gray-500 hover:text-black hover:bg-gray-50 transition"><i class="fa-solid fa-plus text-xs"></i></button>
+                    </div>
+                    
+                    <!-- Botón Añadir al Carrito -->
+                    <button class="flex-1 bg-white text-black border border-black h-12 rounded font-bold hover:bg-gray-50 transition flex items-center justify-center gap-2">
+                        Añadir al carrito
+                    </button>
+                </div>
+                
+                <!-- Botón Compra Dinámica (Comprar Ahora) -->
+                <button class="w-full bg-black text-white h-12 rounded font-bold hover:bg-gray-800 transition shadow-lg mb-6">
+                    Comprar ahora
+                </button>
+
+                <!-- Bloque de Confianza (Trustbadges) -->
+                <div class="flex items-center justify-center gap-6 py-4 border-t border-b border-gray-100 mb-8 text-gray-500 text-[13px]">
+                    <div class="flex flex-col items-center gap-1"><i class="fa-solid fa-shield-halved text-xl"></i> Pago Seguro</div>
+                    <div class="flex flex-col items-center gap-1"><i class="fa-solid fa-truck-fast text-xl"></i> Envío Rápido</div>
+                    <div class="flex flex-col items-center gap-1"><i class="fa-solid fa-rotate-left text-xl"></i> 30 Días Devolución</div>
+                </div>
+
+                <!-- Acordeones de Detalles (Referencia: content blocks) -->
+                <div class="border-t border-gray-200">
+                    <!-- Acordeón: Especificaciones -->
+                    <div class="accordion-item border-b border-gray-200">
+                        <button class="w-full py-4 flex justify-between items-center text-left font-bold text-[15px] text-gray-900 focus:outline-none" onclick="toggleAccordion(this)">
+                            Especificaciones <i class="fa-solid fa-chevron-down text-gray-400 text-[12px] transition-transform"></i>
+                        </button>
+                        <div class="accordion-content text-[14px] text-gray-600">
+                            <ul class="space-y-2 pb-4">
+                                <li><strong class="text-gray-800">Material:</strong> Roble macizo y lino transpirable</li>
+                                <li><strong class="text-gray-800">Dimensiones:</strong> 45cm (Ancho) x 85cm (Alto) x 50cm (Prof.)</li>
+                                <li><strong class="text-gray-800">Peso:</strong> 5.2 kg</li>
+                                <li><strong class="text-gray-800">Montaje:</strong> Requiere montaje básico (15 mins)</li>
+                                <li><strong class="text-gray-800">Carga máxima:</strong> 120 kg</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Acordeón: Pros y Contras -->
+                    <div class="accordion-item border-b border-gray-200">
+                        <button class="w-full py-4 flex justify-between items-center text-left font-bold text-[15px] text-gray-900 focus:outline-none" onclick="toggleAccordion(this)">
+                            Pros y Contras <i class="fa-solid fa-chevron-down text-gray-400 text-[12px] transition-transform"></i>
+                        </button>
+                        <div class="accordion-content text-[14px] pb-4">
+                            <ul class="mb-3 space-y-1.5">
+                                <li class="flex gap-2 text-green-700"><i class="fa-solid fa-check mt-1"></i> <span class="text-gray-600">Diseño ergonómico para largas sobremesas.</span></li>
+                                <li class="flex gap-2 text-green-700"><i class="fa-solid fa-check mt-1"></i> <span class="text-gray-600">Materiales sostenibles y duraderos.</span></li>
+                                <li class="flex gap-2 text-green-700"><i class="fa-solid fa-check mt-1"></i> <span class="text-gray-600">Fácil limpieza del tapizado.</span></li>
+                            </ul>
+                            <ul class="space-y-1.5">
+                                <li class="flex gap-2 text-red-500"><i class="fa-solid fa-xmark mt-1"></i> <span class="text-gray-600">No es apilable para ahorrar espacio.</span></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Acordeón: Envíos -->
+                    <div class="accordion-item border-b border-gray-200">
+                        <button class="w-full py-4 flex justify-between items-center text-left font-bold text-[15px] text-gray-900 focus:outline-none" onclick="toggleAccordion(this)">
+                            Envíos y devoluciones <i class="fa-solid fa-chevron-down text-gray-400 text-[12px] transition-transform"></i>
+                        </button>
+                        <div class="accordion-content text-[14px] text-gray-600 pb-4">
+                            <p>Envío estándar gratuito en pedidos superiores a Bs. 500.00. El tiempo estimado de entrega es de 3 a 5 días hábiles.</p>
+                            <p class="mt-2">Tienes 30 días desde la fecha de recepción para realizar cambios o devoluciones sin costo adicional.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Redes Sociales (Share) -->
+                <div class="mt-8 flex items-center gap-4 text-[13px] font-bold text-gray-900 uppercase">
+                    <span>Compartir:</span>
+                    <div class="flex gap-3 text-gray-500 text-lg">
+                        <a href="#" class="hover:text-blue-600 transition"><i class="fa-brands fa-facebook"></i></a>
+                        <a href="#" class="hover:text-blue-400 transition"><i class="fa-brands fa-twitter"></i></a>
+                        <a href="#" class="hover:text-green-500 transition"><i class="fa-brands fa-whatsapp"></i></a>
+                        <a href="#" class="hover:text-red-600 transition"><i class="fa-brands fa-pinterest"></i></a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- SECCIÓN: PRODUCTOS COMPLEMENTARIOS (Upsell block) -->
+        <section class="mt-24 pt-10 border-t border-gray-200">
+            <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center sm:text-left">Completar el look (Upsell)</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+                <!-- Upsell 1 -->
+                <div class="product-card group cursor-pointer">
+                    <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-3">
+                        <img src="https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Mesa" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    </div>
+                    <h3 class="text-[13px] sm:text-[14px] font-bold text-gray-900 group-hover:underline">Mesa de Centro de Roble</h3>
+                    <div class="mt-1 font-bold text-black text-[13px]">Bs. 120.00</div>
+                </div>
+                <!-- Upsell 2 -->
+                <div class="product-card group cursor-pointer">
+                    <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-3">
+                        <img src="https://images.unsplash.com/photo-1507149833265-60c372daea22?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Lámpara" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    </div>
+                    <h3 class="text-[13px] sm:text-[14px] font-bold text-gray-900 group-hover:underline">Lámpara Colgante Moderna</h3>
+                    <div class="mt-1 font-bold text-red-600 text-[13px]">Bs. 35.00</div>
+                </div>
+                <!-- Upsell 3 -->
+                <div class="product-card group cursor-pointer hidden md:block">
+                    <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-3">
+                        <img src="https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Estantería" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    </div>
+                    <h3 class="text-[13px] sm:text-[14px] font-bold text-gray-900 group-hover:underline">Estantería Flotante</h3>
+                    <div class="mt-1 font-bold text-black text-[13px]">Bs. 45.00</div>
+                </div>
+                <!-- Upsell 4 -->
+                <div class="product-card group cursor-pointer hidden md:block">
+                    <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-3">
+                        <img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Sofá" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    </div>
+                    <h3 class="text-[13px] sm:text-[14px] font-bold text-gray-900 group-hover:underline">Sofá Minimalista</h3>
+                    <div class="mt-1 font-bold text-black text-[13px]">Desde Bs. 450.00</div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Inyección automática del Footer -->
+    <div id="footer-container"></div>
+
+    <!-- Script para cargar componentes globales y funciones específicas de la página de producto -->
+    <script>
+        // Cargar Header y Footer globales
+        Promise.all([
+            fetch('header.html').then(res => res.text()),
+            fetch('footer.html').then(res => res.text())
+        ]).then(([headerHtml, footerHtml]) => {
+            document.getElementById('header-container').innerHTML = headerHtml;
+            document.getElementById('footer-container').innerHTML = footerHtml;
+            
+            const script = document.createElement('script');
+            script.src = 'js/main.js';
+            document.body.appendChild(script);
+        }).catch(err => console.error('Error cargando componentes:', err));
+
+        // --- Funciones específicas de la página de producto (NO se mezclan con main.js) ---
+
+        // Cambiar imagen principal desde miniaturas
+        function changeMainImage(element, newSrc) {
+            document.getElementById('main-image').src = newSrc;
+            // Remover estado activo de todos
+            document.querySelectorAll('.thumbnail-btn').forEach(btn => {
+                btn.classList.remove('thumb-active', 'ring-2', 'ring-black');
+                btn.classList.add('border-transparent');
+                btn.style.opacity = '0.6';
+            });
+            // Añadir activo al clickeado
+            element.classList.add('thumb-active', 'border-transparent');
+            element.style.opacity = '1';
+        }
+
+        // Seleccionar Color
+        function selectColor(element, colorName) {
+            document.getElementById('color-name').textContent = colorName;
+            // Reiniciar anillos
+            const btns = element.parentElement.querySelectorAll('button');
+            btns.forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-black');
+                btn.classList.add('ring-1', 'ring-gray-300');
+            });
+            // Activar anillo en el seleccionado
+            element.classList.remove('ring-1', 'ring-gray-300');
+            element.classList.add('ring-2', 'ring-black');
+        }
+
+        // Actualizar Cantidad
+        function updateQty(change) {
+            const input = document.getElementById('qty-input');
+            let current = parseInt(input.value) || 1;
+            let newVal = current + change;
+            if (newVal >= 1) {
+                input.value = newVal;
+            }
+        }
+
+        // Funcionalidad de Acordeones
+        function toggleAccordion(element) {
+            const parent = element.parentElement;
+            parent.classList.toggle('accordion-active');
+        }
+
+        // Abrir el primer acordeón por defecto
+        document.addEventListener('DOMContentLoaded', () => {
+            const firstAccordion = document.querySelector('.accordion-item');
+            if(firstAccordion) {
+                firstAccordion.classList.add('accordion-active');
+            }
+        });
+    </script>
+</body>
+</html>
