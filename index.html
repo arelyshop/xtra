@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ARELYSHOP.COM - E-commerce</title>
-    <!-- Usamos Tailwind CSS para emular el diseño -->
+    <!-- Usamos Tailwind CSS para emular el diseño de manera rápida y limpia -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome para los iconos -->
+    <!-- FontAwesome para los iconos (reemplazando los SVG de Shopify) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script>
         tailwind.config = {
@@ -22,29 +22,27 @@
         }
     </script>
     <style>
-        /* Animaciones para menús y modales */
+        /* Estilos personalizados menores para la transición del menú */
         .mobile-menu-active { transform: translateX(0%); }
         .mobile-menu-inactive { transform: translateX(-100%); }
+        
+        /* Clases para el Carrito Lateral (Side Cart) */
         .cart-active { transform: translateX(0%); }
         .cart-inactive { transform: translateX(100%); }
-        .search-mobile-active { max-height: 100px; opacity: 1; padding: 1rem; border-bottom-width: 1px; }
-        .search-mobile-inactive { max-height: 0; opacity: 0; padding: 0 1rem; border-bottom-width: 0; overflow: hidden; }
-        .submenu-expanded { max-height: 500px; opacity: 1; }
-        .submenu-collapsed { max-height: 0; opacity: 0; overflow: hidden; }
         
-        /* Ocultar barra de desplazamiento */
+        /* Ocultar barra de desplazamiento en el top bar */
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-white text-gray-800 font-sans antialiased overflow-x-hidden">
+<body class="bg-white text-gray-800 font-sans antialiased">
 
-    <!-- 1. Barra de Anuncios -->
-    <div class="bg-gray-900 text-white text-center py-2 px-4 text-[12px] md:text-[13px] font-medium tracking-wide">
+    <!-- 1. Barra de Anuncios (Basado en 'announcement-block-1' del JSON) -->
+    <div class="bg-gray-900 text-white text-center py-2 px-4 text-[13px] font-medium tracking-wide">
         🚀 <strong>50% OFF</strong> ALL INTERIOR PRODUCTS
     </div>
 
-    <!-- 2. Top Bar (Desktop Only) -->
+    <!-- 2. Top Bar (USPs / Propuestas de Valor del JSON) -->
     <div class="bg-gray-50 text-gray-600 py-2.5 border-b border-gray-200 hidden md:block text-[13px]">
         <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
             <ul class="flex space-x-8">
@@ -55,6 +53,10 @@
                 <li class="flex items-center space-x-2">
                     <i class="fa-solid fa-store text-gray-400"></i>
                     <span>Pickup in <strong>16 stores</strong> international</span>
+                </li>
+                <li class="flex items-center space-x-2">
+                    <i class="fa-solid fa-star text-gray-400"></i>
+                    <span><strong>Premium brand products</strong> for an affordable price</span>
                 </li>
             </ul>
             <div class="flex space-x-6">
@@ -68,51 +70,51 @@
     </div>
 
     <!-- 3. Header Principal (Sticky) -->
-    <header class="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm relative">
-        <div class="max-w-7xl mx-auto px-4 py-3 md:py-4 lg:py-5">
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 py-4 lg:py-5">
             <div class="flex justify-between items-center gap-4 lg:gap-8">
                 
-                <!-- IZQUIERDA: Menú Móvil & Lupa (Solo Móvil) -->
-                <div class="flex items-center gap-3 lg:hidden w-1/3">
-                    <button id="mobile-menu-btn" class="text-[22px] text-gray-700 hover:text-black focus:outline-none transition-colors">
+                <!-- Menú Hamburguesa (Móvil) & Búsqueda (Izquierda) -->
+                <div class="flex items-center gap-4 lg:hidden w-1/3">
+                    <button id="mobile-menu-btn" class="text-2xl text-gray-700 hover:text-black focus:outline-none">
                         <i class="fa-solid fa-bars"></i>
                     </button>
-                    <button id="mobile-search-btn" class="text-[20px] text-gray-700 hover:text-black transition-colors">
+                    <button class="text-xl text-gray-700 hover:text-black">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
                 </div>
 
-                <!-- CENTRO (Móvil) / IZQUIERDA (Desktop): Logo -->
+                <!-- Logo (Basado en layout_2 y layout_mobile: logo_center) -->
                 <div class="flex justify-center lg:justify-start lg:w-1/4 w-1/3">
-                    <a href="#" class="text-xl md:text-2xl font-bold tracking-tighter text-black uppercase whitespace-nowrap">
+                    <a href="#" class="text-2xl font-bold tracking-tighter text-black uppercase">
                         ARELYSHOP.COM
                     </a>
                 </div>
 
-                <!-- CENTRO (Desktop): Búsqueda -->
+                <!-- Barra de Búsqueda Central (Desktop) -->
                 <div class="hidden lg:flex flex-1 max-w-2xl">
                     <form class="w-full flex relative group">
-                        <input type="text" placeholder="Search products..." class="w-full border border-gray-300 rounded-l-md py-2.5 px-4 focus:outline-none focus:border-gray-400 text-[14px] transition-colors">
+                        <input type="text" placeholder="Search..." class="w-full border border-gray-300 rounded-l-md py-2.5 px-4 focus:outline-none focus:border-gray-400 text-[14px] transition-colors">
                         <button type="submit" class="bg-gray-50 text-gray-800 border border-l-0 border-gray-300 px-6 rounded-r-md hover:bg-gray-200 transition-colors">
                             <i class="fa-solid fa-magnifying-glass"></i>
                         </button>
                     </form>
                 </div>
 
-                <!-- DERECHA: Usuario & Carrito -->
-                <div class="flex items-center justify-end gap-4 md:gap-5 lg:w-1/4 w-1/3">
+                <!-- Iconos de Usuario y Carrito (Derecha) -->
+                <div class="flex items-center justify-end gap-5 lg:w-1/4 w-1/3">
                     
+                    <!-- Botón de Login (JSON: button_text: "Dealer login") -->
                     <a href="#" id="dealer-login-btn" class="hidden xl:block text-[14px] font-medium hover:underline">
                         Dealer login
                     </a>
 
-                    <!-- Oculto en móvil pequeño, visible en md para arriba -->
-                    <a href="#" id="user-btn" class="text-[20px] md:text-[22px] text-gray-700 hover:text-black relative group hidden sm:block">
+                    <a href="#" id="user-btn" class="text-[22px] text-gray-700 hover:text-black relative group hidden sm:block">
                         <i class="fa-regular fa-user"></i>
                         <span class="absolute top-10 right-0 w-max bg-black text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition pointer-events-none">Account</span>
                     </a>
                     
-                    <a href="#" id="cart-btn" class="text-[20px] md:text-[22px] text-gray-700 hover:text-black relative group flex items-center gap-2 cursor-pointer">
+                    <a href="#" id="cart-btn" class="text-[22px] text-gray-700 hover:text-black relative group flex items-center gap-2 cursor-pointer">
                         <div class="relative">
                             <i class="fa-solid fa-cart-shopping"></i>
                             <span class="absolute -top-2 -right-2 bg-black text-white text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full">3</span>
@@ -122,49 +124,51 @@
             </div>
         </div>
 
-        <!-- Buscador Desplegable para Móvil -->
-        <div id="mobile-search-bar" class="absolute top-full left-0 w-full bg-white border-gray-200 shadow-md search-mobile-inactive transition-all duration-300 z-30 lg:hidden">
-            <form class="flex relative w-full">
-                <input type="text" placeholder="Search..." class="w-full border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none text-[14px]">
-                <button type="submit" class="bg-primary text-white px-4 rounded-r-md">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                </button>
-            </form>
-        </div>
-
-        <!-- 4. Barra de Navegación (Desktop) -->
-        <nav class="hidden lg:block border-t border-gray-100 relative bg-white">
+        <!-- 4. Barra de Navegación Menú (Desktop) -->
+        <nav class="hidden lg:block border-t border-gray-100 relative">
             <div class="max-w-7xl mx-auto px-4">
                 <ul class="flex space-x-8 text-[14px] font-medium text-gray-700">
                     <li class="py-4 border-b-2 border-transparent hover:border-black hover:text-black cursor-pointer transition">
                         <a href="#">Home</a>
                     </li>
                     
-                    <!-- Mega Menú Desktop -->
+                    <!-- Mega Menú Avanzado (Recreando header-menu.liquid con dropdown_images y promo_banners) -->
                     <li class="py-4 border-b-2 border-transparent hover:border-black hover:text-black cursor-pointer transition group">
                         <a href="#">Catalog <i class="fa-solid fa-chevron-down text-[10px] ml-1 opacity-50"></i></a>
                         
+                        <!-- Contenedor del Mega Menú -->
                         <div class="absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-50">
                             <div class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-4 gap-8">
+                                
+                                <!-- Columna de Enlaces 1 con Imágenes Dropdown (show_dropdown_images) -->
                                 <div>
-                                    <h3 class="font-bold text-black mb-4 uppercase text-[11px] tracking-wider text-gray-500">Furniture</h3>
+                                    <h3 class="font-bold text-black mb-4 uppercase text-[11px] tracking-wider text-gray-500">
+                                        Furniture
+                                    </h3>
                                     <ul class="space-y-4 text-gray-600 text-[14px]">
                                         <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=S" class="rounded w-7 h-7 object-cover border border-gray-200"> Sofas & Armchairs</a></li>
                                         <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=C" class="rounded w-7 h-7 object-cover border border-gray-200"> Chairs</a></li>
                                         <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=B" class="rounded w-7 h-7 object-cover border border-gray-200"> Beds</a></li>
+                                        <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=S" class="rounded w-7 h-7 object-cover border border-gray-200"> Storage</a></li>
                                     </ul>
                                 </div>
+
+                                <!-- Columna de Enlaces 2 -->
                                 <div>
-                                    <h3 class="font-bold text-black mb-4 uppercase text-[11px] tracking-wider text-gray-500">Lighting</h3>
+                                    <h3 class="font-bold text-black mb-4 uppercase text-[11px] tracking-wider text-gray-500">
+                                        Lighting
+                                    </h3>
                                     <ul class="space-y-4 text-gray-600 text-[14px]">
                                         <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=C" class="rounded w-7 h-7 object-cover border border-gray-200"> Ceiling Lights</a></li>
                                         <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=T" class="rounded w-7 h-7 object-cover border border-gray-200"> Table Lamps</a></li>
+                                        <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=O" class="rounded w-7 h-7 object-cover border border-gray-200"> Outdoor</a></li>
                                     </ul>
                                 </div>
-                                <!-- Banners promocionales -->
+
+                                <!-- Promo Banners (Basado en el bloque layout: columns) -->
                                 <div class="col-span-2 grid grid-cols-2 gap-6">
                                     <div class="relative rounded-lg overflow-hidden flex-1 group/promo cursor-pointer h-64 shadow-md">
-                                        <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Promo" class="w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700">
+                                        <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Promo Muebles" class="w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700">
                                         <div class="absolute inset-0 bg-black bg-opacity-10 transition group-hover/promo:bg-opacity-20"></div>
                                         <div class="absolute inset-0 p-5 flex flex-col justify-end text-white">
                                             <h4 class="text-lg font-bold mb-1">Nordic Collection</h4>
@@ -172,7 +176,7 @@
                                         </div>
                                     </div>
                                     <div class="relative rounded-lg overflow-hidden flex-1 group/promo cursor-pointer h-64 shadow-md">
-                                        <img src="https://images.unsplash.com/photo-1507149833265-60c372daea22?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Promo" class="w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700">
+                                        <img src="https://images.unsplash.com/photo-1507149833265-60c372daea22?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Promo Iluminación" class="w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700">
                                         <div class="absolute inset-0 bg-black bg-opacity-10 transition group-hover/promo:bg-opacity-20"></div>
                                         <div class="absolute inset-0 p-5 flex flex-col justify-end text-white">
                                             <h4 class="text-lg font-bold mb-1">Lighting Sale</h4>
@@ -180,9 +184,11 @@
                                         </div>
                                     </div>
                                 </div>
+
                             </div>
                         </div>
                     </li>
+                    
                     <li class="py-4 border-b-2 border-transparent hover:border-black hover:text-black cursor-pointer transition">
                         <a href="#">Collections</a>
                     </li>
@@ -190,6 +196,7 @@
                         <a href="#">About Us</a>
                     </li>
                     <li class="py-4 border-b-2 border-transparent hover:border-black hover:text-black cursor-pointer transition">
+                        <!-- sale_highlight_item implementation -->
                         <a href="#" class="bg-red-600 text-white px-2.5 py-1 rounded-sm text-[11px] font-bold uppercase tracking-wider shadow-sm">Sale</a>
                     </li>
                 </ul>
@@ -198,144 +205,148 @@
     </header>
 
     <!-- 5. Menú Lateral Móvil (Drawer) -->
-    <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden transition-opacity"></div>
-    <div id="mobile-menu" class="fixed top-0 left-0 w-[85%] max-w-[320px] h-full bg-white z-50 mobile-menu-inactive transition-transform duration-300 shadow-xl flex flex-col">
-        
-        <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-            <span class="font-bold text-[15px] tracking-wide">MENÚ</span>
-            <button id="close-mobile-btn" class="text-gray-500 hover:text-black text-2xl px-2">
+    <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden"></div>
+    <div id="mobile-menu" class="fixed top-0 left-0 w-4/5 max-w-sm h-full bg-white z-50 mobile-menu-inactive transition-transform duration-300 shadow-xl overflow-y-auto">
+        <div class="p-4 border-b flex justify-between items-center">
+            <span class="font-bold text-lg">MENÚ</span>
+            <button id="close-mobile-btn" class="text-gray-500 hover:text-black text-2xl">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
-
-        <!-- Links Móviles con Acordeones -->
-        <div class="flex-1 overflow-y-auto">
-            <ul class="text-gray-800 text-[15px] font-medium">
-                <li class="border-b border-gray-100">
-                    <a href="#" class="block p-4 hover:bg-gray-50">Home</a>
-                </li>
-                
-                <!-- Acordeón Catalog -->
-                <li class="border-b border-gray-100">
-                    <button id="mobile-catalog-toggle" class="w-full flex justify-between items-center p-4 hover:bg-gray-50 focus:outline-none transition-colors text-left">
-                        Catalog 
-                        <i id="mobile-catalog-icon" class="fa-solid fa-chevron-down text-[11px] text-gray-400 transition-transform duration-200"></i>
-                    </button>
-                    <!-- Submenú -->
-                    <ul id="mobile-catalog-submenu" class="submenu-collapsed bg-gray-50 transition-all duration-300 ease-in-out">
-                        <li><a href="#" class="block py-3 px-8 text-[14px] text-gray-600 hover:text-black border-b border-gray-200">Furniture</a></li>
-                        <li><a href="#" class="block py-3 px-8 text-[14px] text-gray-600 hover:text-black border-b border-gray-200">Lighting</a></li>
-                        <li><a href="#" class="block py-3 px-8 text-[14px] text-gray-600 hover:text-black">All Products</a></li>
-                    </ul>
-                </li>
-
-                <li class="border-b border-gray-100">
-                    <a href="#" class="block p-4 hover:bg-gray-50">Collections</a>
-                </li>
-                <li class="border-b border-gray-100">
-                    <a href="#" class="block p-4 hover:bg-gray-50">About Us</a>
-                </li>
-                <li class="border-b border-gray-100 bg-red-50">
-                    <a href="#" class="block p-4 text-red-600 font-bold">Ofertas (Sale)</a>
-                </li>
-            </ul>
+        
+        <!-- Búsqueda móvil -->
+        <div class="p-4 border-b">
+            <form class="w-full flex relative">
+                <input type="text" placeholder="Buscar..." class="w-full border border-gray-300 rounded-l-md py-2 px-3 focus:outline-none text-sm">
+                <button type="submit" class="bg-primary text-white px-4 rounded-r-md">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </form>
         </div>
 
+        <!-- Links Móviles -->
+        <ul class="text-gray-800 text-base font-medium">
+            <li class="border-b"><a href="#" class="block p-4 hover:bg-gray-50">Inicio</a></li>
+            <li class="border-b"><a href="#" class="block p-4 hover:bg-gray-50 flex justify-between">Catálogo <i class="fa-solid fa-chevron-right text-sm text-gray-400"></i></a></li>
+            <li class="border-b"><a href="#" class="block p-4 hover:bg-gray-50 flex justify-between">Colecciones <i class="fa-solid fa-chevron-right text-sm text-gray-400"></i></a></li>
+            <li class="border-b"><a href="#" class="block p-4 hover:bg-gray-50">Sobre Nosotros</a></li>
+            <li class="border-b bg-red-50"><a href="#" class="block p-4 text-red-600">Ofertas (Sale)</a></li>
+        </ul>
+
         <!-- Acciones extra móviles -->
-        <div class="p-4 bg-gray-50 border-t border-gray-200 pb-8">
-            <a href="#" id="mobile-user-btn" class="flex items-center gap-3 py-2.5 text-[15px] text-gray-600 hover:text-black">
-                <i class="fa-regular fa-user text-lg w-5 text-center"></i> Account / Login
+        <div class="p-4 bg-gray-50 mt-auto">
+            <a href="#" id="mobile-user-btn" class="flex items-center gap-3 py-2 text-sm text-gray-600 hover:text-black">
+                <i class="fa-regular fa-user"></i> Mi Cuenta
             </a>
-            <a href="#" class="flex items-center gap-3 py-2.5 text-[15px] text-gray-600 hover:text-black">
-                <i class="fa-solid fa-globe text-lg w-5 text-center"></i> Idioma: Español
+            <a href="#" class="flex items-center gap-3 py-2 text-sm text-gray-600 hover:text-black">
+                <i class="fa-solid fa-globe"></i> Idioma: Español
             </a>
         </div>
     </div>
 
-    <!-- 6. Carrito Lateral (Side Cart) -->
+    <!-- 6. Carrito Lateral (Side Cart) - Implementado desde theme.liquid -->
     <div id="side-drawer-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden transition-opacity"></div>
-    <div id="side-cart" class="fixed top-0 right-0 w-[90%] md:w-[400px] h-full bg-white z-50 cart-inactive transition-transform duration-300 shadow-2xl flex flex-col">
+    <div id="side-cart" class="fixed top-0 right-0 w-full md:w-[400px] h-full bg-white z-50 cart-inactive transition-transform duration-300 shadow-2xl flex flex-col">
         <div class="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
             <h2 class="font-bold text-lg flex items-center gap-2">
                 <i class="fa-solid fa-cart-shopping"></i> Tu Carrito (3)
             </h2>
-            <button id="close-cart-btn" class="text-gray-500 hover:text-black text-xl px-2">
+            <button id="close-cart-btn" class="text-gray-500 hover:text-black text-xl">
                 <i class="fa-solid fa-xmark"></i>
             </button>
         </div>
         
+        <!-- Productos en el carrito -->
         <div class="flex-1 overflow-y-auto p-4 space-y-4">
             <!-- Item 1 -->
             <div class="flex gap-4 border-b border-gray-100 pb-4">
-                <div class="w-20 h-20 bg-gray-200 rounded object-cover flex items-center justify-center text-gray-400 shrink-0">
+                <div class="w-20 h-20 bg-gray-200 rounded object-cover flex items-center justify-center text-gray-400">
                     <i class="fa-solid fa-image text-2xl"></i>
                 </div>
                 <div class="flex-1">
-                    <h3 class="text-sm font-bold leading-tight">Silla de Comedor Nórdica</h3>
+                    <h3 class="text-sm font-bold">Silla de Comedor Nórdica</h3>
                     <p class="text-xs text-gray-500 mt-1">Gris / Madera</p>
-                    <div class="flex justify-between items-center mt-3">
-                        <div class="flex items-center border border-gray-300 rounded h-7">
-                            <button class="px-2 text-gray-600 hover:bg-gray-100 h-full leading-none">-</button>
-                            <span class="px-2 text-[13px] font-medium">2</span>
-                            <button class="px-2 text-gray-600 hover:bg-gray-100 h-full leading-none">+</button>
+                    <div class="flex justify-between items-center mt-2">
+                        <div class="flex items-center border border-gray-300 rounded">
+                            <button class="px-2 py-1 text-gray-600 hover:bg-gray-100">-</button>
+                            <span class="px-2 text-sm font-medium">2</span>
+                            <button class="px-2 py-1 text-gray-600 hover:bg-gray-100">+</button>
                         </div>
-                        <span class="font-bold text-[14px]">$90.00</span>
+                        <span class="font-bold text-sm">$90.00</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Item 2 -->
+            <div class="flex gap-4 border-b border-gray-100 pb-4">
+                <div class="w-20 h-20 bg-gray-200 rounded object-cover flex items-center justify-center text-gray-400">
+                    <i class="fa-solid fa-image text-2xl"></i>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-sm font-bold">Lámpara Colgante Moderna</h3>
+                    <p class="text-xs text-gray-500 mt-1">Negro Mate</p>
+                    <div class="flex justify-between items-center mt-2">
+                        <div class="flex items-center border border-gray-300 rounded">
+                            <button class="px-2 py-1 text-gray-600 hover:bg-gray-100">-</button>
+                            <span class="px-2 text-sm font-medium">1</span>
+                            <button class="px-2 py-1 text-gray-600 hover:bg-gray-100">+</button>
+                        </div>
+                        <span class="font-bold text-sm">$35.00</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="p-5 border-t border-gray-200 bg-gray-50 pb-8 md:pb-5">
-            <div class="flex justify-between text-[15px] font-bold mb-3">
+        <!-- Footer del Carrito -->
+        <div class="p-4 border-t border-gray-200 bg-gray-50">
+            <div class="flex justify-between text-base font-bold mb-4">
                 <span>Subtotal</span>
                 <span>$125.00</span>
             </div>
-            <p class="text-[12px] text-gray-500 text-center mb-4">Los impuestos y gastos de envío se calculan en el checkout.</p>
+            <p class="text-xs text-gray-500 text-center mb-4">Los impuestos y gastos de envío se calculan en la pantalla de pago.</p>
             <button class="w-full bg-primary text-white py-3 rounded-md font-bold hover:bg-gray-800 transition">
-                Checkout
+                Finalizar Compra
             </button>
         </div>
     </div>
 
-    <!-- 7. Modal Login -->
-    <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden px-4">
+    <!-- 7. Modal de Inicio de Sesión (Login Dropdown) -->
+    <div id="login-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
         <div id="login-modal-overlay" class="absolute inset-0 bg-black bg-opacity-50 transition-opacity"></div>
-        <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-md p-6 md:p-8 z-10 transform scale-95 opacity-0 transition-all duration-300" id="login-modal-content">
-            <button id="close-login-btn" class="absolute top-4 right-4 text-gray-400 hover:text-black">
+        <div class="relative bg-white rounded-lg shadow-2xl w-full max-w-md p-8 m-4 z-10 transform scale-95 opacity-0 transition-all duration-300" id="login-modal-content">
+            <button id="close-login-btn" class="absolute top-4 right-4 text-gray-500 hover:text-black">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
-            <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
+            <h2 class="text-2xl font-bold mb-6 text-center">Iniciar Sesión</h2>
             <form>
                 <div class="mb-4">
-                    <label class="block text-[13px] font-medium text-gray-700 mb-1" for="email">Email *</label>
-                    <input class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-gray-500 text-[14px]" type="email" id="email" placeholder="tu@email.com" required>
+                    <label class="block text-sm font-medium text-gray-700 mb-1" for="email">Correo Electrónico *</label>
+                    <input class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-black" type="email" id="email" placeholder="tu@email.com" required>
                 </div>
                 <div class="mb-6">
                     <div class="flex justify-between items-center mb-1">
-                        <label class="block text-[13px] font-medium text-gray-700" for="password">Password *</label>
-                        <a href="#" class="text-[12px] text-blue-600 hover:underline">Forgot password?</a>
+                        <label class="block text-sm font-medium text-gray-700" for="password">Contraseña *</label>
+                        <a href="#" class="text-xs text-blue-600 hover:underline">¿Olvidaste tu contraseña?</a>
                     </div>
-                    <input class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-gray-500 text-[14px]" type="password" id="password" placeholder="••••••••" required>
+                    <input class="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-1 focus:ring-black" type="password" id="password" placeholder="••••••••" required>
                 </div>
-                <button type="submit" class="w-full bg-primary text-white py-2.5 rounded-md font-bold hover:bg-gray-800 transition mb-4 text-[14px]">
-                    Sign in
+                <button type="submit" class="w-full bg-primary text-white py-2 rounded-md font-bold hover:bg-gray-800 transition mb-4">
+                    Entrar
                 </button>
-                <p class="text-[13px] text-center text-gray-600">
-                    New customer? <a href="#" class="font-bold hover:underline text-black">Create account</a>
+                <p class="text-sm text-center text-gray-600">
+                    ¿No tienes una cuenta? <a href="#" class="font-bold hover:underline">Regístrate</a>
                 </p>
             </form>
         </div>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <main class="min-h-[70vh] bg-gray-50 p-4 md:p-8">
-        <div class="max-w-7xl mx-auto border-2 md:border-4 border-dashed border-gray-300 rounded-xl h-64 md:h-96 flex flex-col items-center justify-center text-gray-400 text-center px-4">
-            <i class="fa-solid fa-store text-4xl md:text-5xl mb-4"></i>
-            <p class="text-sm md:text-base">Contenido principal de tu tienda ARELYSHOP.COM...</p>
+    <!-- Contenido de Ejemplo de la página -->
+    <main class="h-[150vh] bg-gray-50 p-8">
+        <div class="max-w-7xl mx-auto border-4 border-dashed border-gray-300 rounded-xl h-96 flex items-center justify-center text-gray-400">
+            <p>Contenido principal del sitio web...</p>
         </div>
     </main>
 
-    <!-- 8. Footer Principal (Versión Restaurada) -->
+    <!-- 8. Footer Principal (Basado en footer.liquid y footer-group.json) -->
     <footer class="bg-white border-t border-gray-200 pt-16 mt-auto">
         <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-10 pb-12">
             
@@ -345,20 +356,20 @@
                 <p class="text-gray-600 text-[14px] mb-6">Available between 8AM to 8PM. Ready to answer your questions.</p>
                 <ul class="space-y-4 text-[14px] text-gray-700">
                     <li><a href="tel:+1234567890" class="hover:text-black flex items-center gap-3"><i class="fa-solid fa-phone text-gray-400 text-base w-5 text-center"></i> +1 234 567 890</a></li>
-                    <li><a href="mailto:info@arelyshop.com" class="hover:text-black flex items-center gap-3"><i class="fa-solid fa-envelope text-gray-400 text-base w-5 text-center"></i> info@arelyshop.com</a></li>
-                    <li><a href="#" class="hover:text-black flex items-center gap-3"><i class="fa-brands fa-whatsapp text-gray-400 text-lg w-5 text-center"></i> WhatsApp Chat</a></li>
+                    <li><a href="mailto:info@mitienda.com" class="hover:text-black flex items-center gap-3"><i class="fa-solid fa-envelope text-gray-400 text-base w-5 text-center"></i> info@mitienda.com</a></li>
+                    <li><a href="#" class="hover:text-black flex items-center gap-3"><i class="fa-brands fa-whatsapp text-gray-400 text-lg w-5 text-center"></i> Chatea en WhatsApp</a></li>
                 </ul>
             </div>
 
-            <!-- Bloque 2: Menu Rápidos -->
+            <!-- Bloque 2: Menu (Enlaces Rápidos) -->
             <div>
-                <h4 class="font-bold text-lg mb-4 text-black">Quick Links</h4>
+                <h4 class="font-bold text-lg mb-4 text-black">Enlaces Rápidos</h4>
                 <ul class="space-y-3 text-[14px] text-gray-600">
-                    <li><a href="#" class="hover:text-black hover:underline transition-colors">Search</a></li>
-                    <li><a href="#" class="hover:text-black hover:underline transition-colors">Refund Policy</a></li>
-                    <li><a href="#" class="hover:text-black hover:underline transition-colors">Terms of Service</a></li>
-                    <li><a href="#" class="hover:text-black hover:underline transition-colors">About Us</a></li>
-                    <li><a href="#" class="hover:text-black hover:underline transition-colors">Contact</a></li>
+                    <li><a href="#" class="hover:text-black hover:underline transition-colors">Búsqueda</a></li>
+                    <li><a href="#" class="hover:text-black hover:underline transition-colors">Políticas de Devolución</a></li>
+                    <li><a href="#" class="hover:text-black hover:underline transition-colors">Términos de Servicio</a></li>
+                    <li><a href="#" class="hover:text-black hover:underline transition-colors">Sobre Nosotros</a></li>
+                    <li><a href="#" class="hover:text-black hover:underline transition-colors">Contacto</a></li>
                 </ul>
             </div>
 
@@ -375,9 +386,9 @@
                 </ul>
                 
                 <!-- Boletín (Newsletter) -->
-                <h5 class="font-bold text-[14px] mb-3 text-black">Subscribe to our newsletter</h5>
+                <h5 class="font-bold text-[14px] mb-3 text-black">Suscríbete a nuestro boletín</h5>
                 <form class="flex relative w-full">
-                    <input type="email" placeholder="Email address" class="w-full border border-gray-300 rounded-l-md py-2.5 px-4 focus:outline-none focus:border-gray-500 text-[14px] transition-colors" required>
+                    <input type="email" placeholder="tu@email.com" class="w-full border border-gray-300 rounded-l-md py-2.5 px-4 focus:outline-none focus:border-gray-500 text-[14px] transition-colors" required>
                     <button type="submit" class="bg-primary text-white px-5 rounded-r-md hover:bg-gray-800 transition-colors flex items-center justify-center">
                         <i class="fa-solid fa-chevron-right"></i>
                     </button>
@@ -396,7 +407,7 @@
                 </div>
 
                 <!-- Copyright -->
-                <p class="text-center">&copy; 2026 ARELYSHOP.COM. <a href="#" class="hover:underline">Powered by Shopify</a></p>
+                <p class="text-center">&copy; 2026 ARELYSHOP.COM. <a href="#" class="hover:underline">Desarrollado por Shopify</a></p>
 
                 <!-- Métodos de pago (show_payment_methods: true) -->
                 <ul class="flex space-x-3 text-2xl text-gray-400">
@@ -410,34 +421,22 @@
         </div>
     </footer>
 
-    <!-- Scripts unificados -->
+    <!-- Script para funcionalidad del menú móvil -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // ELEMENTOS DEL DOM
-            const body = document.body;
-            
-            // Menú Móvil
+            // Referencias del Menú Móvil
             const mobileBtn = document.getElementById('mobile-menu-btn');
             const closeBtn = document.getElementById('close-mobile-btn');
             const mobileMenu = document.getElementById('mobile-menu');
             const mobileOverlay = document.getElementById('mobile-menu-overlay');
-            
-            // Buscador Móvil
-            const mobileSearchBtn = document.getElementById('mobile-search-btn');
-            const mobileSearchBar = document.getElementById('mobile-search-bar');
-            
-            // Acordeón Catálogo en Móvil
-            const catalogToggleBtn = document.getElementById('mobile-catalog-toggle');
-            const catalogSubmenu = document.getElementById('mobile-catalog-submenu');
-            const catalogIcon = document.getElementById('mobile-catalog-icon');
 
-            // Carrito
+            // Referencias del Carrito
             const cartBtn = document.getElementById('cart-btn');
             const closeCartBtn = document.getElementById('close-cart-btn');
             const sideCart = document.getElementById('side-cart');
             const sideDrawerOverlay = document.getElementById('side-drawer-overlay');
 
-            // Login Modal
+            // Referencias del Login
             const userBtn = document.getElementById('user-btn');
             const dealerLoginBtn = document.getElementById('dealer-login-btn');
             const mobileUserBtn = document.getElementById('mobile-user-btn');
@@ -446,56 +445,28 @@
             const loginModalOverlay = document.getElementById('login-modal-overlay');
             const loginModalContent = document.getElementById('login-modal-content');
 
-            // FUNCIONES
-            
-            // 1. Toggle Búsqueda Móvil
-            mobileSearchBtn.addEventListener('click', () => {
-                const isActive = mobileSearchBar.classList.contains('search-mobile-active');
-                if(isActive) {
-                    mobileSearchBar.classList.remove('search-mobile-active');
-                    mobileSearchBar.classList.add('search-mobile-inactive');
-                } else {
-                    mobileSearchBar.classList.remove('search-mobile-inactive');
-                    mobileSearchBar.classList.add('search-mobile-active');
-                    // Focus al input para facilitar escritura
-                    setTimeout(() => mobileSearchBar.querySelector('input').focus(), 300);
-                }
-            });
-
-            // 2. Toggle Acordeón Menú Móvil
-            catalogToggleBtn.addEventListener('click', () => {
-                const isCollapsed = catalogSubmenu.classList.contains('submenu-collapsed');
-                if(isCollapsed){
-                    catalogSubmenu.classList.remove('submenu-collapsed');
-                    catalogSubmenu.classList.add('submenu-expanded');
-                    catalogIcon.style.transform = "rotate(180deg)";
-                } else {
-                    catalogSubmenu.classList.remove('submenu-expanded');
-                    catalogSubmenu.classList.add('submenu-collapsed');
-                    catalogIcon.style.transform = "rotate(0deg)";
-                }
-            });
-
-            // 3. Menú Drawer Principal
+            // --- Lógica del Menú Móvil ---
             function toggleMenu() {
                 const isActive = mobileMenu.classList.contains('mobile-menu-active');
+                
                 if (isActive) {
                     mobileMenu.classList.remove('mobile-menu-active');
                     mobileMenu.classList.add('mobile-menu-inactive');
                     mobileOverlay.classList.add('hidden');
-                    body.style.overflow = 'auto'; 
+                    document.body.style.overflow = 'auto'; // Permitir scroll
                 } else {
                     mobileMenu.classList.remove('mobile-menu-inactive');
                     mobileMenu.classList.add('mobile-menu-active');
                     mobileOverlay.classList.remove('hidden');
-                    body.style.overflow = 'hidden'; 
+                    document.body.style.overflow = 'hidden'; // Bloquear scroll de fondo
                 }
             }
+
             mobileBtn.addEventListener('click', toggleMenu);
             closeBtn.addEventListener('click', toggleMenu);
             mobileOverlay.addEventListener('click', toggleMenu);
 
-            // 4. Carrito Lateral
+            // --- Lógica del Carrito Lateral ---
             function toggleCart(e) {
                 if(e) e.preventDefault();
                 const isActive = sideCart.classList.contains('cart-active');
@@ -503,39 +474,43 @@
                     sideCart.classList.remove('cart-active');
                     sideCart.classList.add('cart-inactive');
                     sideDrawerOverlay.classList.add('hidden');
-                    body.style.overflow = 'auto';
+                    document.body.style.overflow = 'auto';
                 } else {
                     sideCart.classList.remove('cart-inactive');
                     sideCart.classList.add('cart-active');
                     sideDrawerOverlay.classList.remove('hidden');
-                    body.style.overflow = 'hidden';
+                    document.body.style.overflow = 'hidden';
                 }
             }
+
             cartBtn.addEventListener('click', toggleCart);
             closeCartBtn.addEventListener('click', toggleCart);
             sideDrawerOverlay.addEventListener('click', toggleCart);
 
-            // 5. Login Modal
+            // --- Lógica del Login Modal ---
             function openLogin(e) {
                 if(e) e.preventDefault();
-                // Si algún menú está abierto, se cierra
+                // Si el menú móvil está abierto, lo cerramos
                 if(mobileMenu.classList.contains('mobile-menu-active')) toggleMenu();
-                
+
                 loginModal.classList.remove('hidden');
+                // Animación suave de aparición
                 setTimeout(() => {
                     loginModalContent.classList.remove('scale-95', 'opacity-0');
                     loginModalContent.classList.add('scale-100', 'opacity-100');
                 }, 10);
-                body.style.overflow = 'hidden';
+                document.body.style.overflow = 'hidden';
             }
+
             function closeLogin() {
                 loginModalContent.classList.remove('scale-100', 'opacity-100');
                 loginModalContent.classList.add('scale-95', 'opacity-0');
                 setTimeout(() => {
                     loginModal.classList.add('hidden');
-                    body.style.overflow = 'auto';
+                    document.body.style.overflow = 'auto';
                 }, 300);
             }
+
             userBtn.addEventListener('click', openLogin);
             if(dealerLoginBtn) dealerLoginBtn.addEventListener('click', openLogin);
             if(mobileUserBtn) mobileUserBtn.addEventListener('click', openLogin);
