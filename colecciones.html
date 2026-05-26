@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todos los productos - ARELYSHOP.COM</title>
+    <!-- Usamos Tailwind CSS para emular el diseño de manera rápida y limpia -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome para los iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#111827',
+                        secondary: '#f3f4f6',
+                        accent: '#2563eb'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos base heredados */
+        .mobile-menu-active { transform: translateX(0%); }
+        .mobile-menu-inactive { transform: translateX(-100%); }
+        .cart-active { transform: translateX(0%); }
+        .cart-inactive { transform: translateX(100%); }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes spin-search { 100% { transform: rotate(360deg); } }
+        .spin-anim { animation: spin-search 0.75s linear infinite; }
+        
+        /* Estilos específicos de Colección (Hover en productos para Quick Buy) */
+        .product-card .quick-buy-btn { transform: translateY(10px); opacity: 0; transition: all 0.3s ease; }
+        .product-card:hover .quick-buy-btn { transform: translateY(0); opacity: 1; }
+        .product-card:hover .product-img { transform: scale(1.05); }
+    </style>
+</head>
+<body class="bg-white text-gray-800 font-sans antialiased">
+
+    <!-- Inyección automática del Header -->
+    <div id="header-container"></div>
+
+    <!-- Contenido Principal: Colecciones -->
+    <main class="max-w-7xl mx-auto px-4 py-8 lg:py-12">
+        
+        <!-- Migas de pan (Breadcrumbs) -->
+        <nav class="text-[13px] text-gray-500 mb-6 flex items-center gap-2">
+            <a href="index.html" class="hover:text-black hover:underline">Inicio</a>
+            <i class="fa-solid fa-chevron-right text-[9px]"></i>
+            <span class="text-gray-900 font-medium">Todos los productos</span>
+        </nav>
+
+        <!-- Cabecera de Colección -->
+        <header class="mb-8 lg:mb-12">
+            <h1 class="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 mb-4">Todos los productos</h1>
+            <p class="text-gray-600 max-w-2xl text-[15px] leading-relaxed">
+                Descubre nuestra colección completa de mobiliario e iluminación. Diseños nórdicos, modernos y atemporales creados para transformar cualquier espacio de tu hogar con estilo y confort.
+            </p>
+        </header>
+
+        <!-- Contenedor Principal (Layout de Colección) -->
+        <div class="flex flex-col lg:flex-row gap-10">
+            
+            <!-- BARRA LATERAL: Filtros (Sticky Desktop) -->
+            <aside class="w-full lg:w-1/4 lg:sticky lg:top-24 lg:h-max lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto hide-scrollbar hidden lg:block">
+                <div class="border-b border-gray-200 pb-4 mb-6 flex justify-between items-center">
+                    <h2 class="font-bold text-lg text-black flex items-center gap-2"><i class="fa-solid fa-sliders text-sm"></i> Filtros</h2>
+                    <a href="#" class="text-[13px] text-gray-500 hover:text-black underline">Limpiar</a>
+                </div>
+
+                <!-- Filtro: Categorías -->
+                <div class="mb-6 border-b border-gray-100 pb-6">
+                    <h3 class="font-bold text-[14px] text-gray-900 mb-4 flex justify-between items-center cursor-pointer">
+                        Categoría <i class="fa-solid fa-chevron-up text-[10px]"></i>
+                    </h3>
+                    <ul class="space-y-3 text-[14px] text-gray-600">
+                        <li class="flex items-center gap-3">
+                            <input type="checkbox" id="cat1" class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
+                            <label for="cat1" class="cursor-pointer hover:text-black flex-1">Sillas & Sillones</label>
+                            <span class="text-gray-400 text-[12px]">(24)</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <input type="checkbox" id="cat2" class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
+                            <label for="cat2" class="cursor-pointer hover:text-black flex-1">Iluminación</label>
+                            <span class="text-gray-400 text-[12px]">(18)</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <input type="checkbox" id="cat3" class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
+                            <label for="cat3" class="cursor-pointer hover:text-black flex-1">Mesas</label>
+                            <span class="text-gray-400 text-[12px]">(12)</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <input type="checkbox" id="cat4" class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
+                            <label for="cat4" class="cursor-pointer hover:text-black flex-1">Almacenaje</label>
+                            <span class="text-gray-400 text-[12px]">(8)</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Filtro: Precio -->
+                <div class="mb-6 border-b border-gray-100 pb-6">
+                    <h3 class="font-bold text-[14px] text-gray-900 mb-4 flex justify-between items-center cursor-pointer">
+                        Precio <i class="fa-solid fa-chevron-up text-[10px]"></i>
+                    </h3>
+                    <div class="flex items-center gap-4">
+                        <div class="relative flex-1">
+                            <span class="absolute left-3 top-2 text-gray-500 text-[13px]">$</span>
+                            <input type="number" placeholder="Desde" class="w-full pl-6 pr-3 py-2 border border-gray-300 rounded text-[13px] focus:outline-none focus:border-black">
+                        </div>
+                        <span class="text-gray-400">-</span>
+                        <div class="relative flex-1">
+                            <span class="absolute left-3 top-2 text-gray-500 text-[13px]">$</span>
+                            <input type="number" placeholder="Hasta" class="w-full pl-6 pr-3 py-2 border border-gray-300 rounded text-[13px] focus:outline-none focus:border-black">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filtro: Color (Swatches) -->
+                <div class="mb-6">
+                    <h3 class="font-bold text-[14px] text-gray-900 mb-4 flex justify-between items-center cursor-pointer">
+                        Color <i class="fa-solid fa-chevron-up text-[10px]"></i>
+                    </h3>
+                    <div class="flex flex-wrap gap-3">
+                        <button class="w-8 h-8 rounded-full bg-black border-2 border-white ring-1 ring-gray-300 focus:ring-black" title="Negro"></button>
+                        <button class="w-8 h-8 rounded-full bg-white border-2 border-white ring-1 ring-gray-300 focus:ring-black" title="Blanco"></button>
+                        <button class="w-8 h-8 rounded-full bg-gray-500 border-2 border-white ring-1 ring-gray-300 focus:ring-black" title="Gris"></button>
+                        <button class="w-8 h-8 rounded-full bg-yellow-700 border-2 border-white ring-1 ring-gray-300 focus:ring-black" title="Madera"></button>
+                        <button class="w-8 h-8 rounded-full bg-red-800 border-2 border-white ring-1 ring-gray-300 focus:ring-black" title="Rojo Oscuro"></button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- ÁREA DE PRODUCTOS (Grid) -->
+            <div class="w-full lg:w-3/4">
+                
+                <!-- Barra de Ordenación (Sorting) -->
+                <div class="flex flex-col sm:flex-row justify-between items-center mb-8 pb-4 border-b border-gray-200 gap-4">
+                    
+                    <!-- Botón Filtros Móvil -->
+                    <button class="lg:hidden w-full sm:w-auto flex items-center justify-center gap-2 border border-gray-300 py-2.5 px-4 rounded font-bold text-[13px] hover:bg-gray-50">
+                        <i class="fa-solid fa-sliders"></i> Filtrar y Ordenar
+                    </button>
+
+                    <p class="hidden sm:block text-[14px] text-gray-500">Mostrando 1 - 12 de 62 productos</p>
+                    
+                    <div class="flex items-center gap-4 w-full sm:w-auto justify-between">
+                        <!-- Select Ordenar -->
+                        <div class="flex items-center gap-2">
+                            <label class="text-[13px] text-gray-600 hidden sm:block">Ordenar por:</label>
+                            <select class="text-[13px] font-medium border-0 bg-transparent focus:ring-0 cursor-pointer pr-6 py-2">
+                                <option>Destacados</option>
+                                <option>Más vendidos</option>
+                                <option>Precio: Menor a Mayor</option>
+                                <option>Precio: Mayor a Menor</option>
+                                <option>Alfabéticamente, A-Z</option>
+                            </select>
+                        </div>
+
+                        <!-- Grid/List View Toggles -->
+                        <div class="hidden sm:flex items-center gap-2 text-gray-400 border-l pl-4 border-gray-200">
+                            <button class="text-black hover:text-black"><i class="fa-solid fa-grip text-lg"></i></button>
+                            <button class="hover:text-black"><i class="fa-solid fa-list text-lg"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cuadrícula de Productos (3 por fila en desktop, 2 en móvil) -->
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-12">
+                    
+                    <!-- Producto 1 -->
+                    <div class="product-card group relative flex flex-col cursor-pointer">
+                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-[4/5] mb-4">
+                            <span class="absolute top-2 left-2 bg-white text-black text-[10px] font-bold px-2 py-1 uppercase rounded z-10 shadow-sm">Nuevo</span>
+                            <img src="https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Silla" class="product-img w-full h-full object-cover transition-transform duration-700">
+                            
+                            <!-- Botón Compra Rápida (Desktop Hover) -->
+                            <div class="absolute bottom-4 left-4 right-4 quick-buy-btn hidden lg:block z-10">
+                                <button class="w-full bg-white/90 backdrop-blur text-black font-bold text-sm py-2.5 rounded shadow-lg hover:bg-black hover:text-white transition-colors border border-gray-100">
+                                    Añadir al carrito
+                                </button>
+                            </div>
+                            <!-- Botón Móvil (Siempre visible en el contenedor de imagen inferior derecha) -->
+                            <button class="lg:hidden absolute bottom-2 right-2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-black z-10">
+                                <i class="fa-solid fa-cart-plus"></i>
+                            </button>
+                        </div>
+                        <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline">Silla de Comedor Nórdica</h3>
+                        <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1">Madera / Tapizado Gris</p>
+                        <div class="mt-auto pt-2 flex items-center gap-2">
+                            <span class="font-bold text-[14px] sm:text-base text-black">$90.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Producto 2 -->
+                    <div class="product-card group relative flex flex-col cursor-pointer">
+                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-[4/5] mb-4">
+                            <span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 uppercase rounded z-10 shadow-sm">Oferta</span>
+                            <img src="https://images.unsplash.com/photo-1507149833265-60c372daea22?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Lámpara" class="product-img w-full h-full object-cover transition-transform duration-700">
+                            <div class="absolute bottom-4 left-4 right-4 quick-buy-btn hidden lg:block z-10">
+                                <button class="w-full bg-white/90 backdrop-blur text-black font-bold text-sm py-2.5 rounded shadow-lg hover:bg-black hover:text-white transition-colors border border-gray-100">
+                                    Añadir al carrito
+                                </button>
+                            </div>
+                            <button class="lg:hidden absolute bottom-2 right-2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-black z-10"><i class="fa-solid fa-cart-plus"></i></button>
+                        </div>
+                        <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline">Lámpara Colgante Moderna</h3>
+                        <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1">Negro Mate</p>
+                        <div class="mt-auto pt-2 flex items-center gap-2">
+                            <span class="font-bold text-[14px] sm:text-base text-red-600">$35.00</span>
+                            <span class="text-gray-400 line-through text-[12px] sm:text-[13px]">$45.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Producto 3 -->
+                    <div class="product-card group relative flex flex-col cursor-pointer">
+                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-[4/5] mb-4">
+                            <img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Sofá" class="product-img w-full h-full object-cover transition-transform duration-700">
+                            <div class="absolute bottom-4 left-4 right-4 quick-buy-btn hidden lg:block z-10">
+                                <button class="w-full bg-white/90 backdrop-blur text-black font-bold text-sm py-2.5 rounded shadow-lg hover:bg-black hover:text-white transition-colors border border-gray-100">
+                                    Seleccionar Opciones
+                                </button>
+                            </div>
+                            <button class="lg:hidden absolute bottom-2 right-2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-black z-10"><i class="fa-solid fa-cart-plus"></i></button>
+                        </div>
+                        <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline">Sofá Minimalista 3 Plazas</h3>
+                        <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1">Varios colores disponibles</p>
+                        <!-- Swatches de producto -->
+                        <div class="flex gap-1.5 my-1.5">
+                            <div class="w-4 h-4 rounded-full bg-gray-300 border border-gray-400"></div>
+                            <div class="w-4 h-4 rounded-full bg-[#3b4138] border border-gray-400"></div>
+                            <div class="w-4 h-4 rounded-full bg-[#bd9354] border border-gray-400"></div>
+                        </div>
+                        <div class="mt-auto pt-1 flex items-center gap-2">
+                            <span class="font-bold text-[14px] sm:text-base text-black">Desde $450.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Producto 4 -->
+                    <div class="product-card group relative flex flex-col cursor-pointer">
+                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-[4/5] mb-4">
+                            <img src="https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Mesa" class="product-img w-full h-full object-cover transition-transform duration-700">
+                            <div class="absolute bottom-4 left-4 right-4 quick-buy-btn hidden lg:block z-10">
+                                <button class="w-full bg-white/90 backdrop-blur text-black font-bold text-sm py-2.5 rounded shadow-lg hover:bg-black hover:text-white transition-colors border border-gray-100">
+                                    Añadir al carrito
+                                </button>
+                            </div>
+                            <button class="lg:hidden absolute bottom-2 right-2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-black z-10"><i class="fa-solid fa-cart-plus"></i></button>
+                        </div>
+                        <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline">Mesa de Centro de Roble</h3>
+                        <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1">Acabado Natural</p>
+                        <div class="mt-auto pt-2 flex items-center gap-2">
+                            <span class="font-bold text-[14px] sm:text-base text-black">$120.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Producto 5 -->
+                    <div class="product-card group relative flex flex-col cursor-pointer">
+                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-[4/5] mb-4">
+                            <img src="https://images.unsplash.com/photo-1505843513577-22bb7d21e455?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Silla Oficina" class="product-img w-full h-full object-cover transition-transform duration-700">
+                            <div class="absolute bottom-4 left-4 right-4 quick-buy-btn hidden lg:block z-10">
+                                <button class="w-full bg-white/90 backdrop-blur text-black font-bold text-sm py-2.5 rounded shadow-lg hover:bg-black hover:text-white transition-colors border border-gray-100">
+                                    Añadir al carrito
+                                </button>
+                            </div>
+                            <button class="lg:hidden absolute bottom-2 right-2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-black z-10"><i class="fa-solid fa-cart-plus"></i></button>
+                        </div>
+                        <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline">Silla de Oficina Ergonómica</h3>
+                        <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1">Negro Mate / Malla</p>
+                        <div class="mt-auto pt-2 flex items-center gap-2">
+                            <span class="font-bold text-[14px] sm:text-base text-black">$199.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Producto 6 -->
+                    <div class="product-card group relative flex flex-col cursor-pointer">
+                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-[4/5] mb-4">
+                            <span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 uppercase rounded z-10 shadow-sm">Oferta</span>
+                            <img src="https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Estantería" class="product-img w-full h-full object-cover transition-transform duration-700">
+                            <div class="absolute bottom-4 left-4 right-4 quick-buy-btn hidden lg:block z-10">
+                                <button class="w-full bg-white/90 backdrop-blur text-black font-bold text-sm py-2.5 rounded shadow-lg hover:bg-black hover:text-white transition-colors border border-gray-100">
+                                    Añadir al carrito
+                                </button>
+                            </div>
+                            <button class="lg:hidden absolute bottom-2 right-2 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-black z-10"><i class="fa-solid fa-cart-plus"></i></button>
+                        </div>
+                        <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline">Estantería Flotante</h3>
+                        <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1">Madera Blanca</p>
+                        <div class="mt-auto pt-2 flex items-center gap-2">
+                            <span class="font-bold text-[14px] sm:text-base text-red-600">$45.00</span>
+                            <span class="text-gray-400 line-through text-[12px] sm:text-[13px]">$60.00</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Paginación -->
+                <div class="mt-16 flex justify-center items-center gap-2 border-t border-gray-200 pt-8">
+                    <button class="w-10 h-10 flex items-center justify-center rounded border border-gray-300 text-gray-400 cursor-not-allowed" disabled>
+                        <i class="fa-solid fa-chevron-left text-[12px]"></i>
+                    </button>
+                    <button class="w-10 h-10 flex items-center justify-center rounded border border-black bg-black text-white font-bold text-[14px]">1</button>
+                    <button class="w-10 h-10 flex items-center justify-center rounded border border-gray-300 text-gray-600 hover:border-black font-bold text-[14px] transition">2</button>
+                    <button class="w-10 h-10 flex items-center justify-center rounded border border-gray-300 text-gray-600 hover:border-black font-bold text-[14px] transition">3</button>
+                    <span class="text-gray-400 px-2">...</span>
+                    <button class="w-10 h-10 flex items-center justify-center rounded border border-gray-300 text-gray-600 hover:border-black font-bold text-[14px] transition">6</button>
+                    <button class="w-10 h-10 flex items-center justify-center rounded border border-gray-300 text-black hover:bg-gray-50 transition">
+                        <i class="fa-solid fa-chevron-right text-[12px]"></i>
+                    </button>
+                </div>
+                
+            </div>
+        </div>
+    </main>
+
+    <!-- Inyección automática del Footer -->
+    <div id="footer-container"></div>
+
+    <!-- Script para cargar componentes y lógica (Idéntico a index.html) -->
+    <script>
+        Promise.all([
+            fetch('header.html').then(res => res.text()),
+            fetch('footer.html').then(res => res.text())
+        ]).then(([headerHtml, footerHtml]) => {
+            document.getElementById('header-container').innerHTML = headerHtml;
+            document.getElementById('footer-container').innerHTML = footerHtml;
+            
+            const script = document.createElement('script');
+            script.src = 'js/main.js';
+            document.body.appendChild(script);
+        }).catch(err => console.error('Error cargando componentes:', err));
+    </script>
+</body>
+</html>
