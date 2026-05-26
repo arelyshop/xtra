@@ -59,25 +59,51 @@
             <!-- 1. GALERÍA DE IMÁGENES -->
             <div class="w-full lg:w-1/2">
                 <!-- Imagen Principal -->
-                <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4 group cursor-zoom-in">
+                <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4 group cursor-zoom-in" onclick="openLightbox()">
                     <span class="absolute top-4 left-4 bg-white text-black text-[11px] font-bold px-3 py-1.5 uppercase rounded z-10 shadow-sm">Nuevo</span>
                     <img id="main-image" src="https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Silla de Comedor Nórdica" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    
+                    <!-- Icono flotante indicador de zoom -->
+                    <div class="absolute bottom-4 right-4 bg-white/90 text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                        <i class="fa-solid fa-expand"></i>
+                    </div>
                 </div>
                 
-                <!-- Miniaturas (Thumbnails) -->
-                <div class="grid grid-cols-4 gap-3">
-                    <button onclick="changeMainImage(this, 'https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')" class="thumbnail-btn thumb-active relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-100 hover:opacity-100 transition">
-                        <img src="https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 1">
-                    </button>
-                    <button onclick="changeMainImage(this, 'https://images.unsplash.com/photo-1592078615290-033ee584e267?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')" class="thumbnail-btn relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition">
-                        <img src="https://images.unsplash.com/photo-1592078615290-033ee584e267?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 2">
-                    </button>
-                    <button onclick="changeMainImage(this, 'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')" class="thumbnail-btn relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition">
-                        <img src="https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 3">
-                    </button>
-                    <button onclick="changeMainImage(this, 'https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80')" class="thumbnail-btn relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition">
-                        <img src="https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 4">
-                    </button>
+                <!-- Miniaturas (Thumbnails) con deslizador móvil y grilla en desktop -->
+                <div class="relative px-10 lg:px-0"> <!-- Padding for arrows on mobile, none on desktop -->
+                    <!-- Flecha Izquierda (Oculta en Desktop) -->
+                    <button onclick="slideThumbnails(-1)" class="absolute left-0 top-1/2 -translate-y-1/2 bg-white border border-gray-200 hover:border-black text-gray-600 hover:text-black shadow-sm rounded-full w-8 h-8 flex lg:hidden items-center justify-center z-10 transition"><i class="fa-solid fa-chevron-left text-[11px]"></i></button>
+                    
+                    <div id="thumbnails-container" class="flex lg:grid lg:grid-cols-4 gap-3 overflow-x-auto lg:overflow-visible hide-scrollbar scroll-smooth snap-x lg:snap-none">
+                        <!-- 8 Miniaturas -->
+                        <button onclick="changeMainImage(0)" class="thumbnail-btn thumb-active flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-100 transition snap-start">
+                            <img src="https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 1">
+                        </button>
+                        <button onclick="changeMainImage(1)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
+                            <img src="https://images.unsplash.com/photo-1592078615290-033ee584e267?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 2">
+                        </button>
+                        <button onclick="changeMainImage(2)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
+                            <img src="https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 3">
+                        </button>
+                        <button onclick="changeMainImage(3)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
+                            <img src="https://images.unsplash.com/photo-1581539250439-c96689b516f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 4">
+                        </button>
+                        <button onclick="changeMainImage(4)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
+                            <img src="https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 5">
+                        </button>
+                        <button onclick="changeMainImage(5)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
+                            <img src="https://images.unsplash.com/photo-1519947486511-46149fa0a254?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 6">
+                        </button>
+                        <button onclick="changeMainImage(6)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
+                            <img src="https://images.unsplash.com/photo-1616464916356-3a777b2b60b1?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 7">
+                        </button>
+                        <button onclick="changeMainImage(7)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
+                            <img src="https://images.unsplash.com/photo-1503602642458-232111445657?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 8">
+                        </button>
+                    </div>
+
+                    <!-- Flecha Derecha (Oculta en Desktop) -->
+                    <button onclick="slideThumbnails(1)" class="absolute right-0 top-1/2 -translate-y-1/2 bg-white border border-gray-200 hover:border-black text-gray-600 hover:text-black shadow-sm rounded-full w-8 h-8 flex lg:hidden items-center justify-center z-10 transition"><i class="fa-solid fa-chevron-right text-[11px]"></i></button>
                 </div>
             </div>
 
@@ -203,6 +229,33 @@
     <!-- Inyección automática del Footer -->
     <div id="footer-container"></div>
 
+    <!-- MODAL LIGHTBOX DE GALERÍA -->
+    <div id="lightbox" class="fixed inset-0 bg-white/95 backdrop-blur-sm z-[100] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300">
+        <!-- Botón Cerrar -->
+        <button onclick="closeLightbox()" class="absolute top-4 right-4 sm:top-8 sm:right-8 w-10 h-10 sm:w-12 sm:h-12 bg-white border border-gray-200 text-black hover:bg-gray-100 rounded-full flex items-center justify-center text-xl z-50 shadow-sm transition"><i class="fa-solid fa-xmark"></i></button>
+        
+        <!-- Navegación Izquierda -->
+        <button onclick="navigateLightbox(-1); event.stopPropagation();" class="absolute left-2 sm:left-10 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-white border border-gray-200 text-black hover:bg-gray-100 rounded-full flex items-center justify-center text-xl z-50 shadow-sm transition"><i class="fa-solid fa-chevron-left"></i></button>
+        
+        <!-- Contenedor Imagen Zoom -->
+        <div class="relative w-full max-w-6xl h-[80vh] flex items-center justify-center overflow-hidden cursor-zoom-in group" onclick="toggleZoom(event)">
+            <img id="lightbox-img" src="" alt="Vista ampliada" class="max-w-full max-h-full object-contain transition-transform duration-300 transform scale-100 origin-center pointer-events-none select-none">
+            
+            <!-- Hint overlay (Desaparece al hacer zoom o al salir el hover) -->
+            <div id="zoom-hint" class="absolute bottom-8 bg-black/80 text-white px-5 py-2.5 rounded-full text-sm font-medium tracking-wide opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none shadow-lg">
+                <i class="fa-solid fa-magnifying-glass-plus mr-2"></i> Haz clic en la imagen para ampliar
+            </div>
+        </div>
+
+        <!-- Navegación Derecha -->
+        <button onclick="navigateLightbox(1); event.stopPropagation();" class="absolute right-2 sm:right-10 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-white border border-gray-200 text-black hover:bg-gray-100 rounded-full flex items-center justify-center text-xl z-50 shadow-sm transition"><i class="fa-solid fa-chevron-right"></i></button>
+
+        <!-- Contador de fotos -->
+        <div class="absolute bottom-6 font-bold text-gray-800 text-sm tracking-widest uppercase bg-white px-4 py-1.5 rounded-full shadow-sm border border-gray-200">
+            <span id="lightbox-counter">1</span> / 8
+        </div>
+    </div>
+
     <!-- Script para cargar componentes globales y funciones específicas de la página de producto -->
     <script>
         // Cargar Header y Footer globales
@@ -220,19 +273,146 @@
 
         // --- Funciones específicas de la página de producto ---
 
+        // Datos de la galería (Las 8 imágenes en alta calidad)
+        const galleryImages = [
+            'https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1592078615290-033ee584e267?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1581539250439-c96689b516f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1519947486511-46149fa0a254?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1616464916356-3a777b2b60b1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+            'https://images.unsplash.com/photo-1503602642458-232111445657?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+        ];
+        let currentImageIndex = 0;
+        let isZoomed = false;
+
         // Cambiar imagen principal desde miniaturas
-        function changeMainImage(element, newSrc) {
-            document.getElementById('main-image').src = newSrc;
-            // Remover estado activo de todos
-            document.querySelectorAll('.thumbnail-btn').forEach(btn => {
-                btn.classList.remove('thumb-active', 'ring-2', 'ring-black');
-                btn.classList.add('border-transparent');
-                btn.style.opacity = '0.6';
+        function changeMainImage(index) {
+            currentImageIndex = index;
+            document.getElementById('main-image').src = galleryImages[index];
+            
+            // Actualizar clases de miniaturas
+            const btns = document.querySelectorAll('.thumbnail-btn');
+            btns.forEach((btn, i) => {
+                if (i === index) {
+                    btn.classList.add('thumb-active', 'border-transparent');
+                    btn.classList.remove('opacity-60');
+                    btn.style.opacity = '1';
+                } else {
+                    btn.classList.remove('thumb-active', 'ring-2', 'ring-black');
+                    btn.classList.add('border-transparent', 'opacity-60');
+                    btn.style.opacity = '0.6';
+                }
             });
-            // Añadir activo al clickeado
-            element.classList.add('thumb-active', 'border-transparent');
-            element.style.opacity = '1';
+            
+            // Hacer scroll en el contenedor de miniaturas para que la activa sea visible
+            const container = document.getElementById('thumbnails-container');
+            if(btns[index]) {
+               btns[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            }
         }
+
+        // Deslizador manual de miniaturas
+        function slideThumbnails(direction) {
+            const container = document.getElementById('thumbnails-container');
+            const scrollAmount = container.clientWidth * 0.6; // Deslizar un 60% del contenedor
+            container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        }
+
+        // --- Funciones del Lightbox (Zoom de imágenes) ---
+        function openLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            
+            // Setear la imagen actual
+            document.getElementById('lightbox-img').src = galleryImages[currentImageIndex];
+            document.getElementById('lightbox-counter').innerText = currentImageIndex + 1;
+            
+            // Mostrar modal
+            lightbox.classList.remove('hidden');
+            lightbox.classList.add('flex');
+            
+            // Timeout pequeño para animar opacidad (fade-in)
+            setTimeout(() => lightbox.classList.remove('opacity-0'), 10);
+            
+            document.body.style.overflow = 'hidden'; // Evitar scroll de la página de fondo
+            resetZoom();
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.add('opacity-0');
+            setTimeout(() => {
+                lightbox.classList.add('hidden');
+                lightbox.classList.remove('flex');
+                document.body.style.overflow = '';
+            }, 300);
+        }
+
+        function navigateLightbox(dir) {
+            currentImageIndex += dir;
+            // Ciclo infinito
+            if (currentImageIndex < 0) currentImageIndex = galleryImages.length - 1;
+            if (currentImageIndex >= galleryImages.length) currentImageIndex = 0;
+            
+            document.getElementById('lightbox-img').src = galleryImages[currentImageIndex];
+            document.getElementById('lightbox-counter').innerText = currentImageIndex + 1;
+            
+            // Sincronizar galería principal por debajo
+            changeMainImage(currentImageIndex);
+            resetZoom();
+        }
+
+        function toggleZoom(e) {
+            const img = document.getElementById('lightbox-img');
+            const hint = document.getElementById('zoom-hint');
+            isZoomed = !isZoomed;
+            
+            if (isZoomed) {
+                // Aplicar Zoom
+                img.classList.remove('scale-100', 'cursor-zoom-in');
+                img.classList.add('scale-[2.5]', 'cursor-zoom-out');
+                
+                // Ocultar texto de ayuda
+                if(hint) hint.classList.add('opacity-0');
+                if(hint) hint.classList.remove('group-hover:opacity-100');
+                
+                // Calcular origen del transform basado en dónde hizo clic el usuario
+                const rect = e.currentTarget.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                img.style.transformOrigin = `${x}% ${y}%`;
+            } else {
+                resetZoom();
+            }
+        }
+
+        function resetZoom() {
+            isZoomed = false;
+            const img = document.getElementById('lightbox-img');
+            const hint = document.getElementById('zoom-hint');
+            
+            if(img) {
+                img.classList.remove('scale-[2.5]', 'cursor-zoom-out');
+                img.classList.add('scale-100', 'cursor-zoom-in');
+                img.style.transformOrigin = 'center center';
+            }
+            if(hint) {
+                // Restaurar visibilidad del texto de ayuda en hover
+                hint.classList.remove('opacity-0');
+                hint.classList.add('group-hover:opacity-100');
+            }
+        }
+
+        // Navegación por teclado en el Lightbox
+        document.addEventListener('keydown', (e) => {
+            const lightbox = document.getElementById('lightbox');
+            if (!lightbox.classList.contains('hidden')) {
+                if (e.key === 'Escape') closeLightbox();
+                if (e.key === 'ArrowLeft') navigateLightbox(-1);
+                if (e.key === 'ArrowRight') navigateLightbox(1);
+            }
+        });
 
         // Actualizar Cantidad
         function updateQty(change) {
