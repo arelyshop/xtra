@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Silla de Comedor Nórdica - ARELYSHOP.COM</title>
+    <title>UGREEN HITUNE T6 - ARELYSHOP.COM</title>
     <!-- Usamos Tailwind CSS para emular el diseño de manera rápida y limpia -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome para los iconos -->
@@ -48,9 +48,9 @@
         <nav class="text-[13px] text-gray-500 mb-6 flex items-center gap-2">
             <a href="index.html" class="hover:text-black hover:underline">Inicio</a>
             <i class="fa-solid fa-chevron-right text-[9px]"></i>
-            <a href="colecciones.html" class="hover:text-black hover:underline">Sillas & Sillones</a>
+            <a href="colecciones.html" class="hover:text-black hover:underline">Audio & Tecnología</a>
             <i class="fa-solid fa-chevron-right text-[9px]"></i>
-            <span class="text-gray-900 font-medium">Silla de Comedor Nórdica</span>
+            <span class="text-gray-900 font-medium line-clamp-1">UGREEN HITUNE T6</span>
         </nav>
 
         <!-- Layout del Producto -->
@@ -61,49 +61,54 @@
                 <!-- Imagen Principal -->
                 <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4 group cursor-zoom-in" onclick="openLightbox()">
                     <span class="absolute top-4 left-4 bg-white text-black text-[11px] font-bold px-3 py-1.5 uppercase rounded z-10 shadow-sm">Nuevo</span>
-                    <img id="main-image" src="https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Silla de Comedor Nórdica" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    <img id="main-image" src="https://lh3.googleusercontent.com/d/1YK-Le08TnFUyghoB6FPF7JCP385MaD-i=w1000?authuser=0" alt="UGREEN HITUNE T6" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                     
+                    <!-- Flecha Izquierda -->
+                    <button onclick="navigateMainImage(event, -1)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 shadow-md rounded-full w-9 h-9 flex items-center justify-center z-20 transition">
+                        <i class="fa-solid fa-chevron-left text-[13px]"></i>
+                    </button>
+
+                    <!-- Flecha Derecha -->
+                    <button onclick="navigateMainImage(event, 1)" class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 shadow-md rounded-full w-9 h-9 flex items-center justify-center z-20 transition">
+                        <i class="fa-solid fa-chevron-right text-[13px]"></i>
+                    </button>
+
                     <!-- Icono flotante indicador de zoom -->
-                    <div class="absolute bottom-4 right-4 bg-white/90 text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                    <div class="absolute bottom-4 right-4 bg-white/90 text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
                         <i class="fa-solid fa-expand"></i>
                     </div>
                 </div>
                 
                 <!-- Miniaturas (Thumbnails) con deslizador móvil y grilla en desktop -->
-                <div class="relative px-10 lg:px-0"> <!-- Padding for arrows on mobile, none on desktop -->
-                    <!-- Flecha Izquierda (Oculta en Desktop) -->
-                    <button onclick="slideThumbnails(-1)" class="absolute left-0 top-1/2 -translate-y-1/2 bg-white border border-gray-200 hover:border-black text-gray-600 hover:text-black shadow-sm rounded-full w-8 h-8 flex lg:hidden items-center justify-center z-10 transition"><i class="fa-solid fa-chevron-left text-[11px]"></i></button>
-                    
+                <div class="relative">
                     <div id="thumbnails-container" class="flex lg:grid lg:grid-cols-4 gap-3 overflow-x-auto lg:overflow-visible hide-scrollbar scroll-smooth snap-x lg:snap-none">
                         <!-- 8 Miniaturas -->
                         <button onclick="changeMainImage(0)" class="thumbnail-btn thumb-active flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-100 transition snap-start">
-                            <img src="https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 1">
+                            <img src="https://lh3.googleusercontent.com/d/1YK-Le08TnFUyghoB6FPF7JCP385MaD-i=w1000?authuser=0" class="w-full h-full object-cover" alt="Vista 1">
                         </button>
                         <button onclick="changeMainImage(1)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
-                            <img src="https://images.unsplash.com/photo-1592078615290-033ee584e267?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 2">
+                            <img src="https://lh3.googleusercontent.com/d/1QLHWo-sl0r75TbN7l1AcgMeK1BThhPXl=w1000?authuser=0" class="w-full h-full object-cover" alt="Vista 2">
                         </button>
                         <button onclick="changeMainImage(2)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
-                            <img src="https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 3">
+                            <img src="https://lh3.googleusercontent.com/d/1WklkyVnXi11-5uCeric3OuuYaw0482_c=w1000?authuser=0" class="w-full h-full object-cover" alt="Vista 3">
                         </button>
                         <button onclick="changeMainImage(3)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
-                            <img src="https://images.unsplash.com/photo-1581539250439-c96689b516f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 4">
+                            <img src="https://lh3.googleusercontent.com/d/1LyYwslpIuuXuIPlZ0_Pdx_wkdhKAYvQm=w1000?authuser=0" class="w-full h-full object-cover" alt="Vista 4">
                         </button>
                         <button onclick="changeMainImage(4)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
-                            <img src="https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 5">
+                            <img src="https://lh3.googleusercontent.com/d/1Fd5h2bU9np8Jje6IMk628w1lWipY274c=w1000?authuser=0" class="w-full h-full object-cover" alt="Vista 5">
                         </button>
                         <button onclick="changeMainImage(5)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
-                            <img src="https://images.unsplash.com/photo-1519947486511-46149fa0a254?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 6">
+                            <img src="https://lh3.googleusercontent.com/d/1SLct_biL_5dI9qaIQVKCL7yQBojMkjcf=w1000?authuser=0" class="w-full h-full object-cover" alt="Vista 6">
                         </button>
                         <button onclick="changeMainImage(6)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
-                            <img src="https://images.unsplash.com/photo-1616464916356-3a777b2b60b1?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 7">
+                            <img src="https://lh3.googleusercontent.com/d/1PI_-EBBbWEV1eS8MwFKhZ4jnOMwCBRJG=w1000?authuser=0" class="w-full h-full object-cover" alt="Vista 7">
                         </button>
                         <button onclick="changeMainImage(7)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
-                            <img src="https://images.unsplash.com/photo-1503602642458-232111445657?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" class="w-full h-full object-cover" alt="Vista 8">
+                            <!-- Nota: Repetimos la primera imagen para completar el grid de 8 -->
+                            <img src="https://lh3.googleusercontent.com/d/1YK-Le08TnFUyghoB6FPF7JCP385MaD-i=w1000?authuser=0" class="w-full h-full object-cover" alt="Vista 8">
                         </button>
                     </div>
-
-                    <!-- Flecha Derecha (Oculta en Desktop) -->
-                    <button onclick="slideThumbnails(1)" class="absolute right-0 top-1/2 -translate-y-1/2 bg-white border border-gray-200 hover:border-black text-gray-600 hover:text-black shadow-sm rounded-full w-8 h-8 flex lg:hidden items-center justify-center z-10 transition"><i class="fa-solid fa-chevron-right text-[11px]"></i></button>
                 </div>
             </div>
 
@@ -111,7 +116,10 @@
             <div class="w-full lg:w-1/2 flex flex-col">
                 
                 <!-- Título -->
-                <h1 class="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 mb-3">Silla de Comedor Nórdica</h1>
+                <h1 class="text-2xl lg:text-3xl font-bold tracking-tight text-gray-900 mb-3 leading-tight">
+                    UGREEN HITUNE T6 - AUDÍFONOS INALÁMBRICOS TWS <br class="hidden sm:block">
+                    <span class="text-lg lg:text-xl text-gray-500 font-medium">(HI-RES AUDIO & CANCELACIÓN DE RUIDO ANC)</span>
+                </h1>
                 
                 <!-- Precio -->
                 <div class="flex items-end gap-3 mb-6">
@@ -159,15 +167,15 @@
                 <div class="text-[15px] text-gray-600 leading-relaxed">
                     <h2 class="text-lg font-bold text-gray-900 mb-3">Descripción completa</h2>
                     <p class="mb-4">
-                        Silla de diseño minimalista y ergonómico. Fabricada con madera de roble macizo y asiento tapizado en tela transpirable. Ideal para comedores modernos o estudios donde se valora la estética y la comodidad a partes iguales.
+                        Experimenta un sonido de alta fidelidad con los audífonos inalámbricos UGREEN HiTune T6. Equipados con tecnología avanzada de Cancelación Activa de Ruido (ANC) y certificación Hi-Res Audio, están diseñados para ofrecer graves profundos y llamadas cristalinas en cualquier entorno.
                     </p>
                     <p class="mb-2"><strong class="text-gray-900">Especificaciones destacadas:</strong></p>
                     <ul class="list-disc pl-5 space-y-1">
-                        <li><strong>Material:</strong> Roble macizo y lino transpirable</li>
-                        <li><strong>Dimensiones:</strong> 45cm (Ancho) x 85cm (Alto) x 50cm (Prof.)</li>
-                        <li><strong>Peso:</strong> 5.2 kg</li>
-                        <li><strong>Montaje:</strong> Requiere montaje básico (15 mins)</li>
-                        <li><strong>Carga máxima:</strong> 120 kg</li>
+                        <li><strong>Conectividad:</strong> Bluetooth 5.3 de baja latencia</li>
+                        <li><strong>Audio:</strong> Certificación Hi-Res con códec LDAC</li>
+                        <li><strong>ANC:</strong> Cancelación de ruido activa hasta -48dB</li>
+                        <li><strong>Batería:</strong> Hasta 30 horas de reproducción total (con estuche)</li>
+                        <li><strong>Resistencia:</strong> IPX5 (resistente a salpicaduras y sudor)</li>
                     </ul>
                 </div>
 
@@ -275,14 +283,14 @@
 
         // Datos de la galería (Las 8 imágenes en alta calidad)
         const galleryImages = [
-            'https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1592078615290-033ee584e267?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1567538096630-e0c55bd6374c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1581539250439-c96689b516f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1506439773649-6e0eb8cfb237?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1519947486511-46149fa0a254?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1616464916356-3a777b2b60b1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
-            'https://images.unsplash.com/photo-1503602642458-232111445657?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+            'https://lh3.googleusercontent.com/d/1YK-Le08TnFUyghoB6FPF7JCP385MaD-i=w1000?authuser=0',
+            'https://lh3.googleusercontent.com/d/1QLHWo-sl0r75TbN7l1AcgMeK1BThhPXl=w1000?authuser=0',
+            'https://lh3.googleusercontent.com/d/1WklkyVnXi11-5uCeric3OuuYaw0482_c=w1000?authuser=0',
+            'https://lh3.googleusercontent.com/d/1LyYwslpIuuXuIPlZ0_Pdx_wkdhKAYvQm=w1000?authuser=0',
+            'https://lh3.googleusercontent.com/d/1Fd5h2bU9np8Jje6IMk628w1lWipY274c=w1000?authuser=0',
+            'https://lh3.googleusercontent.com/d/1SLct_biL_5dI9qaIQVKCL7yQBojMkjcf=w1000?authuser=0',
+            'https://lh3.googleusercontent.com/d/1PI_-EBBbWEV1eS8MwFKhZ4jnOMwCBRJG=w1000?authuser=0',
+            'https://lh3.googleusercontent.com/d/1YK-Le08TnFUyghoB6FPF7JCP385MaD-i=w1000?authuser=0' // Repetimos la 1ra para tener 8 exactas
         ];
         let currentImageIndex = 0;
         let isZoomed = false;
@@ -313,11 +321,13 @@
             }
         }
 
-        // Deslizador manual de miniaturas
-        function slideThumbnails(direction) {
-            const container = document.getElementById('thumbnails-container');
-            const scrollAmount = container.clientWidth * 0.6; // Deslizar un 60% del contenedor
-            container.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        // Navegar en la imagen principal con las flechas
+        function navigateMainImage(e, direction) {
+            e.stopPropagation(); // Evitar que se abra el lightbox al hacer clic en las flechas
+            let newIndex = currentImageIndex + direction;
+            if (newIndex < 0) newIndex = galleryImages.length - 1;
+            if (newIndex >= galleryImages.length) newIndex = 0;
+            changeMainImage(newIndex);
         }
 
         // --- Funciones del Lightbox (Zoom de imágenes) ---
