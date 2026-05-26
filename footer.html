@@ -1,36 +1,74 @@
+<!-- 8. Footer Principal (Basado en footer.liquid y footer-group.json) -->
 <footer class="bg-white border-t border-gray-200 pt-16 mt-auto">
     <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-10 pb-12">
+        
         <!-- Bloque 1: Customer Support -->
         <div>
             <h4 class="font-bold text-lg mb-4 text-black">Customer support</h4>
             <p class="text-gray-600 text-[14px] mb-6">Available between 8AM to 8PM. Ready to answer your questions.</p>
             <ul class="space-y-4 text-[14px] text-gray-700">
                 <li><a href="tel:+1234567890" class="hover:text-black flex items-center gap-3"><i class="fa-solid fa-phone text-gray-400 text-base w-5 text-center"></i> +1 234 567 890</a></li>
+                <li><a href="mailto:info@mitienda.com" class="hover:text-black flex items-center gap-3"><i class="fa-solid fa-envelope text-gray-400 text-base w-5 text-center"></i> info@mitienda.com</a></li>
+                <li><a href="#" class="hover:text-black flex items-center gap-3"><i class="fa-brands fa-whatsapp text-gray-400 text-lg w-5 text-center"></i> Chatea en WhatsApp</a></li>
             </ul>
         </div>
 
-        <!-- Bloque 2: Menu -->
+        <!-- Bloque 2: Menu (Enlaces Rápidos) -->
         <div>
             <h4 class="font-bold text-lg mb-4 text-black">Enlaces Rápidos</h4>
             <ul class="space-y-3 text-[14px] text-gray-600">
+                <li><a href="#" class="hover:text-black hover:underline transition-colors">Búsqueda</a></li>
                 <li><a href="#" class="hover:text-black hover:underline transition-colors">Políticas de Devolución</a></li>
+                <li><a href="#" class="hover:text-black hover:underline transition-colors">Términos de Servicio</a></li>
+                <li><a href="#" class="hover:text-black hover:underline transition-colors">Sobre Nosotros</a></li>
+                <li><a href="#" class="hover:text-black hover:underline transition-colors">Contacto</a></li>
             </ul>
         </div>
 
         <!-- Bloque 3: Socials & Newsletter -->
         <div>
             <h4 class="font-bold text-lg mb-4 text-black">Follow us</h4>
+            
+            <!-- Redes Sociales -->
             <ul class="flex space-x-5 mb-8 text-gray-600">
                 <li><a href="#" class="hover:text-black text-xl transition-colors"><i class="fa-brands fa-instagram"></i></a></li>
                 <li><a href="#" class="hover:text-black text-xl transition-colors"><i class="fa-brands fa-facebook"></i></a></li>
+                <li><a href="#" class="hover:text-black text-xl transition-colors"><i class="fa-brands fa-pinterest"></i></a></li>
+                <li><a href="#" class="hover:text-black text-xl transition-colors"><i class="fa-brands fa-tiktok"></i></a></li>
             </ul>
+            
+            <!-- Boletín (Newsletter) -->
+            <h5 class="font-bold text-[14px] mb-3 text-black">Suscríbete a nuestro boletín</h5>
+            <form class="flex relative w-full">
+                <input type="email" placeholder="tu@email.com" class="w-full border border-gray-300 rounded-l-md py-2.5 px-4 focus:outline-none focus:border-gray-500 text-[14px] transition-colors" required>
+                <button type="submit" class="bg-primary text-white px-5 rounded-r-md hover:bg-gray-800 transition-colors flex items-center justify-center">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </form>
         </div>
     </div>
 
-    <!-- Bottom Bar -->
+    <!-- Bottom Bar (Bottom color scheme) -->
     <div class="bg-gray-50 border-t border-gray-200 py-8">
         <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6 text-[13px] text-gray-500">
-            <p class="text-center">&copy; 2026 ARELYSHOP.COM.</p>
+            
+            <!-- Selectores de Idioma/País -->
+            <div class="flex space-x-6 items-center">
+                <button class="hover:text-black flex items-center gap-1.5 transition-colors">España (EUR €) <i class="fa-solid fa-chevron-down text-[10px]"></i></button>
+                <button class="hover:text-black flex items-center gap-1.5 transition-colors">Español <i class="fa-solid fa-chevron-down text-[10px]"></i></button>
+            </div>
+
+            <!-- Copyright -->
+            <p class="text-center">&copy; 2026 ARELYSHOP.COM. <a href="#" class="hover:underline">Desarrollado por Shopify</a></p>
+
+            <!-- Métodos de pago (show_payment_methods: true) -->
+            <ul class="flex space-x-3 text-2xl text-gray-400">
+                <li title="Visa"><i class="fa-brands fa-cc-visa hover:text-[#1a1f71] transition-colors cursor-pointer"></i></li>
+                <li title="Mastercard"><i class="fa-brands fa-cc-mastercard hover:text-[#eb001b] transition-colors cursor-pointer"></i></li>
+                <li title="PayPal"><i class="fa-brands fa-cc-paypal hover:text-[#00457c] transition-colors cursor-pointer"></i></li>
+                <li title="Amex"><i class="fa-brands fa-cc-amex hover:text-[#2e77bc] transition-colors cursor-pointer"></i></li>
+                <li title="Apple Pay"><i class="fa-brands fa-cc-apple-pay hover:text-black transition-colors cursor-pointer"></i></li>
+            </ul>
         </div>
     </div>
 </footer>
