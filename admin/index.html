@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+script.js<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -134,14 +134,19 @@
                                     </div>
                                 </div>
 
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-1">GTIN / Código de Barras</label>
-                                    <div class="flex items-center space-x-2">
-                                        <!-- name="gtin" para BD, id="barcode" para que el escáner en JS funcione -->
-                                        <input type="text" id="barcode" name="gtin" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. 012345678905">
-                                        <button type="button" id="scan-barcode-btn" class="text-sm bg-gray-700 text-white font-bold p-2.5 rounded-lg hover:bg-gray-600 border border-gray-600 transition-colors">
-                                            <i data-lucide="scan-line" class="h-5 w-5"></i>
-                                        </button>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-1">GTIN</label>
+                                        <input type="text" id="gtin" name="gtin" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. 012345678905">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-1">Código de Barras (Barcode)</label>
+                                        <div class="flex items-center space-x-2">
+                                            <input type="text" id="barcode" name="barcode" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. 770123456789">
+                                            <button type="button" id="scan-barcode-btn" class="text-sm bg-gray-700 text-white font-bold p-2.5 rounded-lg hover:bg-gray-600 border border-gray-600 transition-colors" title="Escanear Código">
+                                                <i data-lucide="scan-line" class="h-5 w-5"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
