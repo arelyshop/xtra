@@ -10,6 +10,8 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- SortableJS para arrastrar y soltar imágenes -->
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <!-- HTML5 QR Code para el escáner -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     
     <style>
         /* Estilos del editor de texto WYSIWYG en Modo Oscuro */
@@ -101,7 +103,17 @@
                             <div class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-300 mb-1">Título del Producto *</label>
-                                    <input required type="text" name="title" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-colors placeholder-gray-500" placeholder="Ej. Zapatillas Deportivas">
+                                    <input required type="text" id="name" name="title" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-colors placeholder-gray-500" placeholder="Ej. Zapatillas Deportivas">
+                                </div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-1">Categoría *</label>
+                                        <input required type="text" name="category" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. Electrónica">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-1">Marca *</label>
+                                        <input required type="text" id="brand" name="brand" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. Nike">
+                                    </div>
                                 </div>
 
                                 <!-- Editor WYSIWYG -->
@@ -122,10 +134,15 @@
                                     </div>
                                 </div>
 
-                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                    <div><label class="block text-sm font-medium text-gray-300 mb-1">Marca *</label><input required type="text" name="brand" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500"></div>
-                                    <div><label class="block text-sm font-medium text-gray-300 mb-1">GTIN / SKU</label><input type="text" name="gtin" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500"></div>
-                                    <div><label class="block text-sm font-medium text-gray-300 mb-1">Barcode</label><input type="text" name="barcode" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500"></div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-1">GTIN / Código de Barras</label>
+                                    <div class="flex items-center space-x-2">
+                                        <!-- name="gtin" para BD, id="barcode" para que el escáner en JS funcione -->
+                                        <input type="text" id="barcode" name="gtin" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. 012345678905">
+                                        <button type="button" id="scan-barcode-btn" class="text-sm bg-gray-700 text-white font-bold p-2.5 rounded-lg hover:bg-gray-600 border border-gray-600 transition-colors">
+                                            <i data-lucide="scan-line" class="h-5 w-5"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -188,10 +205,10 @@
                         <div class="bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700">
                             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 border-b border-gray-700 pb-2 text-white"><i data-lucide="dollar-sign" class="h-5 w-5 text-gray-400"></i> Precios</h2>
                             <div class="space-y-4">
-                                <div><label class="block text-sm font-medium text-gray-300 mb-1">Precio Normal *</label><input required type="number" step="0.01" name="price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="0.00"></div>
-                                <div><label class="block text-sm font-medium text-gray-300 mb-1">Precio Oferta (sale_price)</label><input type="number" step="0.01" name="sale_price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Opcional"></div>
-                                <div><label class="block text-sm font-medium text-gray-300 mb-1">Precio Descuento (discount_price)</label><input type="number" step="0.01" name="discount_price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Opcional"></div>
-                                <div><label class="block text-sm font-medium text-gray-300 mb-1">Precio Compra (purchase_price)</label><input type="number" step="0.01" name="purchase_price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Opcional"></div>
+                                <div><label class="block text-sm font-medium text-gray-300 mb-1">Precio Normal (price) *</label><input required type="number" step="0.01" name="price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="0.00"></div>
+                                <div><label class="block text-sm font-medium text-gray-300 mb-1">Precio de Oferta (sale_price)</label><input type="number" step="0.01" name="sale_price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Opcional"></div>
+                                <div><label class="block text-sm font-medium text-gray-300 mb-1">Precio Mayorista (wholesale_price)</label><input type="number" step="0.01" name="wholesale_price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Opcional"></div>
+                                <div><label class="block text-sm font-medium text-gray-300 mb-1">Costo de Producto (purchase_price)</label><input type="number" step="0.01" name="purchase_price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Opcional"></div>
                             </div>
                         </div>
 
@@ -248,6 +265,15 @@
         <div class="relative bg-gray-800 p-2 rounded-xl shadow-2xl max-w-4xl max-h-[90vh] border border-gray-700">
             <button id="close-preview-btn" class="absolute -top-4 -right-4 bg-red-600 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl font-bold hover:bg-red-700 shadow-lg">&times;</button>
             <img id="preview-image" src="" alt="Vista previa" class="max-w-full max-h-[85vh] object-contain rounded-lg">
+        </div>
+    </div>
+
+    <!-- Barcode Scanner Modal -->
+    <div id="scanner-container" class="fixed inset-0 bg-black bg-opacity-75 flex-col items-center justify-center hidden z-50 p-4 backdrop-blur-sm">
+        <div class="bg-gray-800 p-6 rounded-xl shadow-2xl w-full max-w-md border border-gray-700">
+            <h3 class="text-xl font-bold mb-4 text-center text-white">Escanear Código de Barras</h3>
+            <div id="reader" class="w-full bg-black rounded-lg overflow-hidden"></div>
+            <button type="button" id="close-scanner-btn" class="w-full mt-4 bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">Cancelar</button>
         </div>
     </div>
 
