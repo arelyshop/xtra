@@ -4,18 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administración</title>
-    <!-- Tailwind CSS (CDN para usarlo sin instalar nada) -->
+    <!-- Tailwind CSS (CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Iconos Lucide -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- SortableJS para arrastrar y soltar imágenes -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    
     <style>
-        /* Estilos básicos para que el editor de texto parezca un Word */
-        [contenteditable]:empty:before {
-            content: attr(placeholder);
-            color: #94a3b8;
-            pointer-events: none;
-            display: block; /* For Firefox */
-        }
+        /* Estilos del editor de texto WYSIWYG */
+        [contenteditable]:empty:before { content: attr(placeholder); color: #94a3b8; pointer-events: none; display: block; }
         #descriptionEditor ul { list-style-type: disc; padding-left: 1.5rem; margin-bottom: 0.5rem; }
         #descriptionEditor ol { list-style-type: decimal; padding-left: 1.5rem; margin-bottom: 0.5rem; }
         #descriptionEditor b, #descriptionEditor strong { font-weight: 700; }
@@ -23,9 +21,14 @@
         #descriptionEditor h1 { font-size: 1.5rem; font-weight: 700; margin: 0.5rem 0; }
         #descriptionEditor h2 { font-size: 1.25rem; font-weight: 700; margin: 0.5rem 0; }
         #descriptionEditor p { margin-bottom: 0.5rem; }
+        
+        /* Estilos para el drag and drop (arrastrar y soltar) */
+        .sortable-ghost { opacity: 0.4; background-color: #e2e8f0; }
+        .drag-handle { cursor: grab; }
+        .drag-handle:active { cursor: grabbing; }
     </style>
 </head>
-<body class="bg-slate-50 font-sans text-slate-800 min-h-screen p-4 md:p-8">
+<body class="bg-slate-50 font-sans text-slate-800 min-h-screen p-4 md:p-8 pb-24">
 
     <div class="max-w-5xl mx-auto">
         <!-- Cabecera -->
@@ -33,21 +36,21 @@
             <i data-lucide="package" class="h-8 w-8 text-indigo-600"></i>
             <div>
                 <h1 class="text-3xl font-bold text-slate-900">Gestión de Productos</h1>
-                <p class="text-slate-500 mt-1">Registra nuevos productos (Vanilla HTML/JS)</p>
+                <p class="text-slate-500 mt-1">Registra nuevos productos (Neon DB)</p>
             </div>
         </div>
 
         <!-- Alertas -->
-        <div id="alertBox" class="hidden mb-6 p-4 rounded-lg flex items-center gap-3 border">
+        <div id="alertBox" class="hidden mb-6 p-4 rounded-lg flex items-center gap-3 border transition-all">
             <i id="alertIcon" data-lucide="info" class="h-5 w-5"></i>
             <p id="alertMessage" class="font-medium"></p>
         </div>
 
-        <!-- Formulario -->
+        <!-- Formulario Principal -->
         <form id="productForm" class="space-y-6">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 
-                <!-- Columna Principal -->
+                <!-- Columna Izquierda (Info Principal) -->
                 <div class="md:col-span-2 space-y-6">
                     
                     <!-- Información Básica -->
@@ -59,7 +62,7 @@
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Título del Producto *</label>
-                                <input required type="text" name="title" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-colors">
+                                <input required type="text" name="title" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-colors" placeholder="Ej. Zapatillas Deportivas">
                             </div>
 
                             <!-- Editor WYSIWYG -->
@@ -81,50 +84,58 @@
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Marca *</label>
-                                    <input required type="text" name="brand" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">GTIN / SKU</label>
-                                    <input type="text" name="gtin" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-slate-700 mb-1">Barcode</label>
-                                    <input type="text" name="barcode" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                                </div>
+                                <div><label class="block text-sm font-medium text-slate-700 mb-1">Marca *</label><input required type="text" name="brand" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></div>
+                                <div><label class="block text-sm font-medium text-slate-700 mb-1">GTIN / SKU</label><input type="text" name="gtin" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></div>
+                                <div><label class="block text-sm font-medium text-slate-700 mb-1">Barcode</label><input type="text" name="barcode" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Enlaces e Imágenes -->
+                    <!-- Enlaces e Imágenes Avanzado -->
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
                         <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 border-b pb-2">
-                            <i data-lucide="link" class="h-5 w-5 text-slate-400"></i> Enlaces y Galería
+                            <i data-lucide="image" class="h-5 w-5 text-slate-400"></i> Enlaces y Galería
                         </h2>
                         
-                        <div class="space-y-4">
+                        <div class="space-y-5">
+                            <!-- Enlace general del producto -->
                             <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Enlace del Producto (URL) *</label>
-                                <input required type="url" name="link" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Enlace del Producto en la Tienda (URL) *</label>
+                                <input required type="url" name="link" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="https://mi-tienda.com/producto">
                             </div>
 
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Imagen Principal (URL) *</label>
-                                <input required type="url" name="image_link" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                            </div>
+                            <div class="bg-slate-50 p-4 rounded-lg border border-slate-200">
+                                <label class="block text-base font-semibold text-slate-800 mb-3">Gestión de Fotos</label>
+                                
+                                <!-- Lista separada por comas -->
+                                <div class="mb-4">
+                                    <label for="image-url-list" class="block text-xs font-medium text-slate-500 mb-1">Pegar lista de URLs (separadas por coma)</label>
+                                    <textarea id="image-url-list" rows="2" class="w-full px-3 py-2 bg-white border border-slate-300 text-slate-700 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm" placeholder="https://.../img1.jpg, https://.../img2.jpg"></textarea>
+                                    <button type="button" id="process-urls-btn" class="mt-2 w-full bg-slate-200 text-slate-700 font-semibold py-2 px-4 rounded-lg hover:bg-slate-300 transition-colors text-sm">
+                                        Agregar Fotos desde Lista
+                                    </button>
+                                </div>
+                                
+                                <!-- Entradas individuales (Se inyectan desde script.js) -->
+                                <div class="mb-4">
+                                    <label class="block text-xs font-medium text-slate-500 mb-1">Agregar URL individualmente</label>
+                                    <div id="single-image-inputs-container" class="space-y-2">
+                                        <!-- Inputs dinámicos -->
+                                    </div>
+                                    <button type="button" id="add-single-url-field-btn" class="mt-2 text-sm text-indigo-600 font-semibold py-2 px-2 rounded-lg hover:bg-indigo-50 transition-colors w-full border border-dashed border-indigo-200">
+                                        + Agregar campo para otra URL
+                                    </button>
+                                </div>
 
-                            <!-- Fotos opcionales -->
-                            <div class="pt-2">
-                                <p class="text-sm font-medium text-slate-700 mb-3">Imágenes Adicionales (Opcionales)</p>
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <div><input type="url" name="foto_1" placeholder="URL Foto 1" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></div>
-                                    <div><input type="url" name="foto_2" placeholder="URL Foto 2" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></div>
-                                    <div><input type="url" name="foto_3" placeholder="URL Foto 3" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></div>
-                                    <div><input type="url" name="foto_4" placeholder="URL Foto 4" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></div>
-                                    <div><input type="url" name="foto_5" placeholder="URL Foto 5" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></div>
-                                    <div><input type="url" name="foto_6" placeholder="URL Foto 6" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></div>
-                                    <div class="sm:col-span-2"><input type="url" name="foto_7" placeholder="URL Foto 7" class="w-full px-3 py-2 text-sm border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></div>
+                                <!-- Lista ordenable (Se inyecta y reordena desde script.js) -->
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-500 mb-2">Fotos actuales (Arrastra para reordenar)</label>
+                                    <div id="image-sortable-list" class="space-y-2 min-h-[60px] p-3 bg-white border border-slate-300 border-dashed rounded-lg">
+                                        <!-- Imágenes inyectadas aquí -->
+                                    </div>
+                                    <p class="text-xs text-slate-500 mt-2">
+                                        * La imagen en la posición <b class="text-indigo-600">1.</b> será la Imagen Principal. Las demás serán opcionales (máximo 8 en total).
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -132,40 +143,21 @@
 
                 </div>
 
-                <!-- Columna Lateral -->
+                <!-- Columna Derecha (Precios y Stock) -->
                 <div class="space-y-6">
                     
-                    <!-- Precios -->
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 border-b pb-2">
-                            <i data-lucide="dollar-sign" class="h-5 w-5 text-slate-400"></i> Precios
-                        </h2>
+                        <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 border-b pb-2"><i data-lucide="dollar-sign" class="h-5 w-5 text-slate-400"></i> Precios</h2>
                         <div class="space-y-4">
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Precio Normal *</label>
-                                <input required type="number" step="0.01" name="price" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="0.00">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Precio Oferta (sale_price)</label>
-                                <input type="number" step="0.01" name="sale_price" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Opcional">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Precio Descuento (discount_price)</label>
-                                <input type="number" step="0.01" name="discount_price" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Opcional">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Precio Compra (purchase_price)</label>
-                                <input type="number" step="0.01" name="purchase_price" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Opcional">
-                            </div>
+                            <div><label class="block text-sm font-medium text-slate-700 mb-1">Precio Normal *</label><input required type="number" step="0.01" name="price" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="0.00"></div>
+                            <div><label class="block text-sm font-medium text-slate-700 mb-1">Precio Oferta (sale_price)</label><input type="number" step="0.01" name="sale_price" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Opcional"></div>
+                            <div><label class="block text-sm font-medium text-slate-700 mb-1">Precio Descuento (discount_price)</label><input type="number" step="0.01" name="discount_price" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Opcional"></div>
+                            <div><label class="block text-sm font-medium text-slate-700 mb-1">Precio Compra (purchase_price)</label><input type="number" step="0.01" name="purchase_price" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Opcional"></div>
                         </div>
                     </div>
 
-                    <!-- Inventario -->
                     <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                        <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 border-b pb-2">
-                            <i data-lucide="box" class="h-5 w-5 text-slate-400"></i> Inventario
-                        </h2>
-                        
+                        <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 border-b pb-2"><i data-lucide="box" class="h-5 w-5 text-slate-400"></i> Inventario</h2>
                         <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-medium text-slate-700 mb-1">Disponibilidad *</label>
@@ -183,16 +175,13 @@
                                     <option value="used">Usado</option>
                                 </select>
                             </div>
-                            <div>
-                                <label class="block text-sm font-medium text-slate-700 mb-1">Stock para Facebook *</label>
-                                <input required type="number" min="0" name="quantity_to_sell_on_facebook" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ej. 50">
-                            </div>
+                            <div><label class="block text-sm font-medium text-slate-700 mb-1">Stock para Facebook *</label><input required type="number" min="0" name="quantity_to_sell_on_facebook" class="w-full px-4 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ej. 50"></div>
                         </div>
                     </div>
 
                     <!-- Botón Enviar -->
-                    <button type="submit" id="submitBtn" class="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-4 rounded-xl shadow-sm transition-all disabled:opacity-70">
-                        <i data-lucide="save" id="btnIcon" class="h-5 w-5"></i>
+                    <button type="submit" id="submitBtn" class="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 px-4 rounded-xl shadow-sm transition-all disabled:opacity-70 text-lg mt-4">
+                        <i data-lucide="save" id="btnIcon" class="h-6 w-6"></i>
                         <span id="btnText">Guardar Producto</span>
                     </button>
 
@@ -201,96 +190,15 @@
         </form>
     </div>
 
-    <!-- Script Principal Vainilla JS -->
-    <script>
-        // Iniciar Iconos
-        lucide.createIcons();
+    <!-- Modal para Vista Previa de Imágenes -->
+    <div id="image-preview-modal" class="fixed inset-0 bg-slate-900 bg-opacity-80 flex items-center justify-center hidden z-50 p-4 transition-opacity duration-300 backdrop-blur-sm">
+        <div class="relative bg-white p-2 rounded-xl shadow-2xl max-w-4xl max-h-[90vh]">
+            <button id="close-preview-btn" class="absolute -top-4 -right-4 bg-red-500 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl font-bold hover:bg-red-600 shadow-lg">&times;</button>
+            <img id="preview-image" src="" alt="Vista previa" class="max-w-full max-h-[85vh] object-contain rounded-lg">
+        </div>
+    </div>
 
-        // Referencias al DOM
-        const form = document.getElementById('productForm');
-        const editor = document.getElementById('descriptionEditor');
-        const formatBtns = document.querySelectorAll('.format-btn');
-        const alertBox = document.getElementById('alertBox');
-        const alertIcon = document.getElementById('alertIcon');
-        const alertMessage = document.getElementById('alertMessage');
-        const submitBtn = document.getElementById('submitBtn');
-        const btnText = document.getElementById('btnText');
-        const btnIcon = document.getElementById('btnIcon');
-
-        // Lógica del Editor "Word"
-        formatBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                const command = btn.getAttribute('data-command');
-                const value = btn.getAttribute('data-value') || null;
-                document.execCommand(command, false, value);
-                editor.focus();
-            });
-        });
-
-        // Mostrar Alertas
-        function showAlert(type, message) {
-            alertBox.classList.remove('hidden', 'bg-green-50', 'text-green-800', 'border-green-200', 'bg-red-50', 'text-red-800', 'border-red-200');
-            
-            if (type === 'success') {
-                alertBox.classList.add('bg-green-50', 'text-green-800', 'border-green-200');
-                alertIcon.setAttribute('data-lucide', 'check-circle');
-            } else {
-                alertBox.classList.add('bg-red-50', 'text-red-800', 'border-red-200');
-                alertIcon.setAttribute('data-lucide', 'alert-circle');
-            }
-            
-            alertMessage.textContent = message;
-            lucide.createIcons(); // Recargar icono
-        }
-
-        // Lógica de Envío
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            // Validar que la descripción (HTML) no esté vacía
-            if (!editor.innerHTML.trim()) {
-                showAlert('error', 'La descripción no puede estar vacía.');
-                return;
-            }
-
-            // Cambiar botón a estado cargando
-            submitBtn.disabled = true;
-            btnText.textContent = 'Guardando...';
-            btnIcon.setAttribute('data-lucide', 'loader-2');
-            btnIcon.classList.add('animate-spin');
-            lucide.createIcons();
-
-            // Recopilar datos del formulario
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-            data.description = editor.innerHTML; // Añadir el HTML del editor
-
-            try {
-                // Hacer la petición a Netlify Functions
-                const response = await fetch('/.netlify/functions/addProduct', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
-                if (!response.ok) throw new Error('Error al conectar con la base de datos o backend.');
-
-                showAlert('success', '¡Producto guardado exitosamente en Neon!');
-                form.reset(); // Limpiar inputs
-                editor.innerHTML = ''; // Limpiar editor
-
-            } catch (error) {
-                showAlert('error', error.message || 'Error desconocido.');
-            } finally {
-                // Restaurar botón
-                submitBtn.disabled = false;
-                btnText.textContent = 'Guardar Producto';
-                btnIcon.setAttribute('data-lucide', 'save');
-                btnIcon.classList.remove('animate-spin');
-                lucide.createIcons();
-            }
-        });
-    </script>
+    <!-- Enlace al archivo JavaScript -->
+    <script src="./script.js"></script>
 </body>
 </html>
