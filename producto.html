@@ -116,10 +116,23 @@
             <div class="w-full lg:w-1/2 flex flex-col">
                 
                 <!-- Título -->
-                <h1 class="text-2xl lg:text-3xl font-bold tracking-tight text-gray-900 mb-3 leading-tight">
+                <h1 class="text-2xl lg:text-3xl font-bold tracking-tight text-gray-900 mb-2 leading-tight">
                     UGREEN HITUNE T6 - AUDÍFONOS INALÁMBRICOS TWS <br class="hidden sm:block">
                     <span class="text-lg lg:text-xl text-gray-500 font-medium">(HI-RES AUDIO & CANCELACIÓN DE RUIDO ANC)</span>
                 </h1>
+                
+                <!-- Marca y SKU -->
+                <div class="flex items-center gap-3 mb-5 text-[13px] text-gray-500">
+                    <div class="flex items-center gap-1">
+                        <span class="font-medium text-gray-800">Marca:</span> 
+                        <a href="#" class="text-blue-600 hover:underline">UGREEN</a>
+                    </div>
+                    <div class="w-1 h-1 bg-gray-300 rounded-full"></div>
+                    <div class="flex items-center gap-1">
+                        <span class="font-medium text-gray-800">SKU:</span> 
+                        <span class="uppercase">UG-T6-001</span>
+                    </div>
+                </div>
                 
                 <!-- Precio -->
                 <div class="flex items-end gap-3 mb-6">
@@ -151,9 +164,9 @@
                     </button>
                 </div>
                 
-                <!-- Botón Compra Dinámica (Comprar Ahora) -->
-                <button class="w-full bg-[#128c7e] text-white h-12 rounded font-bold hover:bg-[#0f7569] transition shadow-lg mb-8">
-                    Comprar ahora
+                <!-- Botón Compra Dinámica (Comprar Ahora -> WhatsApp) -->
+                <button id="buy-now-whatsapp" data-name="UGREEN HITUNE T6 - AUDÍFONOS INALÁMBRICOS TWS" data-sku="UG-T6-001" data-price="90.00" class="w-full bg-[#128c7e] text-white h-12 rounded font-bold hover:bg-[#0f7569] transition shadow-lg mb-8 flex items-center justify-center gap-2">
+                    <i class="fa-brands fa-whatsapp text-xl"></i> Comprar ahora
                 </button>
 
                 <!-- Bloque de Confianza (Trustbadges) -->
@@ -177,17 +190,6 @@
                         <li><strong>Batería:</strong> Hasta 30 horas de reproducción total (con estuche)</li>
                         <li><strong>Resistencia:</strong> IPX5 (resistente a salpicaduras y sudor)</li>
                     </ul>
-                </div>
-
-                <!-- Redes Sociales (Share) -->
-                <div class="mt-8 pt-6 border-t border-gray-100 flex items-center gap-4 text-[13px] font-bold text-gray-900 uppercase">
-                    <span>Compartir:</span>
-                    <div class="flex gap-3 text-gray-500 text-lg">
-                        <a href="#" class="hover:text-blue-600 transition"><i class="fa-brands fa-facebook"></i></a>
-                        <a href="#" class="hover:text-blue-400 transition"><i class="fa-brands fa-twitter"></i></a>
-                        <a href="#" class="hover:text-green-500 transition"><i class="fa-brands fa-whatsapp"></i></a>
-                        <a href="#" class="hover:text-red-600 transition"><i class="fa-brands fa-pinterest"></i></a>
-                    </div>
                 </div>
 
             </div>
@@ -567,6 +569,36 @@
             if (newVal >= 1) {
                 input.value = newVal;
             }
+        }
+
+        // --- Lógica de Compra Directa por WhatsApp ---
+        const buyNowBtn = document.getElementById('buy-now-whatsapp');
+        if (buyNowBtn) {
+            buyNowBtn.addEventListener('click', () => {
+                const name = buyNowBtn.dataset.name;
+                const sku = buyNowBtn.dataset.sku;
+                const price = parseFloat(buyNowBtn.dataset.price);
+                
+                // Obtener la cantidad actual del selector
+                const qtyInput = document.getElementById('qty-input');
+                const qty = parseInt(qtyInput ? qtyInput.value : 1);
+                const url = window.location.href;
+                
+                const total = price * qty;
+                
+                let message = "¡Hola Arelyshop! 👋 Quiero finalizar mi pedido:\n\n";
+                message += `➡️ ${qty}x ${name} (${sku})\n`;
+                message += `Precio: ${price.toFixed(2)} Bs.\n`;
+                message += `🔗 ${url}\n`;
+                message += `-----------------------------------\n`;
+                message += `Total del Pedido: ${total.toFixed(2)} Bs.\n\n`;
+                message += `Espero las instrucciones para el pago y envío. ¡Gracias!`;
+                
+                const phone = "59167500044";
+                const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+                
+                window.open(whatsappUrl, '_blank');
+            });
         }
     </script>
 </body>
