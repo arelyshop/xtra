@@ -290,16 +290,26 @@ form.addEventListener('submit', async (e) => {
     data.foto_7 = imageItems[7]?.dataset.url || null;
 
     try {
-        // Enviar a la función de Netlify
-        const response = await fetch('/.netlify/functions/addProduct', {
+        // ENLACE CORREGIDO: Llamando a products.js en lugar de addProduct.js
+        const response = await fetch('/.netlify/functions/products', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
 
-        if (!response.ok) throw new Error('Error al conectar con la base de datos (Netlify Function).');
+        // Si la base de datos responde con un error, tratamos de leer su mensaje real
+        if (!response.ok) {
+            let errorMsg = 'Error al conectar con la base de datos.';
+            try {
+                const errorData = await response.json();
+                errorMsg = errorData.message || errorMsg;
+            } catch (e) {
+                // Falla al parsear JSON, conservamos el mensaje genérico
+            }
+            throw new Error(errorMsg);
+        }
 
-        showAlert('success', '¡Producto guardado exitosamente!');
+        showAlert('success', '¡Producto guardado exitosamente en la Base de Datos!');
         
         // Limpiar todo después de guardar
         form.reset();
@@ -311,7 +321,9 @@ form.addEventListener('submit', async (e) => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
     } catch (error) {
-        showAlert('error', error.message || 'Ocurrió un problema inesperado.');
+        // Muestra en la alerta exactamente qué fue lo que falló en Neon DB
+        showAlert('error', error.message);
+        console.error("Error capturado:", error);
     } finally {
         // Restaurar estado del botón
         submitBtn.disabled = false;
