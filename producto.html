@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UGREEN HITUNE T6 - ARELYSHOP.COM</title>
+    <title>Cargando Producto... - ARELYSHOP.COM</title>
     <!-- Usamos Tailwind CSS para emular el diseño de manera rápida y limpia -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome para los iconos -->
@@ -48,9 +48,9 @@
         <nav class="text-[13px] text-gray-500 mb-6 flex items-center gap-2">
             <a href="index.html" class="hover:text-black hover:underline">Inicio</a>
             <i class="fa-solid fa-chevron-right text-[9px]"></i>
-            <a href="colecciones.html" class="hover:text-black hover:underline">Audio & Tecnología</a>
+            <a href="colecciones.html" class="hover:text-black hover:underline">Catálogo</a>
             <i class="fa-solid fa-chevron-right text-[9px]"></i>
-            <span class="text-gray-900 font-medium line-clamp-1">UGREEN HITUNE T6</span>
+            <span id="br-title" class="text-gray-900 font-medium line-clamp-1">Cargando...</span>
         </nav>
 
         <!-- Layout del Producto -->
@@ -60,8 +60,8 @@
             <div class="w-full lg:w-1/2">
                 <!-- Imagen Principal -->
                 <div id="main-image-container" class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4 group cursor-zoom-in" onclick="openLightbox(event)">
-                    <span class="absolute top-4 left-4 bg-white text-black text-[11px] font-bold px-3 py-1.5 uppercase rounded z-10 shadow-sm">Nuevo</span>
-                    <img id="main-image" src="https://lh3.googleusercontent.com/d/1YK-Le08TnFUyghoB6FPF7JCP385MaD-i=w1000?authuser=0" alt="UGREEN HITUNE T6" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    <!-- Imagen dinámica -->
+                    <img id="main-image" src="" alt="Cargando producto" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-0 transition-opacity duration-300">
                     
                     <!-- Flecha Izquierda -->
                     <button onclick="navigateMainImage(event, -1)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 shadow-md rounded-full w-9 h-9 flex items-center justify-center z-20 transition">
@@ -79,35 +79,10 @@
                     </div>
                 </div>
                 
-                <!-- Miniaturas (Thumbnails) con deslizador móvil y grilla en desktop -->
+                <!-- Miniaturas (Thumbnails) inyectadas desde Neon -->
                 <div class="relative">
                     <div id="thumbnails-container" class="flex lg:grid lg:grid-cols-4 gap-3 overflow-x-auto lg:overflow-visible hide-scrollbar scroll-smooth snap-x lg:snap-none">
-                        <!-- 8 Miniaturas -->
-                        <button onclick="changeMainImage(0)" class="thumbnail-btn thumb-active flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-100 transition snap-start">
-                            <img src="https://lh3.googleusercontent.com/d/1YK-Le08TnFUyghoB6FPF7JCP385MaD-i=w1000?authuser=0" class="w-full h-full object-cover" alt="Vista 1">
-                        </button>
-                        <button onclick="changeMainImage(1)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
-                            <img src="https://lh3.googleusercontent.com/d/1QLHWo-sl0r75TbN7l1AcgMeK1BThhPXl=w1000?authuser=0" class="w-full h-full object-cover" alt="Vista 2">
-                        </button>
-                        <button onclick="changeMainImage(2)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
-                            <img src="https://lh3.googleusercontent.com/d/1WklkyVnXi11-5uCeric3OuuYaw0482_c=w1000?authuser=0" class="w-full h-full object-cover" alt="Vista 3">
-                        </button>
-                        <button onclick="changeMainImage(3)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
-                            <img src="https://lh3.googleusercontent.com/d/1LyYwslpIuuXuIPlZ0_Pdx_wkdhKAYvQm=w1000?authuser=0" class="w-full h-full object-cover" alt="Vista 4">
-                        </button>
-                        <button onclick="changeMainImage(4)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
-                            <img src="https://lh3.googleusercontent.com/d/1Fd5h2bU9np8Jje6IMk628w1lWipY274c=w1000?authuser=0" class="w-full h-full object-cover" alt="Vista 5">
-                        </button>
-                        <button onclick="changeMainImage(5)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
-                            <img src="https://lh3.googleusercontent.com/d/1SLct_biL_5dI9qaIQVKCL7yQBojMkjcf=w1000?authuser=0" class="w-full h-full object-cover" alt="Vista 6">
-                        </button>
-                        <button onclick="changeMainImage(6)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
-                            <img src="https://lh3.googleusercontent.com/d/1PI_-EBBbWEV1eS8MwFKhZ4jnOMwCBRJG=w1000?authuser=0" class="w-full h-full object-cover" alt="Vista 7">
-                        </button>
-                        <button onclick="changeMainImage(7)" class="thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 border-transparent overflow-hidden aspect-square opacity-60 hover:opacity-100 transition snap-start">
-                            <!-- Nota: Repetimos la primera imagen para completar el grid de 8 -->
-                            <img src="https://lh3.googleusercontent.com/d/1YK-Le08TnFUyghoB6FPF7JCP385MaD-i=w1000?authuser=0" class="w-full h-full object-cover" alt="Vista 8">
-                        </button>
+                        <!-- Las miniaturas se insertan aquí vía JS -->
                     </div>
                 </div>
             </div>
@@ -116,58 +91,68 @@
             <div class="w-full lg:w-1/2 flex flex-col">
                 
                 <!-- Título -->
-                <h1 class="text-2xl lg:text-3xl font-bold tracking-tight text-gray-900 mb-2 leading-tight">
-                    UGREEN HITUNE T6 - AUDÍFONOS INALÁMBRICOS TWS <br class="hidden sm:block">
-                    <span class="text-lg lg:text-xl text-gray-500 font-medium">(HI-RES AUDIO & CANCELACIÓN DE RUIDO ANC)</span>
+                <h1 id="prod-title" class="text-2xl lg:text-3xl font-bold tracking-tight text-gray-900 mb-2 leading-tight">
+                    Cargando producto...
                 </h1>
                 
                 <!-- Marca y SKU -->
                 <div class="flex items-center gap-3 mb-5 text-[13px] text-gray-500">
                     <div class="flex items-center gap-1">
                         <span class="font-medium text-gray-800">Marca:</span> 
-                        <a href="#" class="text-blue-600 hover:underline">UGREEN</a>
+                        <span id="prod-brand" class="text-blue-600">...</span>
                     </div>
                     <div class="w-1 h-1 bg-gray-300 rounded-full"></div>
                     <div class="flex items-center gap-1">
                         <span class="font-medium text-gray-800">SKU:</span> 
-                        <span class="uppercase">UG-T6-001</span>
+                        <span id="prod-sku" class="uppercase">...</span>
                     </div>
                 </div>
                 
                 <!-- Precio -->
                 <div class="flex items-end gap-3 mb-6">
-                    <span class="text-2xl font-bold text-black">Bs. 90.00</span>
-                    <span class="text-base text-gray-400 line-through mb-0.5">Bs. 120.00</span>
-                    <span class="text-[12px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded mb-1">Ahorras Bs. 30.00</span>
+                    <span id="prod-sale-price" class="text-2xl font-bold text-black">Bs. 0.00</span>
+                    <span id="prod-price" class="text-base text-gray-400 line-through mb-0.5 hidden">Bs. 0.00</span>
+                    <span id="prod-savings" class="text-[12px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded mb-1 hidden">Ahorras Bs. 0.00</span>
                 </div>
 
                 <!-- Barra de Urgencia / Stock -->
-                <div class="bg-gray-50 border border-gray-100 p-4 rounded-lg mb-8">
-                    <p class="text-[14px] text-gray-800 mb-2 font-medium"><i class="fa-solid fa-fire text-orange-500 mr-1"></i> ¡Date prisa! Solo quedan <strong>5</strong> artículos en stock.</p>
+                <div id="stock-container" class="bg-gray-50 border border-gray-100 p-4 rounded-lg mb-8 hidden">
+                    <p class="text-[14px] text-gray-800 mb-2 font-medium"><i class="fa-solid fa-fire text-orange-500 mr-1"></i> ¡Date prisa! Solo quedan <strong id="prod-stock">0</strong> artículos en stock.</p>
                     <div class="w-full bg-gray-200 rounded-full h-2">
-                        <div class="bg-gradient-to-r from-red-500 to-yellow-400 h-2 rounded-full" style="width: 15%"></div>
+                        <div id="stock-bar-fill" class="bg-gradient-to-r from-red-500 to-yellow-400 h-2 rounded-full" style="width: 0%"></div>
                     </div>
                 </div>
 
-                <!-- Controles de Compra (Quantity + Add to Cart) -->
-                <div class="flex flex-row gap-3 mb-4">
-                    <!-- Selector de Cantidad -->
-                    <div class="flex items-center border border-gray-300 rounded h-12 w-28 sm:w-32 bg-white flex-shrink-0">
-                        <button onclick="updateQty(-1)" class="w-10 h-full flex justify-center items-center text-gray-500 hover:text-black hover:bg-gray-50 transition"><i class="fa-solid fa-minus text-xs"></i></button>
-                        <input type="number" id="qty-input" value="1" min="1" class="flex-1 h-full text-center text-[15px] font-bold border-none focus:ring-0 p-0 m-0 w-full bg-transparent">
-                        <button onclick="updateQty(1)" class="w-10 h-full flex justify-center items-center text-gray-500 hover:text-black hover:bg-gray-50 transition"><i class="fa-solid fa-plus text-xs"></i></button>
-                    </div>
+                <!-- Controles de Compra Dinámicos -->
+                <div id="product-actions-container">
                     
-                    <!-- Botón Añadir al Carrito -->
-                    <button class="flex-1 bg-black text-white border border-black h-12 rounded font-bold hover:bg-gray-800 transition flex items-center justify-center gap-2 text-[14px] sm:text-base">
-                        Añadir al carrito
+                    <!-- BOTONES IN STOCK -->
+                    <div id="in-stock-buttons" class="hidden flex-col">
+                        <div class="flex flex-row gap-3 mb-4">
+                            <!-- Selector de Cantidad -->
+                            <div class="flex items-center border border-gray-300 rounded h-12 w-28 sm:w-32 bg-white flex-shrink-0">
+                                <button onclick="updateQty(-1)" class="w-10 h-full flex justify-center items-center text-gray-500 hover:text-black hover:bg-gray-50 transition"><i class="fa-solid fa-minus text-xs"></i></button>
+                                <input type="number" id="qty-input" value="1" min="1" class="flex-1 h-full text-center text-[15px] font-bold border-none focus:ring-0 p-0 m-0 w-full bg-transparent">
+                                <button onclick="updateQty(1)" class="w-10 h-full flex justify-center items-center text-gray-500 hover:text-black hover:bg-gray-50 transition"><i class="fa-solid fa-plus text-xs"></i></button>
+                            </div>
+                            
+                            <!-- Botón Añadir al Carrito -->
+                            <button class="flex-1 bg-black text-white border border-black h-12 rounded font-bold hover:bg-gray-800 transition flex items-center justify-center gap-2 text-[14px] sm:text-base">
+                                Añadir al carrito
+                            </button>
+                        </div>
+                        
+                        <!-- Botón Compra Dinámica (Comprar Ahora -> WhatsApp) -->
+                        <button id="buy-now-whatsapp" data-name="" data-sku="" data-price="" class="w-full bg-[#128c7e] text-white h-12 rounded font-bold hover:bg-[#0f7569] transition shadow-lg mb-8 flex items-center justify-center gap-2">
+                            <i class="fa-brands fa-whatsapp text-xl"></i> Comprar ahora
+                        </button>
+                    </div>
+
+                    <!-- BOTÓN OUT OF STOCK -->
+                    <button id="out-of-stock-btn" class="hidden w-full bg-gray-400 text-white h-12 rounded font-bold cursor-not-allowed mb-8 flex items-center justify-center gap-2 transition" disabled>
+                        <i class="fa-solid fa-ban text-lg"></i> Agotado
                     </button>
                 </div>
-                
-                <!-- Botón Compra Dinámica (Comprar Ahora -> WhatsApp) -->
-                <button id="buy-now-whatsapp" data-name="UGREEN HITUNE T6 - AUDÍFONOS INALÁMBRICOS TWS" data-sku="UG-T6-001" data-price="90.00" class="w-full bg-[#128c7e] text-white h-12 rounded font-bold hover:bg-[#0f7569] transition shadow-lg mb-8 flex items-center justify-center gap-2">
-                    <i class="fa-brands fa-whatsapp text-xl"></i> Comprar ahora
-                </button>
 
                 <!-- Bloque de Confianza (Trustbadges) -->
                 <div class="flex items-center justify-center gap-6 py-4 border-t border-b border-gray-100 mb-8 text-gray-500 text-[13px]">
@@ -179,17 +164,9 @@
                 <!-- Descripción Completa -->
                 <div class="text-[15px] text-gray-600 leading-relaxed">
                     <h2 class="text-lg font-bold text-gray-900 mb-3">Descripción completa</h2>
-                    <p class="mb-4">
-                        Experimenta un sonido de alta fidelidad con los audífonos inalámbricos UGREEN HiTune T6. Equipados con tecnología avanzada de Cancelación Activa de Ruido (ANC) y certificación Hi-Res Audio, están diseñados para ofrecer graves profundos y llamadas cristalinas en cualquier entorno.
-                    </p>
-                    <p class="mb-2"><strong class="text-gray-900">Especificaciones destacadas:</strong></p>
-                    <ul class="list-disc pl-5 space-y-1">
-                        <li><strong>Conectividad:</strong> Bluetooth 5.3 de baja latencia</li>
-                        <li><strong>Audio:</strong> Certificación Hi-Res con códec LDAC</li>
-                        <li><strong>ANC:</strong> Cancelación de ruido activa hasta -48dB</li>
-                        <li><strong>Batería:</strong> Hasta 30 horas de reproducción total (con estuche)</li>
-                        <li><strong>Resistencia:</strong> IPX5 (resistente a salpicaduras y sudor)</li>
-                    </ul>
+                    <div id="prod-desc" class="space-y-4">
+                        <!-- Descripción inyectada desde base de datos -->
+                    </div>
                 </div>
 
             </div>
@@ -197,40 +174,9 @@
 
         <!-- SECCIÓN: PRODUCTOS COMPLEMENTARIOS (Upsell block) -->
         <section class="mt-24 pt-10 border-t border-gray-200">
-            <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center sm:text-left">Completar el look (Upsell)</h2>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
-                <!-- Upsell 1 -->
-                <div class="product-card group cursor-pointer">
-                    <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-3">
-                        <img src="https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Mesa" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                    </div>
-                    <h3 class="text-[13px] sm:text-[14px] font-bold text-gray-900 group-hover:underline">Mesa de Centro de Roble</h3>
-                    <div class="mt-1 font-bold text-black text-[13px]">Bs. 120.00</div>
-                </div>
-                <!-- Upsell 2 -->
-                <div class="product-card group cursor-pointer">
-                    <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-3">
-                        <img src="https://images.unsplash.com/photo-1507149833265-60c372daea22?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Lámpara" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                    </div>
-                    <h3 class="text-[13px] sm:text-[14px] font-bold text-gray-900 group-hover:underline">Lámpara Colgante Moderna</h3>
-                    <div class="mt-1 font-bold text-red-600 text-[13px]">Bs. 35.00</div>
-                </div>
-                <!-- Upsell 3 -->
-                <div class="product-card group cursor-pointer hidden md:block">
-                    <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-3">
-                        <img src="https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Estantería" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                    </div>
-                    <h3 class="text-[13px] sm:text-[14px] font-bold text-gray-900 group-hover:underline">Estantería Flotante</h3>
-                    <div class="mt-1 font-bold text-black text-[13px]">Bs. 45.00</div>
-                </div>
-                <!-- Upsell 4 -->
-                <div class="product-card group cursor-pointer hidden md:block">
-                    <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-3">
-                        <img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Sofá" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
-                    </div>
-                    <h3 class="text-[13px] sm:text-[14px] font-bold text-gray-900 group-hover:underline">Sofá Minimalista</h3>
-                    <div class="mt-1 font-bold text-black text-[13px]">Desde Bs. 450.00</div>
-                </div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center sm:text-left">Productos que también te pueden interesar</h2>
+            <div id="related-products-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+                <!-- Upsells inyectados desde base de datos -->
             </div>
         </section>
 
@@ -263,11 +209,11 @@
 
         <!-- Contador de fotos -->
         <div class="absolute bottom-6 font-bold text-gray-800 text-sm tracking-widest uppercase bg-white px-4 py-1.5 rounded-full shadow-sm border border-gray-200 pointer-events-none">
-            <span id="lightbox-counter">1</span> / 8
+            <span id="lightbox-counter">1</span> / <span id="lightbox-counter-total">1</span>
         </div>
     </div>
 
-    <!-- Script para cargar componentes globales y funciones específicas de la página de producto -->
+    <!-- Script principal de la página -->
     <script>
         // Cargar Header y Footer globales
         Promise.all([
@@ -282,28 +228,153 @@
             document.body.appendChild(script);
         }).catch(err => console.error('Error cargando componentes:', err));
 
-        // --- Funciones específicas de la página de producto ---
-
-        // Datos de la galería (Las 8 imágenes en alta calidad)
-        const galleryImages = [
-            'https://lh3.googleusercontent.com/d/1YK-Le08TnFUyghoB6FPF7JCP385MaD-i=w1000?authuser=0',
-            'https://lh3.googleusercontent.com/d/1QLHWo-sl0r75TbN7l1AcgMeK1BThhPXl=w1000?authuser=0',
-            'https://lh3.googleusercontent.com/d/1WklkyVnXi11-5uCeric3OuuYaw0482_c=w1000?authuser=0',
-            'https://lh3.googleusercontent.com/d/1LyYwslpIuuXuIPlZ0_Pdx_wkdhKAYvQm=w1000?authuser=0',
-            'https://lh3.googleusercontent.com/d/1Fd5h2bU9np8Jje6IMk628w1lWipY274c=w1000?authuser=0',
-            'https://lh3.googleusercontent.com/d/1SLct_biL_5dI9qaIQVKCL7yQBojMkjcf=w1000?authuser=0',
-            'https://lh3.googleusercontent.com/d/1PI_-EBBbWEV1eS8MwFKhZ4jnOMwCBRJG=w1000?authuser=0',
-            'https://lh3.googleusercontent.com/d/1YK-Le08TnFUyghoB6FPF7JCP385MaD-i=w1000?authuser=0' // Repetimos la 1ra para tener 8 exactas
-        ];
+        // --- LÓGICA DE DATOS DINÁMICOS DESDE NEON ---
+        let galleryImages = [];
         let currentImageIndex = 0;
         let isZoomed = false;
 
-        // Cambiar imagen principal desde miniaturas
+        // 1. Cargar producto principal por ID
+        async function fetchProductData() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id') || '1'; // Default ID 1 si no hay URL
+            
+            try {
+                const response = await fetch(`/.netlify/functions/get_tienda?id=${productId}`);
+                if (!response.ok) throw new Error('Producto no encontrado');
+                return await response.json();
+            } catch (error) {
+                console.error("Error al cargar el producto:", error);
+                document.getElementById('prod-title').textContent = "Producto no disponible";
+                return null;
+            }
+        }
+
+        // 2. Cargar sugerencias
+        async function fetchRelatedProducts(brand, category) {
+            try {
+                const url = `/.netlify/functions/get_tienda?brand=${encodeURIComponent(brand || '')}&category=${encodeURIComponent(category || '')}&limit=5`;
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Error cargando relacionados');
+                return await response.json();
+            } catch (error) {
+                console.error("Error al cargar relacionados:", error);
+                return [];
+            }
+        }
+
+        // 3. Inicializador
+        async function initProductPage() {
+            const product = await fetchProductData();
+            if (!product) return;
+
+            // Procesamiento de campos
+            const price = parseFloat(product.price) || 0;
+            const salePrice = parseFloat(product.sale_price) || price;
+            const stockQty = parseInt(product.quantity_to_sell_on_facebook) || 0;
+            const availability = (product.availability || '').trim().toLowerCase();
+
+            // Textos básicos
+            document.title = `${product.title} - ARELYSHOP.COM`;
+            document.getElementById('br-title').textContent = product.title;
+            document.getElementById('prod-title').textContent = product.title;
+            document.getElementById('prod-brand').textContent = product.brand || 'N/A';
+            document.getElementById('prod-sku').textContent = product.gtin || 'N/A';
+            document.getElementById('prod-desc').innerHTML = product.description || '';
+
+            // Precios
+            document.getElementById('prod-sale-price').textContent = `Bs. ${salePrice.toFixed(2)}`;
+            if (price > salePrice) {
+                document.getElementById('prod-price').textContent = `Bs. ${price.toFixed(2)}`;
+                document.getElementById('prod-price').classList.remove('hidden');
+                
+                const savings = price - salePrice;
+                document.getElementById('prod-savings').textContent = `Ahorras Bs. ${savings.toFixed(2)}`;
+                document.getElementById('prod-savings').classList.remove('hidden');
+            }
+
+            // Barra de Stock
+            if (stockQty > 0) {
+                document.getElementById('stock-container').classList.remove('hidden');
+                document.getElementById('prod-stock').textContent = stockQty;
+                // Calculamos porcentaje visual de urgencia (15 de límite para que se vea la barra moverse)
+                const percentage = Math.min((stockQty / 15) * 100, 100);
+                document.getElementById('stock-bar-fill').style.width = `${percentage}%`;
+            }
+
+            // Disponibilidad (Botones In Stock vs Agotado)
+            if (availability === 'in stock') {
+                document.getElementById('in-stock-buttons').classList.remove('hidden');
+                document.getElementById('in-stock-buttons').classList.add('flex');
+                
+                // Setear dataset para WhatsApp
+                const whatsappBtn = document.getElementById('buy-now-whatsapp');
+                whatsappBtn.dataset.name = product.title;
+                whatsappBtn.dataset.sku = product.gtin || '';
+                whatsappBtn.dataset.price = salePrice;
+            } else {
+                document.getElementById('out-of-stock-btn').classList.remove('hidden');
+                document.getElementById('out-of-stock-btn').classList.add('flex');
+            }
+
+            // Mapeo Dinámico de Imágenes (image_link + foto_1 a foto_7)
+            const photoFields = ['image_link', 'foto_1', 'foto_2', 'foto_3', 'foto_4', 'foto_5', 'foto_6', 'foto_7'];
+            galleryImages = photoFields.map(f => product[f]).filter(img => img && img.trim() !== '');
+            
+            if (galleryImages.length > 0) {
+                const mainImg = document.getElementById('main-image');
+                mainImg.src = galleryImages[0];
+                mainImg.classList.remove('opacity-0');
+                
+                document.getElementById('lightbox-counter-total').textContent = galleryImages.length;
+                
+                const thumbContainer = document.getElementById('thumbnails-container');
+                thumbContainer.innerHTML = ''; 
+                
+                galleryImages.forEach((imgUrl, index) => {
+                    const btn = document.createElement('button');
+                    btn.onclick = () => changeMainImage(index);
+                    btn.className = `thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded border-2 overflow-hidden aspect-square transition snap-start ${index === 0 ? 'thumb-active border-transparent opacity-100' : 'border-transparent opacity-60 hover:opacity-100'}`;
+                    btn.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover" alt="Vista ${index + 1}">`;
+                    thumbContainer.appendChild(btn);
+                });
+            }
+
+            // Cargar Upsell / Sugerencias
+            const related = await fetchRelatedProducts(product.brand, product.category);
+            const grid = document.getElementById('related-products-grid');
+            grid.innerHTML = '';
+            
+            let upsellCount = 0;
+            related.forEach((item) => {
+                // Evitamos sugerir el mismo producto y limitamos a 4
+                if (item.id == product.id || upsellCount >= 4) return; 
+                
+                const itemSalePrice = parseFloat(item.sale_price) || parseFloat(item.price) || 0;
+                const hiddenClass = upsellCount > 1 ? 'hidden md:block' : '';
+                
+                // Renderizado
+                grid.innerHTML += `
+                <a href="producto.html?id=${item.id}" class="product-card group cursor-pointer ${hiddenClass}">
+                    <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-3">
+                        <img src="${item.image_link}" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                    </div>
+                    <h3 class="text-[13px] sm:text-[14px] font-bold text-gray-900 group-hover:underline line-clamp-2">${item.title}</h3>
+                    <div class="mt-1 font-bold text-black text-[13px]">Bs. ${itemSalePrice.toFixed(2)}</div>
+                </a>`;
+                upsellCount++;
+            });
+        }
+
+        // Ejecutar inicializador al cargar el DOM
+        document.addEventListener('DOMContentLoaded', initProductPage);
+
+
+        // --- FUNCIONES DE INTERFAZ (Galería, Zoom y Botones) ---
+
         function changeMainImage(index) {
             currentImageIndex = index;
             document.getElementById('main-image').src = galleryImages[index];
             
-            // Actualizar clases de miniaturas
             const btns = document.querySelectorAll('.thumbnail-btn');
             btns.forEach((btn, i) => {
                 if (i === index) {
@@ -317,40 +388,34 @@
                 }
             });
             
-            // Hacer scroll en el contenedor de miniaturas para que la activa sea visible
             const container = document.getElementById('thumbnails-container');
             if(btns[index]) {
                btns[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             }
         }
 
-        // Navegar en la imagen principal con las flechas
         function navigateMainImage(e, direction) {
-            if (e && e.stopPropagation) e.stopPropagation(); // Evitar que se abra el lightbox
+            if (e && e.stopPropagation) e.stopPropagation();
+            if(galleryImages.length === 0) return;
+            
             let newIndex = currentImageIndex + direction;
             if (newIndex < 0) newIndex = galleryImages.length - 1;
             if (newIndex >= galleryImages.length) newIndex = 0;
             changeMainImage(newIndex);
         }
 
-        // --- Funciones del Lightbox (Zoom de imágenes) ---
         function openLightbox(e) {
-            if (isSwipingMain) return; // Evitar abrir si el usuario estaba deslizando
+            if (isSwipingMain || galleryImages.length === 0) return;
 
             const lightbox = document.getElementById('lightbox');
-            
-            // Setear la imagen actual
             document.getElementById('lightbox-img').src = galleryImages[currentImageIndex];
             document.getElementById('lightbox-counter').innerText = currentImageIndex + 1;
             
-            // Mostrar modal
             lightbox.classList.remove('hidden');
             lightbox.classList.add('flex');
-            
-            // Timeout pequeño para animar opacidad (fade-in)
             setTimeout(() => lightbox.classList.remove('opacity-0'), 10);
             
-            document.body.style.overflow = 'hidden'; // Evitar scroll de la página de fondo
+            document.body.style.overflow = 'hidden';
             resetZoom();
         }
 
@@ -365,20 +430,19 @@
         }
 
         function navigateLightbox(dir) {
+            if(galleryImages.length === 0) return;
             currentImageIndex += dir;
-            // Ciclo infinito
             if (currentImageIndex < 0) currentImageIndex = galleryImages.length - 1;
             if (currentImageIndex >= galleryImages.length) currentImageIndex = 0;
             
             document.getElementById('lightbox-img').src = galleryImages[currentImageIndex];
             document.getElementById('lightbox-counter').innerText = currentImageIndex + 1;
             
-            // Sincronizar galería principal por debajo
             changeMainImage(currentImageIndex);
             resetZoom();
         }
 
-        // --- Lógica de Swipe para la Imagen Principal (Móviles) ---
+        // Swipe Principal
         const mainImageContainer = document.getElementById('main-image-container');
         let mainTouchStartX = 0;
         let isSwipingMain = false;
@@ -391,45 +455,24 @@
 
             mainImageContainer.addEventListener('touchmove', (e) => {
                 let currentX = e.changedTouches[0].screenX;
-                // Si el dedo se mueve horizontalmente, es un swipe (evita clics accidentales)
-                if (Math.abs(currentX - mainTouchStartX) > 15) {
-                    isSwipingMain = true;
-                }
+                if (Math.abs(currentX - mainTouchStartX) > 15) isSwipingMain = true;
             }, {passive: true});
 
             mainImageContainer.addEventListener('touchend', (e) => {
                 let mainTouchEndX = e.changedTouches[0].screenX;
-                const threshold = 40; // Distancia mínima para el swipe
-
-                if (mainTouchStartX - mainTouchEndX > threshold) {
-                    // Swipe Izquierda (Siguiente)
-                    navigateMainImage(null, 1);
-                } else if (mainTouchEndX - mainTouchStartX > threshold) {
-                    // Swipe Derecha (Anterior)
-                    navigateMainImage(null, -1);
-                }
-                
-                // Limpiar flag después del clic automático de touchend
+                const threshold = 40;
+                if (mainTouchStartX - mainTouchEndX > threshold) navigateMainImage(null, 1);
+                else if (mainTouchEndX - mainTouchStartX > threshold) navigateMainImage(null, -1);
                 setTimeout(() => { isSwipingMain = false; }, 50);
             });
         }
 
-        // --- Lógica de Zoom y Gestos (Pinch-to-zoom para móviles) ---
-        let currentScale = 1;
-        let touchStartDist = 0;
-        let initialScale = 1;
-        let isPinching = false;
-        let isDragging = false;
-        let startX = 0, startY = 0;
-        let translateX = 0, translateY = 0;
-
-        // Variables para Swipe dentro del Lightbox
-        let lbSwipeStartX = 0;
-        let isLbSwiping = false;
+        // Lógica Zoom
+        let currentScale = 1, touchStartDist = 0, initialScale = 1, isPinching = false, isDragging = false;
+        let startX = 0, startY = 0, translateX = 0, translateY = 0, lbSwipeStartX = 0, isLbSwiping = false;
 
         function toggleZoom(e) {
             e.stopPropagation(); 
-            // En celulares, ignorar el zoom con "un clic" para forzar al usuario a usar los dos dedos (pinch)
             if (e.pointerType === 'touch') return;
             
             const img = document.getElementById('lightbox-img');
@@ -439,12 +482,9 @@
             if (isZoomed) {
                 currentScale = 2.5;
                 img.classList.replace('cursor-zoom-in', 'cursor-zoom-out');
-                
-                // Ocultar texto de ayuda
                 if(hint) hint.classList.add('opacity-0');
                 if(hint) hint.classList.remove('group-hover:opacity-100');
                 
-                // Calcular origen basado estrictamente en el marco de la imagen (Solo PC)
                 const rect = img.getBoundingClientRect();
                 const x = ((e.clientX - rect.left) / rect.width) * 100;
                 const y = ((e.clientY - rect.top) / rect.height) * 100;
@@ -476,50 +516,34 @@
             }
         }
 
-        // Escuchar gestos en pantallas táctiles
         const lightboxImgNode = document.getElementById('lightbox-img');
-
         lightboxImgNode.addEventListener('touchstart', (e) => {
             if (e.touches.length === 2) {
-                isPinching = true;
-                isDragging = false;
-                isLbSwiping = false;
-                touchStartDist = Math.hypot(
-                    e.touches[0].clientX - e.touches[1].clientX,
-                    e.touches[0].clientY - e.touches[1].clientY
-                );
+                isPinching = true; isDragging = false; isLbSwiping = false;
+                touchStartDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
                 initialScale = currentScale;
-                lightboxImgNode.style.transition = 'none'; // Quitar transición para que siga a los dedos
+                lightboxImgNode.style.transition = 'none';
             } else if (e.touches.length === 1) {
                 if (currentScale > 1) {
-                    isDragging = true;
-                    isPinching = false;
-                    isLbSwiping = false;
+                    isDragging = true; isPinching = false; isLbSwiping = false;
                     startX = e.touches[0].clientX - translateX;
                     startY = e.touches[0].clientY - translateY;
                     lightboxImgNode.style.transition = 'none';
                 } else {
-                    // Estado normal (scale 1), listo para swipe
-                    isLbSwiping = true;
-                    lbSwipeStartX = e.touches[0].clientX;
+                    isLbSwiping = true; lbSwipeStartX = e.touches[0].clientX;
                 }
             }
         });
 
         lightboxImgNode.addEventListener('touchmove', (e) => {
             if (isPinching && e.touches.length === 2) {
-                e.preventDefault(); // Impide comportamientos no deseados
-                const currentDist = Math.hypot(
-                    e.touches[0].clientX - e.touches[1].clientX,
-                    e.touches[0].clientY - e.touches[1].clientY
-                );
+                e.preventDefault();
+                const currentDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
                 currentScale = Math.min(Math.max(1, initialScale * (currentDist / touchStartDist)), 4);
                 lightboxImgNode.style.transformOrigin = 'center center';
                 lightboxImgNode.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
-                
                 const hint = document.getElementById('zoom-hint');
                 if(hint) hint.classList.add('opacity-0');
-                
             } else if (isDragging && e.touches.length === 1) {
                 e.preventDefault();
                 translateX = e.touches[0].clientX - startX;
@@ -529,29 +553,20 @@
         });
 
         lightboxImgNode.addEventListener('touchend', (e) => {
-            // Lógica de Swipe en Lightbox para cambiar imagen
             if (isLbSwiping && e.changedTouches.length === 1 && currentScale === 1) {
                 let lbSwipeEndX = e.changedTouches[0].clientX;
                 const threshold = 40;
-                if (lbSwipeStartX - lbSwipeEndX > threshold) {
-                    navigateLightbox(1);
-                } else if (lbSwipeEndX - lbSwipeStartX > threshold) {
-                    navigateLightbox(-1);
-                }
+                if (lbSwipeStartX - lbSwipeEndX > threshold) navigateLightbox(1);
+                else if (lbSwipeEndX - lbSwipeStartX > threshold) navigateLightbox(-1);
                 isLbSwiping = false;
             }
-
             if (e.touches.length < 2) isPinching = false;
             if (e.touches.length === 0) isDragging = false;
             
-            lightboxImgNode.style.transition = 'transform 0.3s ease-out'; // Regresar transición suave
-            
-            if (currentScale <= 1) {
-                resetZoom();
-            }
+            lightboxImgNode.style.transition = 'transform 0.3s ease-out';
+            if (currentScale <= 1) resetZoom();
         });
 
-        // Navegación por teclado en el Lightbox
         document.addEventListener('keydown', (e) => {
             const lightbox = document.getElementById('lightbox');
             if (!lightbox.classList.contains('hidden')) {
@@ -561,14 +576,12 @@
             }
         });
 
-        // Actualizar Cantidad
+        // Controles de cantidad
         function updateQty(change) {
             const input = document.getElementById('qty-input');
             let current = parseInt(input.value) || 1;
             let newVal = current + change;
-            if (newVal >= 1) {
-                input.value = newVal;
-            }
+            if (newVal >= 1) input.value = newVal;
         }
 
         // --- Lógica de Compra Directa por WhatsApp ---
@@ -579,11 +592,9 @@
                 const sku = buyNowBtn.dataset.sku;
                 const price = parseFloat(buyNowBtn.dataset.price);
                 
-                // Obtener la cantidad actual del selector
                 const qtyInput = document.getElementById('qty-input');
                 const qty = parseInt(qtyInput ? qtyInput.value : 1);
                 const url = window.location.href;
-                
                 const total = price * qty;
                 
                 let message = "¡Hola Arelyshop! 👋 Quiero finalizar mi pedido:\n\n";
