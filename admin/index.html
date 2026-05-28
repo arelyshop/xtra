@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Administración - Arelyshop</title>
+    <title>Panel de Administración</title>
     <!-- Tailwind CSS (CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Iconos Lucide -->
@@ -35,100 +35,84 @@
         .bg-red-50 { background-color: rgba(127, 29, 29, 0.4) !important; border-color: rgba(248, 113, 113, 0.2) !important; color: #f87171 !important; }
         .text-red-800 { color: #f87171 !important; }
         
+        /* Cajas dinámicas de URL generadas por JS */
         .single-url-wrapper input { background-color: #111827 !important; border-color: #4b5563 !important; color: #f9fafb !important; }
         .single-url-wrapper button.save-single-url-btn { background-color: #4f46e5 !important; }
         .single-url-wrapper button.save-single-url-btn:hover { background-color: #4338ca !important; }
         
+        /* Items de imágenes ordenables generados por JS */
         #image-sortable-list > div { background-color: #1f2937 !important; border-color: #374151 !important; }
         #image-sortable-list > div p { color: #d1d5db !important; }
         #image-sortable-list > div img { background-color: #111827 !important; border-color: #374151 !important; }
-
-        /* Scrollbar personalizado para la lista de productos */
-        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #1f2937; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #6b7280; }
     </style>
 </head>
 <body class="bg-gray-900 font-sans text-gray-300 min-h-screen flex flex-col">
 
     <!-- Header Principal -->
     <header class="bg-gray-800 border-b border-gray-700 sticky top-0 z-40 shadow-sm">
-        <div class="max-w-[1400px] mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <img src="/images/logo-escritorio.svg" alt="Arelyshop Logo" class="h-8 md:h-10" onerror="this.onerror=null; this.src='https://placehold.co/120x40/1f2937/ffffff?text=Arelyshop';">
                 <span class="text-xl font-bold text-white hidden sm:block">Arelyshop <span class="text-indigo-400 font-medium text-sm ml-1">Admin</span></span>
+            </div>
+            <div class="flex items-center gap-4">
+                <div class="hidden md:block text-right">
+                    <p class="text-sm font-semibold text-white">Administrador</p>
+                    <p class="text-xs text-gray-400">Panel de Control</p>
+                </div>
+                <div class="bg-gray-900 rounded-full p-2 border border-gray-700 text-gray-400">
+                    <i data-lucide="user" class="h-5 w-5"></i>
+                </div>
             </div>
         </div>
     </header>
 
     <!-- Contenido Principal -->
-    <main class="flex-grow p-4 md:p-6 pb-12">
-        <div class="max-w-[1400px] mx-auto">
-            
+    <main class="flex-grow p-4 md:p-8 pb-12">
+        <div class="max-w-5xl mx-auto">
+            <!-- Título de Sección -->
+            <div class="mb-8 flex items-center gap-3">
+                <div class="bg-gray-800 p-2 rounded-lg border border-gray-700">
+                    <i data-lucide="package" class="h-7 w-7 text-indigo-400"></i>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-white">Gestión de Productos</h1>
+                    <p class="text-gray-400 mt-1">Registra nuevos productos en el catálogo</p>
+                </div>
+            </div>
+
             <!-- Alertas -->
             <div id="alertBox" class="hidden mb-6 p-4 rounded-lg flex items-center gap-3 border transition-all">
                 <i id="alertIcon" data-lucide="info" class="h-5 w-5"></i>
                 <p id="alertMessage" class="font-medium"></p>
             </div>
 
-            <!-- Grid Layout: Lista Izquierda / Formulario Derecha -->
-            <div class="flex flex-col lg:flex-row gap-6">
-                
-                <!-- PANEL IZQUIERDO: Lista de Productos -->
-                <div id="product-list-container" class="w-full lg:w-1/3 bg-gray-800 p-5 rounded-xl border border-gray-700 flex flex-col h-[85vh]">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-xl font-bold text-white flex items-center gap-2">
-                            <i data-lucide="list" class="h-5 w-5 text-indigo-400"></i> Inventario
-                        </h2>
-                        <button id="new-product-btn" class="text-xs bg-indigo-600 text-white font-bold py-2 px-3 rounded-lg hover:bg-indigo-700 transition-colors">
-                            + Nuevo
-                        </button>
-                    </div>
+            <!-- Formulario Principal -->
+            <form id="productForm" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     
-                    <!-- Buscador -->
-                    <div class="relative mb-4">
-                        <i data-lucide="search" class="absolute left-3 top-2.5 h-4 w-4 text-gray-500"></i>
-                        <input type="text" id="search-product-input" placeholder="Buscar por nombre o código..." class="w-full pl-9 pr-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm placeholder-gray-500">
-                    </div>
-                    
-                    <!-- Lista Dinámica -->
-                    <div id="product-list" class="flex-grow overflow-y-auto custom-scrollbar pr-2 space-y-2">
-                        <p class="text-gray-400 text-sm text-center py-4">Cargando productos...</p>
-                    </div>
-                </div>
-
-                <!-- PANEL DERECHO: Formulario -->
-                <div id="product-form-container" class="w-full lg:w-2/3 bg-gray-800 p-6 rounded-xl border border-gray-700 hidden lg:block overflow-y-auto custom-scrollbar h-[85vh]">
-                    <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-4">
-                        <h2 id="form-title" class="text-2xl font-bold text-white flex items-center gap-2">
-                            <i data-lucide="package-plus" class="h-6 w-6 text-indigo-400"></i> Agregar Nuevo Producto
-                        </h2>
-                        <button type="button" id="back-to-list-btn" class="lg:hidden text-sm bg-gray-700 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors">
-                            &larr; Volver
-                        </button>
-                    </div>
-
-                    <form id="productForm" class="space-y-6">
-                        <!-- ID OCULTO PARA EDICIÓN -->
-                        <input type="hidden" id="productId" name="id">
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Columna Izquierda (Info Principal) -->
+                    <div class="md:col-span-2 space-y-6">
+                        
+                        <!-- Información Básica -->
+                        <div class="bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700">
+                            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 border-b border-gray-700 pb-2 text-white">
+                                <i data-lucide="info" class="h-5 w-5 text-gray-400"></i> Información Básica
+                            </h2>
                             
-                            <!-- Columna 1 del Formulario -->
-                            <div class="space-y-5">
+                            <div class="space-y-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-300 mb-1">Título del Producto *</label>
-                                    <input required type="text" id="title" name="title" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500">
+                                    <input required type="text" id="name" name="title" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-colors placeholder-gray-500" placeholder="Ej. Zapatillas Deportivas">
                                 </div>
-                                <div class="grid grid-cols-2 gap-4">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <label class="block text-sm font-medium text-gray-300 mb-1">Categoría *</label>
-                                        <input required type="text" id="category" name="category" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                                        <input required type="text" name="category" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. Electrónica">
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-300 mb-1">Marca *</label>
-                                        <input required type="text" id="brand" name="brand" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                                        <input required type="text" id="brand" name="brand" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. Nike">
                                     </div>
                                 </div>
 
@@ -137,114 +121,168 @@
                                     <label class="block text-sm font-medium text-gray-300 mb-1">Descripción *</label>
                                     <div class="border border-gray-600 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 transition-colors bg-gray-900">
                                         <div class="bg-gray-800 border-b border-gray-700 p-1.5 flex flex-wrap gap-1 items-center">
-                                            <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300" data-command="bold"><i data-lucide="bold" class="h-4 w-4"></i></button>
-                                            <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300" data-command="italic"><i data-lucide="italic" class="h-4 w-4"></i></button>
+                                            <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300 transition-colors" data-command="bold" title="Negrita"><i data-lucide="bold" class="h-4 w-4"></i></button>
+                                            <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300 transition-colors" data-command="italic" title="Cursiva"><i data-lucide="italic" class="h-4 w-4"></i></button>
                                             <div class="w-px h-5 bg-gray-700 mx-1"></div>
-                                            <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300" data-command="formatBlock" data-value="H1"><i data-lucide="heading-1" class="h-4 w-4"></i></button>
-                                            <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300" data-command="formatBlock" data-value="H2"><i data-lucide="heading-2" class="h-4 w-4"></i></button>
+                                            <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300 transition-colors" data-command="formatBlock" data-value="H1" title="Título Principal"><i data-lucide="heading-1" class="h-4 w-4"></i></button>
+                                            <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300 transition-colors" data-command="formatBlock" data-value="H2" title="Subtítulo"><i data-lucide="heading-2" class="h-4 w-4"></i></button>
                                             <div class="w-px h-5 bg-gray-700 mx-1"></div>
-                                            <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300" data-command="insertUnorderedList"><i data-lucide="list" class="h-4 w-4"></i></button>
-                                            <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300" data-command="insertOrderedList"><i data-lucide="list-ordered" class="h-4 w-4"></i></button>
+                                            <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300 transition-colors" data-command="insertUnorderedList" title="Lista de viñetas"><i data-lucide="list" class="h-4 w-4"></i></button>
+                                            <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300 transition-colors" data-command="insertOrderedList" title="Lista numerada"><i data-lucide="list-ordered" class="h-4 w-4"></i></button>
                                         </div>
-                                        <div id="descriptionEditor" contenteditable="true" class="w-full min-h-[120px] max-h-[300px] overflow-y-auto p-4 outline-none text-sm text-gray-200"></div>
+                                        <div id="descriptionEditor" contenteditable="true" class="w-full min-h-[150px] max-h-[400px] overflow-y-auto p-4 outline-none text-sm text-gray-200" placeholder="Escribe la descripción aquí..."></div>
                                     </div>
                                 </div>
 
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div><label class="block text-sm font-medium text-gray-300 mb-1">GTIN</label><input type="text" id="gtin" name="gtin" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"></div>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-300 mb-1">Código (Barcode)</label>
+                                        <label class="block text-sm font-medium text-gray-300 mb-1">GTIN</label>
+                                        <input type="text" id="gtin" name="gtin" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. 012345678905">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-1">Código de Barras (Barcode)</label>
                                         <div class="flex items-center space-x-2">
-                                            <input type="text" id="barcode" name="barcode" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                                            <button type="button" id="scan-barcode-btn" class="text-sm bg-gray-700 text-white font-bold p-2.5 rounded-lg hover:bg-gray-600 border border-gray-600"><i data-lucide="scan-line" class="h-5 w-5"></i></button>
+                                            <input type="text" id="barcode" name="barcode" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. 770123456789">
+                                            <button type="button" id="scan-barcode-btn" class="text-sm bg-gray-700 text-white font-bold p-2.5 rounded-lg hover:bg-gray-600 border border-gray-600 transition-colors" title="Escanear Código">
+                                                <i data-lucide="scan-line" class="h-5 w-5"></i>
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
-                                
-                                <div class="grid grid-cols-3 gap-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-300 mb-1">Disponibilidad *</label>
-                                        <select required id="availability" name="availability" class="w-full px-3 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                                            <option value="in stock">En Stock</option><option value="out of stock">Agotado</option><option value="preorder">Pre-venta</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-300 mb-1">Condición *</label>
-                                        <select required id="condition" name="condition" class="w-full px-3 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                                            <option value="new">Nuevo</option><option value="refurbished">Reacondicionado</option><option value="used">Usado</option>
-                                        </select>
-                                    </div>
-                                    <div><label class="block text-sm font-medium text-gray-300 mb-1">Stock Face *</label><input required type="number" min="0" id="quantity_to_sell_on_facebook" name="quantity_to_sell_on_facebook" class="w-full px-3 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg outline-none"></div>
-                                </div>
                             </div>
+                        </div>
 
-                            <!-- Columna 2 del Formulario -->
+                        <!-- Enlaces e Imágenes Avanzado -->
+                        <div class="bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700">
+                            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 border-b border-gray-700 pb-2 text-white">
+                                <i data-lucide="image" class="h-5 w-5 text-gray-400"></i> Enlaces y Galería
+                            </h2>
+                            
                             <div class="space-y-5">
-                                <!-- Precios -->
-                                <div class="bg-gray-900 p-4 rounded-lg border border-gray-700 grid grid-cols-2 gap-4">
-                                    <div><label class="block text-sm font-medium text-gray-300 mb-1">Precio Normal *</label><input required type="number" step="0.01" id="price" name="price" class="w-full px-3 py-2 bg-gray-800 border border-gray-600 text-white rounded-lg outline-none" placeholder="0.00"></div>
-                                    <div><label class="block text-sm font-medium text-gray-300 mb-1">Precio Oferta</label><input type="number" step="0.01" id="sale_price" name="sale_price" class="w-full px-3 py-2 bg-gray-800 border border-gray-600 text-white rounded-lg outline-none"></div>
-                                    <div><label class="block text-sm font-medium text-gray-300 mb-1">Precio Mayorista</label><input type="number" step="0.01" id="wholesale_price" name="wholesale_price" class="w-full px-3 py-2 bg-gray-800 border border-gray-600 text-white rounded-lg outline-none"></div>
-                                    <div><label class="block text-sm font-medium text-gray-300 mb-1">Costo Producto</label><input type="number" step="0.01" id="purchase_price" name="purchase_price" class="w-full px-3 py-2 bg-gray-800 border border-gray-600 text-white rounded-lg outline-none"></div>
+                                <!-- Enlace general del producto -->
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-1">Enlace del Producto en la Tienda (URL) *</label>
+                                    <input required type="url" name="link" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="https://mi-tienda.com/producto">
                                 </div>
 
-                                <!-- Galería -->
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-1">Enlace del Producto (URL de la tienda) *</label>
-                                    <input required type="url" id="link" name="link" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none mb-4">
+                                <div class="bg-gray-900 p-4 rounded-lg border border-gray-700">
+                                    <label class="block text-base font-semibold text-white mb-3">Gestión de Fotos</label>
                                     
-                                    <div class="bg-gray-900 p-4 rounded-lg border border-gray-700">
-                                        <label class="block text-base font-semibold text-white mb-2">Fotos del Producto</label>
-                                        <div class="mb-3">
-                                            <textarea id="image-url-list" rows="1" class="w-full px-3 py-2 bg-gray-800 border border-gray-600 text-white rounded-lg outline-none text-sm placeholder-gray-500" placeholder="Pegar lista separada por coma..."></textarea>
-                                            <button type="button" id="process-urls-btn" class="mt-2 w-full bg-gray-700 text-white py-1.5 px-4 rounded-lg hover:bg-gray-600 text-sm">Agregar desde Lista</button>
+                                    <!-- Lista separada por comas -->
+                                    <div class="mb-4">
+                                        <label for="image-url-list" class="block text-xs font-medium text-gray-400 mb-1">Pegar lista de URLs (separadas por coma)</label>
+                                        <textarea id="image-url-list" rows="2" class="w-full px-3 py-2 bg-gray-800 border border-gray-600 text-white rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm placeholder-gray-500" placeholder="https://.../img1.jpg, https://.../img2.jpg"></textarea>
+                                        <button type="button" id="process-urls-btn" class="mt-2 w-full bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors text-sm">
+                                            Agregar Fotos desde Lista
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Entradas individuales (Se inyectan desde script.js) -->
+                                    <div class="mb-4">
+                                        <label class="block text-xs font-medium text-gray-400 mb-1">Agregar URL individualmente</label>
+                                        <div id="single-image-inputs-container" class="space-y-2">
+                                            <!-- Inputs dinámicos -->
                                         </div>
-                                        <div class="mb-3">
-                                            <div id="single-image-inputs-container" class="space-y-2"></div>
-                                            <button type="button" id="add-single-url-field-btn" class="mt-2 text-sm text-indigo-400 py-1.5 px-2 rounded-lg hover:bg-gray-800 w-full border border-dashed border-gray-600">+ Agregar URL individual</button>
+                                        <button type="button" id="add-single-url-field-btn" class="mt-2 text-sm text-indigo-400 font-semibold py-2 px-2 rounded-lg hover:bg-gray-800 transition-colors w-full border border-dashed border-gray-600">
+                                            + Agregar campo para otra URL
+                                        </button>
+                                    </div>
+
+                                    <!-- Lista ordenable (Se inyecta y reordena desde script.js) -->
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-400 mb-2">Fotos actuales (Arrastra para reordenar)</label>
+                                        <div id="image-sortable-list" class="space-y-2 min-h-[60px] p-3 bg-gray-800 border border-gray-600 border-dashed rounded-lg">
+                                            <!-- Imágenes inyectadas aquí -->
                                         </div>
-                                        <div>
-                                            <div id="image-sortable-list" class="space-y-2 min-h-[60px] p-2 bg-gray-800 border border-gray-600 border-dashed rounded-lg"></div>
-                                            <p class="text-xs text-gray-400 mt-2">* La foto <b class="text-indigo-400">1.</b> es la Principal.</p>
-                                        </div>
+                                        <p class="text-xs text-gray-400 mt-2">
+                                            * La imagen en la posición <b class="text-indigo-400">1.</b> será la Imagen Principal. Las demás serán opcionales (máximo 8 en total).
+                                        </p>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Botones de Acción -->
-                        <div class="pt-4 border-t border-gray-700 flex flex-col sm:flex-row gap-4">
-                            <button type="submit" id="submitBtn" class="flex-1 flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl shadow-md transition-all">
-                                <i data-lucide="save" id="btnIcon" class="h-5 w-5"></i>
-                                <span id="btnText">Guardar Producto</span>
-                            </button>
-                            <button type="button" id="deleteBtn" class="hidden flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all">
-                                <i data-lucide="trash-2" class="h-5 w-5"></i> Eliminar
-                            </button>
+                    </div>
+
+                    <!-- Columna Derecha (Precios y Stock) -->
+                    <div class="space-y-6">
+                        
+                        <div class="bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700">
+                            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 border-b border-gray-700 pb-2 text-white"><i data-lucide="dollar-sign" class="h-5 w-5 text-gray-400"></i> Precios</h2>
+                            <div class="space-y-4">
+                                <div><label class="block text-sm font-medium text-gray-300 mb-1">Precio Normal (price) *</label><input required type="number" step="0.01" name="price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="0.00"></div>
+                                <div><label class="block text-sm font-medium text-gray-300 mb-1">Precio de Oferta (sale_price)</label><input type="number" step="0.01" name="sale_price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Opcional"></div>
+                                <div><label class="block text-sm font-medium text-gray-300 mb-1">Precio Mayorista (wholesale_price)</label><input type="number" step="0.01" name="wholesale_price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Opcional"></div>
+                                <div><label class="block text-sm font-medium text-gray-300 mb-1">Costo de Producto (purchase_price)</label><input type="number" step="0.01" name="purchase_price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Opcional"></div>
+                            </div>
                         </div>
-                    </form>
+
+                        <div class="bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700">
+                            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 border-b border-gray-700 pb-2 text-white"><i data-lucide="box" class="h-5 w-5 text-gray-400"></i> Inventario</h2>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-1">Disponibilidad *</label>
+                                    <select required name="availability" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                                        <option value="in stock">En Stock</option>
+                                        <option value="out of stock">Agotado</option>
+                                        <option value="preorder">Pre-venta</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-1">Condición *</label>
+                                    <select required name="condition" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                                        <option value="new">Nuevo</option>
+                                        <option value="refurbished">Reacondicionado</option>
+                                        <option value="used">Usado</option>
+                                    </select>
+                                </div>
+                                <div><label class="block text-sm font-medium text-gray-300 mb-1">Stock para Facebook *</label><input required type="number" min="0" name="quantity_to_sell_on_facebook" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. 50"></div>
+                            </div>
+                        </div>
+
+                        <!-- Botón Enviar -->
+                        <button type="submit" id="submitBtn" class="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 px-4 rounded-xl shadow-md transition-all disabled:opacity-70 text-lg mt-4">
+                            <i data-lucide="save" id="btnIcon" class="h-6 w-6"></i>
+                            <span id="btnText">Guardar Producto</span>
+                        </button>
+
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </main>
 
-    <!-- Modales (Escáner y Preview) -->
-    <!-- ... Se mantienen igual, los incluyo para completitud ... -->
+    <!-- Footer -->
+    <footer class="bg-gray-800 border-t border-gray-700 py-6 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <img src="/images/logo-escritorio.svg" alt="Arelyshop Logo" class="h-6 opacity-75 grayscale">
+                <span class="text-gray-400 font-semibold">Arelyshop</span>
+            </div>
+            <p class="text-gray-500 text-sm">
+                &copy; <script>document.write(new Date().getFullYear())</script> Todos los derechos reservados.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Modal para Vista Previa de Imágenes -->
+    <div id="image-preview-modal" class="fixed inset-0 bg-gray-950 bg-opacity-80 flex items-center justify-center hidden z-50 p-4 transition-opacity duration-300 backdrop-blur-sm">
+        <div class="relative bg-gray-800 p-2 rounded-xl shadow-2xl max-w-4xl max-h-[90vh] border border-gray-700">
+            <button id="close-preview-btn" class="absolute -top-4 -right-4 bg-red-600 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl font-bold hover:bg-red-700 shadow-lg">&times;</button>
+            <img id="preview-image" src="" alt="Vista previa" class="max-w-full max-h-[85vh] object-contain rounded-lg">
+        </div>
+    </div>
+
+    <!-- Barcode Scanner Modal -->
     <div id="scanner-container" class="fixed inset-0 bg-black bg-opacity-75 flex-col items-center justify-center hidden z-50 p-4 backdrop-blur-sm">
         <div class="bg-gray-800 p-6 rounded-xl shadow-2xl w-full max-w-md border border-gray-700">
-            <h3 class="text-xl font-bold mb-4 text-center text-white">Escanear Código</h3>
+            <h3 class="text-xl font-bold mb-4 text-center text-white">Escanear Código de Barras</h3>
             <div id="reader" class="w-full bg-black rounded-lg overflow-hidden"></div>
             <button type="button" id="close-scanner-btn" class="w-full mt-4 bg-red-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-red-700 transition-colors">Cancelar</button>
         </div>
     </div>
 
-    <div id="image-preview-modal" class="fixed inset-0 bg-gray-950 bg-opacity-80 flex items-center justify-center hidden z-50 p-4 backdrop-blur-sm">
-        <div class="relative bg-gray-800 p-2 rounded-xl shadow-2xl max-w-4xl max-h-[90vh] border border-gray-700">
-            <button id="close-preview-btn" class="absolute -top-4 -right-4 bg-red-600 text-white rounded-full w-10 h-10 flex items-center justify-center text-xl font-bold hover:bg-red-700 shadow-lg">&times;</button>
-            <img id="preview-image" src="" alt="Preview" class="max-w-full max-h-[85vh] object-contain rounded-lg">
-        </div>
-    </div>
-
+    <!-- Enlace al archivo JavaScript -->
     <script src="./script.js"></script>
 </body>
 </html>
