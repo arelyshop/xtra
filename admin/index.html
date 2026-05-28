@@ -46,297 +46,339 @@
         #image-sortable-list > div img { background-color: #111827 !important; border-color: #374151 !important; }
     </style>
 </head>
-<body class="bg-gray-900 font-sans text-gray-300 min-h-screen flex flex-col">
+<body class="bg-gray-900 font-sans text-gray-300 min-h-screen">
 
-    <!-- Header Principal -->
-    <header class="bg-gray-800 border-b border-gray-700 sticky top-0 z-40 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <img src="/images/logo-escritorio.svg" alt="Arelyshop Logo" class="h-8 md:h-10" onerror="this.onerror=null; this.src='https://placehold.co/120x40/1f2937/ffffff?text=Arelyshop';">
-                <span class="text-xl font-bold text-white hidden sm:block">Arelyshop <span class="text-indigo-400 font-medium text-sm ml-1">Admin</span></span>
+    <!-- ========================================== -->
+    <!-- PANTALLA DE LOGIN -->
+    <!-- ========================================== -->
+    <div id="login-container" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-950 px-4 transition-opacity duration-300">
+        <div class="bg-gray-800 p-8 rounded-2xl shadow-2xl w-full max-w-md border border-gray-700">
+            <div class="text-center mb-8">
+                <img src="/images/logo-escritorio.svg" alt="Arelyshop" class="h-12 mx-auto mb-4" onerror="this.onerror=null; this.src='https://placehold.co/150x50/1f2937/ffffff?text=Arelyshop';">
+                <h2 class="text-2xl font-bold text-white">Iniciar Sesión</h2>
+                <p class="text-gray-400 text-sm mt-2">Ingresa tus credenciales para administrar</p>
             </div>
-            <div class="flex items-center gap-4">
-                <!-- Botón de Refrescar -->
-                <button type="button" id="refresh-db-btn" class="flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-indigo-400 hover:text-indigo-300 p-2 rounded-full border border-gray-700 hover:border-indigo-500/50 transition-all shadow-sm" title="Sincronizar Base de Datos">
-                    <i data-lucide="refresh-cw" id="refresh-db-icon" class="h-5 w-5"></i>
-                </button>
-                <div class="w-px h-6 bg-gray-700 hidden sm:block"></div>
-                
-                <div class="hidden md:block text-right">
-                    <p class="text-sm font-semibold text-white">Administrador</p>
-                    <p class="text-xs text-gray-400">Panel de Control</p>
-                </div>
-                <div class="bg-gray-900 rounded-full p-2 border border-gray-700 text-gray-400">
-                    <i data-lucide="user" class="h-5 w-5"></i>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Pestañas de Navegación -->
-        <div class="max-w-5xl mx-auto px-4 mt-2 flex gap-6">
-            <button id="tab-add" class="pb-3 border-b-2 border-indigo-500 text-indigo-400 font-semibold flex items-center gap-2 transition-colors">
-                <i data-lucide="plus-circle" class="w-5 h-5"></i> <span id="tab-add-text">Nuevo Producto</span>
-            </button>
-            <button id="tab-list" class="pb-3 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-semibold flex items-center gap-2 transition-colors">
-                <i data-lucide="list" class="w-5 h-5"></i> Inventario
-            </button>
-        </div>
-    </header>
-
-    <!-- Contenido Principal -->
-    <main class="flex-grow p-4 md:p-8 pb-12">
-        <div class="max-w-5xl mx-auto">
             
-            <!-- Alertas Generales -->
-            <div id="alertBox" class="hidden mb-6 p-4 rounded-lg flex items-center gap-3 border transition-all">
-                <i id="alertIcon" data-lucide="info" class="h-5 w-5"></i>
-                <p id="alertMessage" class="font-medium"></p>
-            </div>
+            <form id="loginForm" class="space-y-5">
+                <div id="loginAlert" class="hidden p-3 rounded-lg bg-red-900/50 border border-red-700 text-red-300 text-sm flex items-center gap-2">
+                    <i data-lucide="alert-circle" class="w-5 h-5 flex-shrink-0"></i>
+                    <span id="loginAlertMessage">Credenciales incorrectas</span>
+                </div>
 
-            <!-- ========================================== -->
-            <!-- VISTA: FORMULARIO (NUEVO / EDITAR) -->
-            <!-- ========================================== -->
-            <div id="view-add-product" class="block">
-                <!-- Título de Sección -->
-                <div class="mb-8 flex items-center gap-3">
-                    <div class="bg-gray-800 p-2 rounded-lg border border-gray-700">
-                        <i data-lucide="package" id="form-header-icon" class="h-7 w-7 text-indigo-400"></i>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-1">Usuario</label>
+                    <input type="text" id="loginUsername" required autocomplete="username" class="w-full px-4 py-3 bg-gray-900 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500 transition-shadow">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-300 mb-1">Contraseña</label>
+                    <input type="password" id="loginPassword" required autocomplete="current-password" class="w-full px-4 py-3 bg-gray-900 border border-gray-600 text-white rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500 transition-shadow">
+                </div>
+                
+                <button type="submit" id="loginSubmitBtn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all flex justify-center items-center gap-2 mt-4">
+                    <i data-lucide="log-in" id="loginBtnIcon" class="w-5 h-5"></i>
+                    <span id="loginBtnText">Ingresar al Panel</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- ========================================== -->
+    <!-- CONTENEDOR PRINCIPAL DE LA APP (Oculto al inicio) -->
+    <!-- ========================================== -->
+    <div id="app-container" class="hidden flex-col min-h-screen">
+        
+        <!-- Header Principal -->
+        <header class="bg-gray-800 border-b border-gray-700 sticky top-0 z-40 shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <img src="/images/logo-escritorio.svg" alt="Arelyshop Logo" class="h-8 md:h-10" onerror="this.onerror=null; this.src='https://placehold.co/120x40/1f2937/ffffff?text=Arelyshop';">
+                    <span class="text-xl font-bold text-white hidden sm:block">Arelyshop <span class="text-indigo-400 font-medium text-sm ml-1">Admin</span></span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <!-- Botón de Refrescar -->
+                    <button type="button" id="refresh-db-btn" class="flex items-center justify-center bg-gray-800 hover:bg-gray-700 text-indigo-400 hover:text-indigo-300 p-2 rounded-full border border-gray-700 hover:border-indigo-500/50 transition-all shadow-sm" title="Sincronizar Base de Datos">
+                        <i data-lucide="refresh-cw" id="refresh-db-icon" class="h-5 w-5"></i>
+                    </button>
+                    <div class="w-px h-6 bg-gray-700 hidden sm:block"></div>
+                    
+                    <!-- Usuario y Logout -->
+                    <div class="hidden md:block text-right">
+                        <p class="text-sm font-semibold text-white capitalize" id="display-username">Administrador</p>
+                        <p class="text-xs text-gray-400">Panel de Control</p>
                     </div>
-                    <div>
-                        <h1 class="text-3xl font-bold text-white" id="form-header-title">Gestión de Productos</h1>
-                        <p class="text-gray-400 mt-1" id="form-header-subtitle">Registra nuevos productos en el catálogo</p>
-                    </div>
-                    <!-- Botón para cancelar edición -->
-                    <button type="button" id="cancelEditBtn" class="ml-auto hidden bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
-                        <i data-lucide="x-circle" class="w-4 h-4"></i> Cancelar Edición
+                    <button type="button" id="logout-btn" class="bg-gray-800 hover:bg-red-900/50 hover:border-red-500/50 text-gray-400 hover:text-red-400 rounded-full p-2 border border-gray-700 transition-colors shadow-sm" title="Cerrar Sesión">
+                        <i data-lucide="log-out" class="h-5 w-5"></i>
                     </button>
                 </div>
-
-                <form id="productForm" class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        
-                        <!-- Columna Izquierda (Info Principal) -->
-                        <div class="md:col-span-2 space-y-6">
-                            
-                            <!-- Información Básica -->
-                            <div class="bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700">
-                                <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 border-b border-gray-700 pb-2 text-white">
-                                    <i data-lucide="info" class="h-5 w-5 text-gray-400"></i> Información Básica
-                                </h2>
-                                
-                                <div class="space-y-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-300 mb-1">Título del Producto *</label>
-                                        <input required type="text" id="name" name="title" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-colors placeholder-gray-500" placeholder="Ej. Zapatillas Deportivas">
-                                    </div>
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-300 mb-1">Categoría *</label>
-                                            <input required type="text" name="category" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. Electrónica">
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-300 mb-1">Marca *</label>
-                                            <input required type="text" id="brand" name="brand" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. Nike">
-                                        </div>
-                                    </div>
-
-                                    <!-- Editor WYSIWYG -->
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-300 mb-1">Descripción *</label>
-                                        <div class="border border-gray-600 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 transition-colors bg-gray-900">
-                                            <div class="bg-gray-800 border-b border-gray-700 p-1.5 flex flex-wrap gap-1 items-center">
-                                                <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300 transition-colors" data-command="bold" title="Negrita"><i data-lucide="bold" class="h-4 w-4"></i></button>
-                                                <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300 transition-colors" data-command="italic" title="Cursiva"><i data-lucide="italic" class="h-4 w-4"></i></button>
-                                                <div class="w-px h-5 bg-gray-700 mx-1"></div>
-                                                <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300 transition-colors" data-command="formatBlock" data-value="H1" title="Título Principal"><i data-lucide="heading-1" class="h-4 w-4"></i></button>
-                                                <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300 transition-colors" data-command="formatBlock" data-value="H2" title="Subtítulo"><i data-lucide="heading-2" class="h-4 w-4"></i></button>
-                                                <div class="w-px h-5 bg-gray-700 mx-1"></div>
-                                                <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300 transition-colors" data-command="insertUnorderedList" title="Lista de viñetas"><i data-lucide="list" class="h-4 w-4"></i></button>
-                                                <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300 transition-colors" data-command="insertOrderedList" title="Lista numerada"><i data-lucide="list-ordered" class="h-4 w-4"></i></button>
-                                            </div>
-                                            <div id="descriptionEditor" contenteditable="true" class="w-full min-h-[150px] max-h-[400px] overflow-y-auto p-4 outline-none text-sm text-gray-200" placeholder="Escribe la descripción aquí..."></div>
-                                        </div>
-                                    </div>
-
-                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-300 mb-1">GTIN</label>
-                                            <input type="text" id="gtin" name="gtin" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. 012345678905">
-                                        </div>
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-300 mb-1">Código de Barras (Barcode)</label>
-                                            <div class="flex items-center space-x-2">
-                                                <input type="text" id="barcode" name="barcode" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. 770123456789">
-                                                <button type="button" id="scan-barcode-btn" class="text-sm bg-gray-700 text-white font-bold p-2.5 rounded-lg hover:bg-gray-600 border border-gray-600 transition-colors" title="Escanear Código">
-                                                    <i data-lucide="scan-line" class="h-5 w-5"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Enlaces e Imágenes Avanzado -->
-                            <div class="bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700">
-                                <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 border-b border-gray-700 pb-2 text-white">
-                                    <i data-lucide="image" class="h-5 w-5 text-gray-400"></i> Enlaces y Galería
-                                </h2>
-                                
-                                <div class="space-y-5">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-300 mb-1">Enlace del Producto en la Tienda (URL) *</label>
-                                        <input required type="url" name="link" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="https://mi-tienda.com/producto">
-                                    </div>
-
-                                    <div class="bg-gray-900 p-4 rounded-lg border border-gray-700">
-                                        <label class="block text-base font-semibold text-white mb-3">Gestión de Fotos</label>
-                                        
-                                        <div class="mb-4">
-                                            <label for="image-url-list" class="block text-xs font-medium text-gray-400 mb-1">Pegar lista de URLs (separadas por coma)</label>
-                                            <textarea id="image-url-list" rows="2" class="w-full px-3 py-2 bg-gray-800 border border-gray-600 text-white rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm placeholder-gray-500" placeholder="https://.../img1.jpg, https://.../img2.jpg"></textarea>
-                                            <button type="button" id="process-urls-btn" class="mt-2 w-full bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors text-sm">
-                                                Agregar Fotos desde Lista
-                                            </button>
-                                        </div>
-                                        
-                                        <div class="mb-4">
-                                            <label class="block text-xs font-medium text-gray-400 mb-1">Agregar URL individualmente</label>
-                                            <div id="single-image-inputs-container" class="space-y-2"></div>
-                                            <button type="button" id="add-single-url-field-btn" class="mt-2 text-sm text-indigo-400 font-semibold py-2 px-2 rounded-lg hover:bg-gray-800 transition-colors w-full border border-dashed border-gray-600">
-                                                + Agregar campo para otra URL
-                                            </button>
-                                        </div>
-
-                                        <div>
-                                            <label class="block text-xs font-medium text-gray-400 mb-2">Fotos actuales (Arrastra para reordenar)</label>
-                                            <div id="image-sortable-list" class="space-y-2 min-h-[60px] p-3 bg-gray-800 border border-gray-600 border-dashed rounded-lg"></div>
-                                            <p class="text-xs text-gray-400 mt-2">
-                                                * La imagen en la posición <b class="text-indigo-400">1.</b> será la Imagen Principal. Puedes cargar hasta 20 para organizar, pero <b class="text-red-400">SOLO SE GUARDARÁN LAS PRIMERAS 8</b>.
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Columna Derecha (Precios y Stock) -->
-                        <div class="space-y-6">
-                            <div class="bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700">
-                                <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 border-b border-gray-700 pb-2 text-white"><i data-lucide="dollar-sign" class="h-5 w-5 text-gray-400"></i> Precios</h2>
-                                <div class="space-y-4">
-                                    <div><label class="block text-sm font-medium text-gray-300 mb-1">Precio Normal (price) *</label><input required type="number" step="0.01" name="price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="0.00"></div>
-                                    <div><label class="block text-sm font-medium text-gray-300 mb-1">Precio de Oferta (sale_price)</label><input type="number" step="0.01" name="sale_price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Opcional"></div>
-                                    <div><label class="block text-sm font-medium text-gray-300 mb-1">Precio Mayorista (wholesale_price)</label><input type="number" step="0.01" name="wholesale_price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Opcional"></div>
-                                    <div><label class="block text-sm font-medium text-gray-300 mb-1">Costo de Producto (purchase_price)</label><input type="number" step="0.01" name="purchase_price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Opcional"></div>
-                                </div>
-                            </div>
-
-                            <div class="bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700">
-                                <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 border-b border-gray-700 pb-2 text-white"><i data-lucide="box" class="h-5 w-5 text-gray-400"></i> Inventario</h2>
-                                <div class="space-y-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-300 mb-1">Disponibilidad *</label>
-                                        <select required name="availability" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                                            <option value="in stock">En Stock</option>
-                                            <option value="out of stock">Agotado</option>
-                                            <option value="preorder">Pre-venta</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-300 mb-1">Condición *</label>
-                                        <select required name="condition" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
-                                            <option value="new">Nuevo</option>
-                                            <option value="refurbished">Reacondicionado</option>
-                                            <option value="used">Usado</option>
-                                        </select>
-                                    </div>
-                                    <div><label class="block text-sm font-medium text-gray-300 mb-1">Stock para Facebook *</label><input required type="number" min="0" name="quantity_to_sell_on_facebook" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. 50"></div>
-                                </div>
-                            </div>
-
-                            <!-- Botón Enviar -->
-                            <button type="submit" id="submitBtn" class="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 px-4 rounded-xl shadow-md transition-all disabled:opacity-70 text-lg mt-4">
-                                <i data-lucide="save" id="btnIcon" class="h-6 w-6"></i>
-                                <span id="btnText">Guardar Producto</span>
-                            </button>
-                        </div>
-                    </div>
-                </form>
             </div>
+            
+            <!-- Pestañas de Navegación -->
+            <div class="max-w-5xl mx-auto px-4 mt-2 flex gap-6">
+                <button id="tab-add" class="pb-3 border-b-2 border-indigo-500 text-indigo-400 font-semibold flex items-center gap-2 transition-colors">
+                    <i data-lucide="plus-circle" class="w-5 h-5"></i> <span id="tab-add-text">Nuevo Producto</span>
+                </button>
+                <button id="tab-list" class="pb-3 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-semibold flex items-center gap-2 transition-colors">
+                    <i data-lucide="list" class="w-5 h-5"></i> Inventario
+                </button>
+            </div>
+        </header>
 
-            <!-- ========================================== -->
-            <!-- VISTA: INVENTARIO (LISTADO) -->
-            <!-- ========================================== -->
-            <div id="view-list-products" class="hidden">
-                <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div>
-                        <h1 class="text-3xl font-bold text-white flex items-center gap-3">
-                            <i data-lucide="layout-list" class="h-7 w-7 text-indigo-400"></i> Inventario
-                        </h1>
-                        <p class="text-gray-400 mt-1">Administra y busca tus productos registrados</p>
-                    </div>
-                    
-                    <!-- Buscador -->
-                    <div class="relative w-full md:w-[32rem] flex items-stretch">
-                        <div class="relative flex-grow">
-                            <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5"></i>
-                            <input type="text" id="searchInput" class="w-full h-full pl-10 pr-10 py-2.5 bg-gray-800 border border-gray-700 text-white rounded-l-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500 shadow-sm" placeholder="Buscar por Nombre, GTIN o Código...">
-                            <!-- Botón Limpiar (X) -->
-                            <button type="button" id="clearSearchBtn" class="hidden absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-400 transition-colors" title="Limpiar búsqueda">
-                                <i data-lucide="x" class="h-5 w-5"></i>
-                            </button>
+        <!-- Contenido Principal -->
+        <main class="flex-grow p-4 md:p-8 pb-12">
+            <div class="max-w-5xl mx-auto">
+                
+                <!-- Alertas Generales -->
+                <div id="alertBox" class="hidden mb-6 p-4 rounded-lg flex items-center gap-3 border transition-all">
+                    <i id="alertIcon" data-lucide="info" class="h-5 w-5"></i>
+                    <p id="alertMessage" class="font-medium"></p>
+                </div>
+
+                <!-- ========================================== -->
+                <!-- VISTA: FORMULARIO (NUEVO / EDITAR) -->
+                <!-- ========================================== -->
+                <div id="view-add-product" class="block">
+                    <!-- Título de Sección -->
+                    <div class="mb-8 flex items-center gap-3">
+                        <div class="bg-gray-800 p-2 rounded-lg border border-gray-700">
+                            <i data-lucide="package" id="form-header-icon" class="h-7 w-7 text-indigo-400"></i>
                         </div>
-                        <!-- Botón Escáner de Búsqueda -->
-                        <button type="button" id="scan-search-btn" class="bg-gray-700 hover:bg-gray-600 text-white border border-l-0 border-gray-700 rounded-r-lg px-4 flex items-center justify-center transition-colors shadow-sm" title="Escanear Código de Barras">
-                            <i data-lucide="scan-line" class="h-5 w-5 text-indigo-400"></i>
+                        <div>
+                            <h1 class="text-3xl font-bold text-white" id="form-header-title">Gestión de Productos</h1>
+                            <p class="text-gray-400 mt-1" id="form-header-subtitle">Registra nuevos productos en el catálogo</p>
+                        </div>
+                        <!-- Botón para cancelar edición -->
+                        <button type="button" id="cancelEditBtn" class="ml-auto hidden bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors flex items-center gap-2">
+                            <i data-lucide="x-circle" class="w-4 h-4"></i> Cancelar Edición
                         </button>
                     </div>
+
+                    <form id="productForm" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            
+                            <!-- Columna Izquierda (Info Principal) -->
+                            <div class="md:col-span-2 space-y-6">
+                                
+                                <!-- Información Básica -->
+                                <div class="bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700">
+                                    <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 border-b border-gray-700 pb-2 text-white">
+                                        <i data-lucide="info" class="h-5 w-5 text-gray-400"></i> Información Básica
+                                    </h2>
+                                    
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-300 mb-1">Título del Producto *</label>
+                                            <input required type="text" id="name" name="title" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none transition-colors placeholder-gray-500" placeholder="Ej. Zapatillas Deportivas">
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-300 mb-1">Categoría *</label>
+                                                <input required type="text" name="category" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. Electrónica">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-300 mb-1">Marca *</label>
+                                                <input required type="text" id="brand" name="brand" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. Nike">
+                                            </div>
+                                        </div>
+
+                                        <!-- Editor WYSIWYG -->
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-300 mb-1">Descripción *</label>
+                                            <div class="border border-gray-600 rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-indigo-500 transition-colors bg-gray-900">
+                                                <div class="bg-gray-800 border-b border-gray-700 p-1.5 flex flex-wrap gap-1 items-center">
+                                                    <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300 transition-colors" data-command="bold" title="Negrita"><i data-lucide="bold" class="h-4 w-4"></i></button>
+                                                    <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300 transition-colors" data-command="italic" title="Cursiva"><i data-lucide="italic" class="h-4 w-4"></i></button>
+                                                    <div class="w-px h-5 bg-gray-700 mx-1"></div>
+                                                    <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300 transition-colors" data-command="formatBlock" data-value="H1" title="Título Principal"><i data-lucide="heading-1" class="h-4 w-4"></i></button>
+                                                    <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300 transition-colors" data-command="formatBlock" data-value="H2" title="Subtítulo"><i data-lucide="heading-2" class="h-4 w-4"></i></button>
+                                                    <div class="w-px h-5 bg-gray-700 mx-1"></div>
+                                                    <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300 transition-colors" data-command="insertUnorderedList" title="Lista de viñetas"><i data-lucide="list" class="h-4 w-4"></i></button>
+                                                    <button type="button" class="format-btn p-1.5 hover:bg-gray-700 rounded text-gray-300 transition-colors" data-command="insertOrderedList" title="Lista numerada"><i data-lucide="list-ordered" class="h-4 w-4"></i></button>
+                                                </div>
+                                                <div id="descriptionEditor" contenteditable="true" class="w-full min-h-[150px] max-h-[400px] overflow-y-auto p-4 outline-none text-sm text-gray-200" placeholder="Escribe la descripción aquí..."></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-300 mb-1">GTIN</label>
+                                                <input type="text" id="gtin" name="gtin" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. 012345678905">
+                                            </div>
+                                            <div>
+                                                <label class="block text-sm font-medium text-gray-300 mb-1">Código de Barras (Barcode)</label>
+                                                <div class="flex items-center space-x-2">
+                                                    <input type="text" id="barcode" name="barcode" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. 770123456789">
+                                                    <button type="button" id="scan-barcode-btn" class="text-sm bg-gray-700 text-white font-bold p-2.5 rounded-lg hover:bg-gray-600 border border-gray-600 transition-colors" title="Escanear Código">
+                                                        <i data-lucide="scan-line" class="h-5 w-5"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Enlaces e Imágenes Avanzado -->
+                                <div class="bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700">
+                                    <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 border-b border-gray-700 pb-2 text-white">
+                                        <i data-lucide="image" class="h-5 w-5 text-gray-400"></i> Enlaces y Galería
+                                    </h2>
+                                    
+                                    <div class="space-y-5">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-300 mb-1">Enlace del Producto en la Tienda (URL) *</label>
+                                            <input required type="url" name="link" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="https://mi-tienda.com/producto">
+                                        </div>
+
+                                        <div class="bg-gray-900 p-4 rounded-lg border border-gray-700">
+                                            <label class="block text-base font-semibold text-white mb-3">Gestión de Fotos</label>
+                                            
+                                            <div class="mb-4">
+                                                <label for="image-url-list" class="block text-xs font-medium text-gray-400 mb-1">Pegar lista de URLs (separadas por coma)</label>
+                                                <textarea id="image-url-list" rows="2" class="w-full px-3 py-2 bg-gray-800 border border-gray-600 text-white rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 text-sm placeholder-gray-500" placeholder="https://.../img1.jpg, https://.../img2.jpg"></textarea>
+                                                <button type="button" id="process-urls-btn" class="mt-2 w-full bg-gray-700 text-white font-semibold py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors text-sm">
+                                                    Agregar Fotos desde Lista
+                                                </button>
+                                            </div>
+                                            
+                                            <div class="mb-4">
+                                                <label class="block text-xs font-medium text-gray-400 mb-1">Agregar URL individualmente</label>
+                                                <div id="single-image-inputs-container" class="space-y-2"></div>
+                                                <button type="button" id="add-single-url-field-btn" class="mt-2 text-sm text-indigo-400 font-semibold py-2 px-2 rounded-lg hover:bg-gray-800 transition-colors w-full border border-dashed border-gray-600">
+                                                    + Agregar campo para otra URL
+                                                </button>
+                                            </div>
+
+                                            <div>
+                                                <label class="block text-xs font-medium text-gray-400 mb-2">Fotos actuales (Arrastra para reordenar)</label>
+                                                <div id="image-sortable-list" class="space-y-2 min-h-[60px] p-3 bg-gray-800 border border-gray-600 border-dashed rounded-lg"></div>
+                                                <p class="text-xs text-gray-400 mt-2">
+                                                    * La imagen en la posición <b class="text-indigo-400">1.</b> será la Imagen Principal. Puedes cargar hasta 20 para organizar, pero <b class="text-red-400">SOLO SE GUARDARÁN LAS PRIMERAS 8</b>.
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Columna Derecha (Precios y Stock) -->
+                            <div class="space-y-6">
+                                <div class="bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700">
+                                    <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 border-b border-gray-700 pb-2 text-white"><i data-lucide="dollar-sign" class="h-5 w-5 text-gray-400"></i> Precios</h2>
+                                    <div class="space-y-4">
+                                        <div><label class="block text-sm font-medium text-gray-300 mb-1">Precio Normal (price) *</label><input required type="number" step="0.01" name="price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="0.00"></div>
+                                        <div><label class="block text-sm font-medium text-gray-300 mb-1">Precio de Oferta (sale_price)</label><input type="number" step="0.01" name="sale_price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Opcional"></div>
+                                        <div><label class="block text-sm font-medium text-gray-300 mb-1">Precio Mayorista (wholesale_price)</label><input type="number" step="0.01" name="wholesale_price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Opcional"></div>
+                                        <div><label class="block text-sm font-medium text-gray-300 mb-1">Costo de Producto (purchase_price)</label><input type="number" step="0.01" name="purchase_price" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Opcional"></div>
+                                    </div>
+                                </div>
+
+                                <div class="bg-gray-800 p-6 rounded-xl shadow-md border border-gray-700">
+                                    <h2 class="text-xl font-semibold mb-4 flex items-center gap-2 border-b border-gray-700 pb-2 text-white"><i data-lucide="box" class="h-5 w-5 text-gray-400"></i> Inventario</h2>
+                                    <div class="space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-300 mb-1">Disponibilidad *</label>
+                                            <select required name="availability" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                                                <option value="in stock">En Stock</option>
+                                                <option value="out of stock">Agotado</option>
+                                                <option value="preorder">Pre-venta</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-300 mb-1">Condición *</label>
+                                            <select required name="condition" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none">
+                                                <option value="new">Nuevo</option>
+                                                <option value="refurbished">Reacondicionado</option>
+                                                <option value="used">Usado</option>
+                                            </select>
+                                        </div>
+                                        <div><label class="block text-sm font-medium text-gray-300 mb-1">Stock para Facebook *</label><input required type="number" min="0" name="quantity_to_sell_on_facebook" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. 50"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Botón Enviar -->
+                                <button type="submit" id="submitBtn" class="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 px-4 rounded-xl shadow-md transition-all disabled:opacity-70 text-lg mt-4">
+                                    <i data-lucide="save" id="btnIcon" class="h-6 w-6"></i>
+                                    <span id="btnText">Guardar Producto</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
 
-                <div class="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden shadow-md">
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-sm text-gray-300">
-                            <thead class="bg-gray-900 text-gray-400 uppercase text-xs font-semibold border-b border-gray-700">
-                                <tr>
-                                    <th class="px-4 py-3 w-16 text-center">Editar</th>
-                                    <th class="px-4 py-3 w-16 text-center">ID</th>
-                                    <th class="px-4 py-3 w-20 text-center">Foto</th>
-                                    <th class="px-4 py-3">Producto</th>
-                                    <th class="px-4 py-3">Códigos</th>
-                                    <th class="px-4 py-3 text-right">Precio</th>
-                                    <th class="px-4 py-3 text-center">Stock</th>
-                                    <th class="px-4 py-3 text-center">Eliminar</th>
-                                </tr>
-                            </thead>
-                            <tbody id="productsTableBody" class="divide-y divide-gray-700">
-                                <!-- Filas de productos inyectadas por JS -->
-                                <tr>
-                                    <td colspan="8" class="px-4 py-8 text-center text-gray-500">
-                                        <i data-lucide="loader-2" class="h-8 w-8 animate-spin mx-auto mb-2 text-indigo-500"></i>
-                                        Cargando productos...
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <!-- ========================================== -->
+                <!-- VISTA: INVENTARIO (LISTADO) -->
+                <!-- ========================================== -->
+                <div id="view-list-products" class="hidden">
+                    <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h1 class="text-3xl font-bold text-white flex items-center gap-3">
+                                <i data-lucide="layout-list" class="h-7 w-7 text-indigo-400"></i> Inventario
+                            </h1>
+                            <p class="text-gray-400 mt-1">Administra y busca tus productos registrados</p>
+                        </div>
+                        
+                        <!-- Buscador -->
+                        <div class="relative w-full md:w-[32rem] flex items-stretch">
+                            <div class="relative flex-grow">
+                                <i data-lucide="search" class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5"></i>
+                                <input type="text" id="searchInput" class="w-full h-full pl-10 pr-10 py-2.5 bg-gray-800 border border-gray-700 text-white rounded-l-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500 shadow-sm" placeholder="Buscar por Nombre, GTIN o Código...">
+                                <!-- Botón Limpiar (X) -->
+                                <button type="button" id="clearSearchBtn" class="hidden absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-red-400 transition-colors" title="Limpiar búsqueda">
+                                    <i data-lucide="x" class="h-5 w-5"></i>
+                                </button>
+                            </div>
+                            <!-- Botón Escáner de Búsqueda -->
+                            <button type="button" id="scan-search-btn" class="bg-gray-700 hover:bg-gray-600 text-white border border-l-0 border-gray-700 rounded-r-lg px-4 flex items-center justify-center transition-colors shadow-sm" title="Escanear Código de Barras">
+                                <i data-lucide="scan-line" class="h-5 w-5 text-indigo-400"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 rounded-xl border border-gray-700 overflow-hidden shadow-md">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-sm text-gray-300">
+                                <thead class="bg-gray-900 text-gray-400 uppercase text-xs font-semibold border-b border-gray-700">
+                                    <tr>
+                                        <th class="px-4 py-3 w-16 text-center">Editar</th>
+                                        <th class="px-4 py-3 w-16 text-center">ID</th>
+                                        <th class="px-4 py-3 w-20 text-center">Foto</th>
+                                        <th class="px-4 py-3">Producto</th>
+                                        <th class="px-4 py-3">Códigos</th>
+                                        <th class="px-4 py-3 text-right">Precio</th>
+                                        <th class="px-4 py-3 text-center">Stock</th>
+                                        <th class="px-4 py-3 text-center">Eliminar</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productsTableBody" class="divide-y divide-gray-700">
+                                    <!-- Filas de productos inyectadas por JS -->
+                                    <tr>
+                                        <td colspan="8" class="px-4 py-8 text-center text-gray-500">
+                                            <i data-lucide="loader-2" class="h-8 w-8 animate-spin mx-auto mb-2 text-indigo-500"></i>
+                                            Cargando productos...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-        </div>
-    </main>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 border-t border-gray-700 py-6 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
-            <div class="flex items-center gap-2">
-                <img src="/images/logo-escritorio.svg" alt="Arelyshop Logo" class="h-6 opacity-75 grayscale">
-                <span class="text-gray-400 font-semibold">Arelyshop</span>
             </div>
-            <p class="text-gray-500 text-sm">
-                &copy; <script>document.write(new Date().getFullYear())</script> Todos los derechos reservados.
-            </p>
-        </div>
-    </footer>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-800 border-t border-gray-700 py-6 mt-auto">
+            <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-2">
+                    <img src="/images/logo-escritorio.svg" alt="Arelyshop Logo" class="h-6 opacity-75 grayscale">
+                    <span class="text-gray-400 font-semibold">Arelyshop</span>
+                </div>
+                <p class="text-gray-500 text-sm">
+                    &copy; <script>document.write(new Date().getFullYear())</script> Todos los derechos reservados.
+                </p>
+            </div>
+        </footer>
+    </div> <!-- Cierre App Container -->
 
     <!-- Modales -->
     <div id="image-preview-modal" class="fixed inset-0 bg-gray-950 bg-opacity-80 flex items-center justify-center hidden z-50 p-4 transition-opacity duration-300 backdrop-blur-sm">
@@ -377,6 +419,22 @@
         // ==========================================
         // REFERENCIAS AL DOM
         // ==========================================
+        // Contenedores Principales
+        const loginContainer = document.getElementById('login-container');
+        const appContainer = document.getElementById('app-container');
+        
+        // Elementos Login
+        const loginForm = document.getElementById('loginForm');
+        const loginUsernameInput = document.getElementById('loginUsername');
+        const loginPasswordInput = document.getElementById('loginPassword');
+        const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+        const loginBtnText = document.getElementById('loginBtnText');
+        const loginAlert = document.getElementById('loginAlert');
+        const loginAlertMessage = document.getElementById('loginAlertMessage');
+        const logoutBtn = document.getElementById('logout-btn');
+        const displayUsername = document.getElementById('display-username');
+
+        // Formulario de Productos
         const form = document.getElementById('productForm');
         const editor = document.getElementById('descriptionEditor');
         const formatBtns = document.querySelectorAll('.format-btn');
@@ -430,6 +488,100 @@
         let productToDelete = null;
         let isDataLoaded = false;
 
+
+        // ==========================================
+        // UTILIDAD PARA ACTUALIZAR ICONOS LUCIDE
+        // ==========================================
+        function updateIcon(elementId, iconName, extraClasses = '') {
+            const el = document.getElementById(elementId);
+            if (el) {
+                const newIcon = document.createElement('i');
+                newIcon.id = elementId;
+                newIcon.setAttribute('data-lucide', iconName);
+                if (extraClasses) newIcon.className = extraClasses;
+                el.parentNode.replaceChild(newIcon, el);
+            }
+        }
+
+        // ==========================================
+        // SISTEMA DE AUTENTICACIÓN (LOGIN)
+        // ==========================================
+        function checkAuthStatus() {
+            const userSession = sessionStorage.getItem('adminUser');
+            if (userSession) {
+                // Usuario autenticado
+                loginContainer.classList.add('hidden');
+                appContainer.classList.remove('hidden');
+                appContainer.classList.add('flex'); // Necesario porque es flex-col
+                
+                try {
+                    const user = JSON.parse(userSession);
+                    displayUsername.textContent = user.username || 'Administrador';
+                } catch(e) {}
+            } else {
+                // Usuario NO autenticado
+                appContainer.classList.add('hidden');
+                appContainer.classList.remove('flex');
+                loginContainer.classList.remove('hidden');
+            }
+        }
+
+        // Manejar el submit del Login
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const username = loginUsernameInput.value.trim();
+            const password = loginPasswordInput.value.trim();
+            
+            if(!username || !password) return;
+
+            // Bloquear botón
+            loginSubmitBtn.disabled = true;
+            loginBtnText.textContent = "Verificando...";
+            updateIcon('loginBtnIcon', 'loader-2', 'w-5 h-5 animate-spin');
+            loginAlert.classList.add('hidden');
+            lucide.createIcons();
+
+            try {
+                const res = await fetch('/.netlify/functions/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok || !data.success) {
+                    throw new Error(data.message || 'Error de autenticación');
+                }
+
+                // Autenticación Exitosa
+                sessionStorage.setItem('adminUser', JSON.stringify(data.user));
+                loginForm.reset();
+                checkAuthStatus(); // Cambia la vista a la App
+                
+            } catch (error) {
+                loginAlertMessage.textContent = error.message;
+                loginAlert.classList.remove('hidden');
+            } finally {
+                // Restaurar botón
+                loginSubmitBtn.disabled = false;
+                loginBtnText.textContent = "Ingresar al Panel";
+                updateIcon('loginBtnIcon', 'log-in', 'w-5 h-5');
+                lucide.createIcons();
+            }
+        });
+
+        // Cerrar Sesión
+        logoutBtn.addEventListener('click', () => {
+            sessionStorage.removeItem('adminUser');
+            checkAuthStatus(); // Vuelve a la pantalla de login
+        });
+
+        // Ejecutar verificación de estado al cargar la página
+        checkAuthStatus();
+
+
         // ==========================================
         // 0. NAVEGACIÓN Y TABS
         // ==========================================
@@ -468,20 +620,6 @@
             resetFormToCreateMode();
             switchTab('list');
         });
-
-        // ==========================================
-        // UTILIDAD PARA ACTUALIZAR ICONOS LUCIDE
-        // ==========================================
-        function updateIcon(elementId, iconName, extraClasses = '') {
-            const el = document.getElementById(elementId);
-            if (el) {
-                const newIcon = document.createElement('i');
-                newIcon.id = elementId;
-                newIcon.setAttribute('data-lucide', iconName);
-                if (extraClasses) newIcon.className = extraClasses;
-                el.parentNode.replaceChild(newIcon, el);
-            }
-        }
 
         // ==========================================
         // BOTÓN REFRESCAR BASE DE DATOS
@@ -531,7 +669,6 @@
                 
                 // Fallback local en caso de estar en un entorno sin el backend Netlify
                 if(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || !window.location.hostname) {
-                     // Solo para previsualización si falla netlify localmente
                      console.warn("Usando mock local para previsualización");
                 }
             }
