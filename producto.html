@@ -250,9 +250,10 @@
         }
 
         // 2. Cargar sugerencias
-        async function fetchRelatedProducts(brand, category) {
+        async function fetchRelatedProducts(brand, category, currentId) {
             try {
-                const url = `/.netlify/functions/get_tienda?brand=${encodeURIComponent(brand || '')}&category=${encodeURIComponent(category || '')}&limit=5`;
+                // Pasamos brand, category y el ID actual para excluirlo de la búsqueda
+                const url = `/.netlify/functions/get_tienda?brand=${encodeURIComponent(brand || '')}&category=${encodeURIComponent(category || '')}&exclude_id=${currentId}&limit=4`;
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Error cargando relacionados');
                 return await response.json();
@@ -306,11 +307,12 @@
                 document.getElementById('in-stock-buttons').classList.remove('hidden');
                 document.getElementById('in-stock-buttons').classList.add('flex');
                 
-                // Setear dataset para WhatsApp
+                // Setear dataset para WhatsApp asegurando el ID
                 const whatsappBtn = document.getElementById('buy-now-whatsapp');
                 whatsappBtn.dataset.name = product.title;
                 whatsappBtn.dataset.sku = product.gtin || '';
                 whatsappBtn.dataset.price = salePrice;
+                whatsappBtn.dataset.id = product.id; // <-- Guardamos el ID exacto de la base de datos
             } else {
                 document.getElementById('out-of-stock-btn').classList.remove('hidden');
                 document.getElementById('out-of-stock-btn').classList.add('flex');
@@ -340,19 +342,19 @@
             }
 
             // Cargar Upsell / Sugerencias
-            const related = await fetchRelatedProducts(product.brand, product.category);
+            const related = await fetchRelatedProducts(product.brand, product.category, product.id);
             const grid = document.getElementById('related-products-grid');
             grid.innerHTML = '';
             
             let upsellCount = 0;
             related.forEach((item) => {
-                // Evitamos sugerir el mismo producto y limitamos a 4
-                if (item.id == product.id || upsellCount >= 4) return; 
+                // Limitamos a 4 (la base de datos ya excluyó el producto actual)
+                if (upsellCount >= 4) return; 
                 
                 const itemSalePrice = parseFloat(item.sale_price) || parseFloat(item.price) || 0;
                 const hiddenClass = upsellCount > 1 ? 'hidden md:block' : '';
                 
-                // Renderizado
+                // Renderizado asegurando el enlace exacto producto.html?id={id}
                 grid.innerHTML += `
                 <a href="producto.html?id=${item.id}" class="product-card group cursor-pointer ${hiddenClass}">
                     <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-3">
@@ -591,10 +593,14 @@
                 const name = buyNowBtn.dataset.name;
                 const sku = buyNowBtn.dataset.sku;
                 const price = parseFloat(buyNowBtn.dataset.price);
+                const id = buyNowBtn.dataset.id; // Recuperamos el ID de la tabla
                 
                 const qtyInput = document.getElementById('qty-input');
                 const qty = parseInt(qtyInput ? qtyInput.value : 1);
-                const url = window.location.href;
+                
+                // Construimos la URL limpia usando el ID de tu tabla (ej: dominio.com/producto.html?id=355)
+                const url = `${window.location.origin}/producto.html?id=${id}`;
+                
                 const total = price * qty;
                 
                 let message = "¡Hola Arelyshop! 👋 Quiero finalizar mi pedido:\n\n";
