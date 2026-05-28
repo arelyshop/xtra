@@ -85,14 +85,28 @@ const updateImageNumbers = () => {
     const imageItems = imageSortableList.querySelectorAll('div[data-url]');
     imageItems.forEach((item, index) => {
         const numberEl = item.querySelector('.image-number');
-        if (numberEl) {
+        const statusEl = item.querySelector('.image-status');
+        
+        if (numberEl && statusEl) {
             numberEl.textContent = `${index + 1}.`;
             if (index === 0) {
-                numberEl.classList.add('text-indigo-400', 'font-bold');
-                numberEl.classList.remove('text-gray-400');
+                // Estilos Imagen Principal
+                numberEl.className = 'image-number text-sm font-bold text-indigo-400 w-5 text-center flex-shrink-0';
+                item.className = 'flex items-center space-x-3 p-2 bg-gray-900 rounded-lg border border-indigo-500/50 group transition-all';
+                statusEl.textContent = 'PRINCIPAL';
+                statusEl.className = 'image-status ml-auto text-[10px] font-bold px-2 py-1 rounded bg-indigo-900/50 text-indigo-300 border border-indigo-700/50 hidden sm:inline-block';
+            } else if (index < 8) {
+                // Estilos Fotos Adicionales (Se guardan)
+                numberEl.className = 'image-number text-sm font-semibold text-gray-400 w-5 text-center flex-shrink-0';
+                item.className = 'flex items-center space-x-3 p-2 bg-gray-900 rounded-lg border border-gray-700 group transition-all';
+                statusEl.textContent = 'SE GUARDARÁ';
+                statusEl.className = 'image-status ml-auto text-[10px] font-bold px-2 py-1 rounded bg-green-900/50 text-green-300 border border-green-700/50 hidden sm:inline-block';
             } else {
-                numberEl.classList.remove('text-indigo-400', 'font-bold');
-                numberEl.classList.add('text-gray-400');
+                // Estilos Fotos Ignoradas (No se guardan)
+                numberEl.className = 'image-number text-sm font-bold text-red-500 w-5 text-center flex-shrink-0';
+                item.className = 'flex items-center space-x-3 p-2 bg-gray-900/50 rounded-lg border border-red-900/50 opacity-60 group transition-all';
+                statusEl.textContent = 'NO SE GUARDARÁ';
+                statusEl.className = 'image-status ml-auto text-[10px] font-bold px-2 py-1 rounded bg-red-900/50 text-red-300 border border-red-700/50 hidden sm:inline-block';
             }
         }
     });
@@ -106,21 +120,23 @@ const addUrlToSorter = (url) => {
         return;
     }
 
-    if (existingUrls.length >= 8) {
-        showAlert('error', 'Solo puedes agregar un máximo de 8 fotos por producto.');
+    // Cambiado límite de 8 a 20
+    if (existingUrls.length >= 20) {
+        showAlert('error', 'Puedes agregar un máximo de 20 fotos a la lista para organizar.');
         return;
     }
 
     const div = document.createElement('div');
-    div.className = 'flex items-center space-x-3 p-2 bg-gray-900 rounded-lg border border-gray-700 group';
     div.dataset.url = url;
 
+    // Se agregan las clases base, que luego `updateImageNumbers` reemplazará para darle el color correcto.
     div.innerHTML = `
-        <span class="image-number text-sm font-semibold text-gray-400 w-5 text-center"></span>
-        <svg class="w-6 h-6 text-gray-500 drag-handle cursor-grab hover:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-        <img src="${url}" onerror="this.onerror=null;this.src='https://placehold.co/40x40/1f2937/9ca3af?text=Err';" class="w-12 h-12 rounded shadow-sm object-cover bg-gray-800 cursor-pointer hover:opacity-80 transition-opacity ring-1 ring-gray-600">
-        <p class="flex-grow text-xs text-gray-400 truncate px-2">${url}</p>
-        <button type="button" class="text-xl text-red-500 hover:text-red-400 remove-image-btn p-1 font-bold">&times;</button>
+        <span class="image-number"></span>
+        <svg class="w-6 h-6 text-gray-500 drag-handle cursor-grab hover:text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        <img src="${url}" onerror="this.onerror=null;this.src='https://placehold.co/40x40/1f2937/9ca3af?text=Err';" class="w-12 h-12 rounded shadow-sm object-cover bg-gray-800 cursor-pointer hover:opacity-80 transition-opacity ring-1 ring-gray-600 flex-shrink-0">
+        <p class="text-xs text-gray-400 truncate px-2 flex-grow min-w-0">${url}</p>
+        <span class="image-status"></span>
+        <button type="button" class="text-xl text-red-500 hover:text-red-400 remove-image-btn p-1 font-bold flex-shrink-0">&times;</button>
     `;
 
     div.querySelector('img').addEventListener('click', () => openImagePreview(url));
