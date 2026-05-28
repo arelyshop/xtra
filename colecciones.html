@@ -55,7 +55,7 @@
         <header class="mb-8 lg:mb-12">
             <h1 class="text-3xl lg:text-4xl font-bold tracking-tight text-gray-900 mb-4">Todos los productos</h1>
             <p class="text-gray-600 max-w-2xl text-[15px] leading-relaxed">
-                Descubre nuestra colección completa de mobiliario e iluminación. Diseños nórdicos, modernos y atemporales creados para transformar cualquier espacio de tu hogar con estilo y confort.
+                Descubre nuestra colección completa de tecnología, mobiliario e iluminación. Diseños modernos y atemporales creados para transformar tu vida con estilo y confort.
             </p>
         </header>
 
@@ -66,25 +66,17 @@
             <aside class="w-full lg:w-1/4 lg:sticky lg:top-24 lg:h-max lg:max-h-[calc(100vh-120px)] lg:overflow-y-auto hide-scrollbar hidden lg:block">
                 <div class="border-b border-gray-200 pb-4 mb-6 flex justify-between items-center">
                     <h2 class="font-bold text-lg text-black flex items-center gap-2"><i class="fa-solid fa-sliders text-sm"></i> Filtros</h2>
-                    <a href="#" class="text-[13px] text-gray-500 hover:text-black underline">Limpiar</a>
+                    <button onclick="resetFilters()" class="text-[13px] text-gray-500 hover:text-black underline">Limpiar</button>
                 </div>
 
-                <!-- 1. Filtro: Disponibilidad (En stock) -->
+                <!-- 1. Filtro: Disponibilidad -->
                 <div class="mb-6 border-b border-gray-100 pb-6">
                     <h3 class="font-bold text-[14px] text-gray-900 mb-4 flex justify-between items-center cursor-pointer">
                         Disponibilidad <i class="fa-solid fa-chevron-up text-[10px]"></i>
                     </h3>
-                    <ul class="space-y-3 text-[14px] text-gray-600">
-                        <li class="flex items-center gap-3">
-                            <input type="checkbox" id="in-stock" class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
-                            <label for="in-stock" class="cursor-pointer hover:text-black flex-1">En stock</label>
-                            <span class="text-gray-400 text-[12px]">(62)</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <input type="checkbox" id="out-of-stock" class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
-                            <label for="out-of-stock" class="cursor-pointer hover:text-black flex-1">Agotado</label>
-                            <span class="text-gray-400 text-[12px]">(5)</span>
-                        </li>
+                    <ul id="filter-availability" class="space-y-3 text-[14px] text-gray-600">
+                        <!-- Se llena dinámicamente -->
+                        <li class="text-xs text-gray-400">Cargando...</li>
                     </ul>
                 </div>
 
@@ -93,27 +85,9 @@
                     <h3 class="font-bold text-[14px] text-gray-900 mb-4 flex justify-between items-center cursor-pointer">
                         Categoría <i class="fa-solid fa-chevron-up text-[10px]"></i>
                     </h3>
-                    <ul class="space-y-3 text-[14px] text-gray-600">
-                        <li class="flex items-center gap-3">
-                            <input type="checkbox" id="cat1" class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
-                            <label for="cat1" class="cursor-pointer hover:text-black flex-1">Sillas & Sillones</label>
-                            <span class="text-gray-400 text-[12px]">(24)</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <input type="checkbox" id="cat2" class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
-                            <label for="cat2" class="cursor-pointer hover:text-black flex-1">Iluminación</label>
-                            <span class="text-gray-400 text-[12px]">(18)</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <input type="checkbox" id="cat3" class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
-                            <label for="cat3" class="cursor-pointer hover:text-black flex-1">Mesas</label>
-                            <span class="text-gray-400 text-[12px]">(12)</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <input type="checkbox" id="cat4" class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
-                            <label for="cat4" class="cursor-pointer hover:text-black flex-1">Almacenaje</label>
-                            <span class="text-gray-400 text-[12px]">(8)</span>
-                        </li>
+                    <ul id="filter-category" class="space-y-3 text-[14px] text-gray-600">
+                        <!-- Se llena dinámicamente -->
+                        <li class="text-xs text-gray-400">Cargando...</li>
                     </ul>
                 </div>
 
@@ -122,27 +96,9 @@
                     <h3 class="font-bold text-[14px] text-gray-900 mb-4 flex justify-between items-center cursor-pointer">
                         Marca <i class="fa-solid fa-chevron-up text-[10px]"></i>
                     </h3>
-                    <ul class="space-y-3 text-[14px] text-gray-600">
-                        <li class="flex items-center gap-3">
-                            <input type="checkbox" id="brand1" class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
-                            <label for="brand1" class="cursor-pointer hover:text-black flex-1">ArelyDesign</label>
-                            <span class="text-gray-400 text-[12px]">(27)</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <input type="checkbox" id="brand2" class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
-                            <label for="brand2" class="cursor-pointer hover:text-black flex-1">NordicHome</label>
-                            <span class="text-gray-400 text-[12px]">(15)</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <input type="checkbox" id="brand3" class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
-                            <label for="brand3" class="cursor-pointer hover:text-black flex-1">Lumina</label>
-                            <span class="text-gray-400 text-[12px]">(12)</span>
-                        </li>
-                        <li class="flex items-center gap-3">
-                            <input type="checkbox" id="brand4" class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
-                            <label for="brand4" class="cursor-pointer hover:text-black flex-1">Wood & Co.</label>
-                            <span class="text-gray-400 text-[12px]">(8)</span>
-                        </li>
+                    <ul id="filter-brand" class="space-y-3 text-[14px] text-gray-600">
+                        <!-- Se llena dinámicamente -->
+                        <li class="text-xs text-gray-400">Cargando...</li>
                     </ul>
                 </div>
             </aside>
@@ -159,15 +115,16 @@
                         <input type="checkbox" id="mobile-stock-only" class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black cursor-pointer">
                     </div>
 
-                    <p class="hidden sm:block text-[14px] text-gray-500">Mostrando 1 - 12 de 62 productos</p>
+                    <p id="product-count-text" class="hidden sm:block text-[14px] text-gray-500">Cargando catálogo...</p>
                     
                     <div class="hidden sm:flex items-center gap-4 w-full sm:w-auto justify-between">
                         <!-- Select Ordenar -->
                         <div class="flex items-center gap-2">
                             <label class="text-[13px] text-gray-600 hidden sm:block">Ordenar por:</label>
-                            <select class="text-[13px] font-medium border-0 bg-transparent focus:ring-0 cursor-pointer pr-6 py-2">
-                                <option>Precio: Menor a Mayor</option>
-                                <option>Precio: Mayor a Menor</option>
+                            <select id="sort-select" class="text-[13px] font-medium border-0 bg-transparent focus:ring-0 cursor-pointer pr-6 py-2">
+                                <option value="default">Recomendados</option>
+                                <option value="asc">Precio: Menor a Mayor</option>
+                                <option value="desc">Precio: Mayor a Menor</option>
                             </select>
                         </div>
 
@@ -180,106 +137,17 @@
                 </div>
 
                 <!-- Cuadrícula de Productos (3 por fila en desktop, 2 en móvil) -->
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-12">
-                    
-                    <!-- Producto 1 -->
-                    <div class="product-card group relative flex flex-col cursor-pointer">
-                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
-                            <span class="absolute top-2 left-2 bg-white text-black text-[10px] font-bold px-2 py-1 uppercase rounded z-10 shadow-sm">Nuevo</span>
-                            <img src="https://images.unsplash.com/photo-1505843490538-5133c6c7d0e1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Silla" class="product-img w-full h-full object-cover transition-transform duration-700">
-                        </div>
-                        <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline">Silla de Comedor Nórdica</h3>
-                        <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1">Madera / Tapizado Gris</p>
-                        <div class="mt-auto pt-2 flex items-center gap-2">
-                            <span class="font-bold text-[14px] sm:text-base text-black">Bs. 90.00</span>
-                        </div>
+                <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-12">
+                    <!-- Loader inicial -->
+                    <div class="col-span-full py-20 flex flex-col items-center justify-center text-gray-500">
+                        <i class="fa-solid fa-circle-notch spin-anim text-3xl mb-4 text-gray-400"></i>
+                        <p>Cargando productos...</p>
                     </div>
-
-                    <!-- Producto 2 -->
-                    <div class="product-card group relative flex flex-col cursor-pointer">
-                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
-                            <span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 uppercase rounded z-10 shadow-sm">Oferta</span>
-                            <img src="https://images.unsplash.com/photo-1507149833265-60c372daea22?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Lámpara" class="product-img w-full h-full object-cover transition-transform duration-700">
-                        </div>
-                        <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline">Lámpara Colgante Moderna</h3>
-                        <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1">Negro Mate</p>
-                        <div class="mt-auto pt-2 flex items-center gap-2">
-                            <span class="font-bold text-[14px] sm:text-base text-red-600">Bs. 35.00</span>
-                            <span class="text-gray-400 line-through text-[12px] sm:text-[13px]">Bs. 45.00</span>
-                        </div>
-                    </div>
-
-                    <!-- Producto 3 -->
-                    <div class="product-card group relative flex flex-col cursor-pointer">
-                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
-                            <img src="https://images.unsplash.com/photo-1493663284031-b7e3aefcae8e?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Sofá" class="product-img w-full h-full object-cover transition-transform duration-700">
-                        </div>
-                        <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline">Sofá Minimalista 3 Plazas</h3>
-                        <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1">Varios colores disponibles</p>
-                        <!-- Swatches de producto -->
-                        <div class="flex gap-1.5 my-1.5">
-                            <div class="w-4 h-4 rounded-full bg-gray-300 border border-gray-400"></div>
-                            <div class="w-4 h-4 rounded-full bg-[#3b4138] border border-gray-400"></div>
-                            <div class="w-4 h-4 rounded-full bg-[#bd9354] border border-gray-400"></div>
-                        </div>
-                        <div class="mt-auto pt-1 flex items-center gap-2">
-                            <span class="font-bold text-[14px] sm:text-base text-black">Desde Bs. 450.00</span>
-                        </div>
-                    </div>
-
-                    <!-- Producto 4 -->
-                    <div class="product-card group relative flex flex-col cursor-pointer">
-                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
-                            <img src="https://images.unsplash.com/photo-1533090481720-856c6e3c1fdc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Mesa" class="product-img w-full h-full object-cover transition-transform duration-700">
-                        </div>
-                        <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline">Mesa de Centro de Roble</h3>
-                        <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1">Acabado Natural</p>
-                        <div class="mt-auto pt-2 flex items-center gap-2">
-                            <span class="font-bold text-[14px] sm:text-base text-black">Bs. 120.00</span>
-                        </div>
-                    </div>
-
-                    <!-- Producto 5 -->
-                    <div class="product-card group relative flex flex-col cursor-pointer">
-                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
-                            <img src="https://images.unsplash.com/photo-1505843513577-22bb7d21e455?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Silla Oficina" class="product-img w-full h-full object-cover transition-transform duration-700">
-                        </div>
-                        <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline">Silla de Oficina Ergonómica</h3>
-                        <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1">Negro Mate / Malla</p>
-                        <div class="mt-auto pt-2 flex items-center gap-2">
-                            <span class="font-bold text-[14px] sm:text-base text-black">Bs. 199.00</span>
-                        </div>
-                    </div>
-
-                    <!-- Producto 6 -->
-                    <div class="product-card group relative flex flex-col cursor-pointer">
-                        <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
-                            <span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 uppercase rounded z-10 shadow-sm">Oferta</span>
-                            <img src="https://images.unsplash.com/photo-1594026112284-02bb6f3352fe?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Estantería" class="product-img w-full h-full object-cover transition-transform duration-700">
-                        </div>
-                        <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline">Estantería Flotante</h3>
-                        <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1">Madera Blanca</p>
-                        <div class="mt-auto pt-2 flex items-center gap-2">
-                            <span class="font-bold text-[14px] sm:text-base text-red-600">Bs. 45.00</span>
-                            <span class="text-gray-400 line-through text-[12px] sm:text-[13px]">Bs. 60.00</span>
-                        </div>
-                    </div>
-
                 </div>
 
-                <!-- Paginación -->
+                <!-- Paginación (Se puede esconder si no hay muchos productos por ahora) -->
                 <div class="mt-16 flex justify-center items-center gap-2 border-t border-gray-200 pt-8">
-                    <button class="w-10 h-10 flex items-center justify-center rounded border border-gray-300 text-gray-400 cursor-not-allowed" disabled>
-                        <i class="fa-solid fa-chevron-left text-[12px]"></i>
-                    </button>
-                    <button class="w-10 h-10 flex items-center justify-center rounded border border-black bg-black text-white font-bold text-[14px]">1</button>
-                    <button class="w-10 h-10 flex items-center justify-center rounded border border-gray-300 text-gray-600 hover:border-black font-bold text-[14px] transition">2</button>
-                    <button class="w-10 h-10 flex items-center justify-center rounded border border-gray-300 text-gray-600 hover:border-black font-bold text-[14px] transition">3</button>
-                    <span class="text-gray-400 px-2">...</span>
-                    <button class="w-10 h-10 flex items-center justify-center rounded border border-gray-300 text-gray-600 hover:border-black font-bold text-[14px] transition">6</button>
-                    <button class="w-10 h-10 flex items-center justify-center rounded border border-gray-300 text-black hover:bg-gray-50 transition">
-                        <i class="fa-solid fa-chevron-right text-[12px]"></i>
-                    </button>
+                    <p class="text-gray-400 text-sm">Has visto todo el catálogo</p>
                 </div>
                 
             </div>
@@ -289,8 +157,9 @@
     <!-- Inyección automática del Footer -->
     <div id="footer-container"></div>
 
-    <!-- Script para cargar componentes y lógica (Idéntico a index.html) -->
+    <!-- Lógica del Catálogo Dinámico -->
     <script>
+        // Cargar Header y Footer globales
         Promise.all([
             fetch('header.html').then(res => res.text()),
             fetch('footer.html').then(res => res.text())
@@ -302,6 +171,197 @@
             script.src = 'js/main.js';
             document.body.appendChild(script);
         }).catch(err => console.error('Error cargando componentes:', err));
+
+        // --- LÓGICA DE DATOS DESDE NEON ---
+        let allProducts = [];
+        let filteredProducts = [];
+
+        async function initColecciones() {
+            try {
+                // Hacemos fetch al backend (Pedimos hasta 100 productos para rellenar el catálogo)
+                const response = await fetch('/.netlify/functions/get_tienda?limit=100');
+                if (!response.ok) throw new Error('Error al conectar con la base de datos');
+                
+                allProducts = await response.json();
+                filteredProducts = [...allProducts];
+
+                buildFilters();
+                renderProducts();
+            } catch (error) {
+                console.error("Error cargando productos:", error);
+                document.getElementById('product-grid').innerHTML = `
+                    <div class="col-span-full py-20 text-center text-red-500">
+                        <i class="fa-solid fa-triangle-exclamation text-3xl mb-3"></i>
+                        <p>No se pudo cargar el catálogo en este momento. Inténtalo más tarde.</p>
+                    </div>`;
+            }
+        }
+
+        // Renderiza el Grid de Productos
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = ''; // Limpiamos el grid
+
+            if (filteredProducts.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-20 text-center text-gray-500">
+                        <i class="fa-solid fa-box-open text-4xl mb-4 text-gray-300"></i>
+                        <p>No se encontraron productos con estos filtros.</p>
+                        <button onclick="resetFilters()" class="mt-4 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-black rounded text-sm font-bold transition">Limpiar filtros</button>
+                    </div>`;
+                document.getElementById('product-count-text').textContent = '0 productos';
+                return;
+            }
+
+            filteredProducts.forEach(item => {
+                const price = parseFloat(item.price) || 0;
+                const salePrice = parseFloat(item.sale_price) || price;
+                
+                let badgeHtml = '';
+                let priceHtml = '';
+
+                // Verificamos si hay oferta real
+                if (price > salePrice) {
+                    badgeHtml = `<span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 uppercase rounded z-10 shadow-sm">Oferta</span>`;
+                    priceHtml = `
+                        <span class="font-bold text-[14px] sm:text-base text-red-600">Bs. ${salePrice.toFixed(2)}</span>
+                        <span class="text-gray-400 line-through text-[12px] sm:text-[13px]">Bs. ${price.toFixed(2)}</span>
+                    `;
+                } else {
+                    priceHtml = `<span class="font-bold text-[14px] sm:text-base text-black">Bs. ${salePrice.toFixed(2)}</span>`;
+                }
+
+                // Injectamos la tarjeta con loading="lazy" en la imagen para máxima velocidad
+                grid.innerHTML += `
+                <a href="producto.html?id=${item.id}" class="product-card group relative flex flex-col cursor-pointer">
+                    <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
+                        ${badgeHtml}
+                        <img src="${item.image_link}" loading="lazy" decoding="async" alt="${item.title}" class="product-img w-full h-full object-cover transition-transform duration-700">
+                    </div>
+                    <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline line-clamp-2">${item.title}</h3>
+                    <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1 line-clamp-1">${item.category || item.brand || 'Varios'}</p>
+                    <div class="mt-auto pt-2 flex items-center gap-2">
+                        ${priceHtml}
+                    </div>
+                </a>`;
+            });
+
+            // Actualizamos el contador de texto
+            document.getElementById('product-count-text').textContent = `Mostrando ${filteredProducts.length} productos`;
+        }
+
+        // Construye las listas de filtros en el Sidebar basándose en los datos reales
+        function buildFilters() {
+            // 1. Filtro Disponibilidad
+            const inStock = allProducts.filter(p => (p.availability || '').trim().toLowerCase() === 'in stock').length;
+            const outOfStock = allProducts.filter(p => (p.availability || '').trim().toLowerCase() === 'out of stock').length;
+
+            document.getElementById('filter-availability').innerHTML = `
+                <li class="flex items-center gap-3">
+                    <input type="checkbox" id="stock-in" value="in stock" class="filter-checkbox filter-stock w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
+                    <label for="stock-in" class="cursor-pointer hover:text-black flex-1">En stock</label>
+                    <span class="text-gray-400 text-[12px]">(${inStock})</span>
+                </li>
+                <li class="flex items-center gap-3">
+                    <input type="checkbox" id="stock-out" value="out of stock" class="filter-checkbox filter-stock w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
+                    <label for="stock-out" class="cursor-pointer hover:text-black flex-1">Agotado</label>
+                    <span class="text-gray-400 text-[12px]">(${outOfStock})</span>
+                </li>
+            `;
+
+            // 2. Filtro Categorías (Dinámico y sin duplicados)
+            const categories = [...new Set(allProducts.map(p => p.category).filter(c => c && c.trim() !== ''))];
+            let catHtml = '';
+            categories.forEach((cat, idx) => {
+                const count = allProducts.filter(p => p.category === cat).length;
+                catHtml += `
+                <li class="flex items-center gap-3">
+                    <input type="checkbox" id="cat-${idx}" value="${cat}" class="filter-checkbox filter-cat w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
+                    <label for="cat-${idx}" class="cursor-pointer hover:text-black flex-1 line-clamp-1">${cat}</label>
+                    <span class="text-gray-400 text-[12px]">(${count})</span>
+                </li>`;
+            });
+            document.getElementById('filter-category').innerHTML = catHtml || '<li class="text-xs text-gray-400">Sin categorías</li>';
+
+            // 3. Filtro Marcas (Dinámico y sin duplicados)
+            const brands = [...new Set(allProducts.map(p => p.brand).filter(b => b && b.trim() !== ''))];
+            let brandHtml = '';
+            brands.forEach((brand, idx) => {
+                const count = allProducts.filter(p => p.brand === brand).length;
+                brandHtml += `
+                <li class="flex items-center gap-3">
+                    <input type="checkbox" id="brand-${idx}" value="${brand}" class="filter-checkbox filter-brand w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
+                    <label for="brand-${idx}" class="cursor-pointer hover:text-black flex-1 line-clamp-1">${brand}</label>
+                    <span class="text-gray-400 text-[12px]">(${count})</span>
+                </li>`;
+            });
+            document.getElementById('filter-brand').innerHTML = brandHtml || '<li class="text-xs text-gray-400">Sin marcas</li>';
+
+            // Event Listeners a todos los checkboxes creados
+            document.querySelectorAll('.filter-checkbox').forEach(cb => {
+                cb.addEventListener('change', applyFilters);
+            });
+        }
+
+        // Aplica lógica de filtrado y luego ordena
+        function applyFilters() {
+            // Obtenemos los valores de los checkboxes marcados
+            const checkedStock = Array.from(document.querySelectorAll('.filter-stock:checked')).map(cb => cb.value);
+            const checkedCats = Array.from(document.querySelectorAll('.filter-cat:checked')).map(cb => cb.value);
+            const checkedBrands = Array.from(document.querySelectorAll('.filter-brand:checked')).map(cb => cb.value);
+            
+            // Filtro Switcher de Móvil
+            const mobileStockOnly = document.getElementById('mobile-stock-only').checked;
+
+            filteredProducts = allProducts.filter(p => {
+                const pStock = (p.availability || '').trim().toLowerCase();
+                
+                // Validación de Availability
+                let availMatch = checkedStock.length === 0 || checkedStock.includes(pStock);
+                if (mobileStockOnly && pStock !== 'in stock') availMatch = false;
+
+                // Validación Categoría
+                const catMatch = checkedCats.length === 0 || checkedCats.includes(p.category);
+                
+                // Validación Marca
+                const brandMatch = checkedBrands.length === 0 || checkedBrands.includes(p.brand);
+
+                return availMatch && catMatch && brandMatch;
+            });
+
+            applySorting(); // Ordena y renderiza
+        }
+
+        // Sistema de Ordenamiento
+        function applySorting() {
+            const sortVal = document.getElementById('sort-select').value;
+            
+            if (sortVal === 'asc') {
+                filteredProducts.sort((a,b) => (parseFloat(a.sale_price) || parseFloat(a.price) || 0) - (parseFloat(b.sale_price) || parseFloat(b.price) || 0));
+            } else if (sortVal === 'desc') {
+                filteredProducts.sort((a,b) => (parseFloat(b.sale_price) || parseFloat(b.price) || 0) - (parseFloat(a.sale_price) || parseFloat(a.price) || 0));
+            } else {
+                // Volver al orden por ID/Defecto si eligen "Recomendados"
+                filteredProducts.sort((a,b) => a.id - b.id);
+            }
+            
+            renderProducts();
+        }
+
+        // Botón limpiar todo
+        function resetFilters() {
+            document.querySelectorAll('.filter-checkbox').forEach(cb => cb.checked = false);
+            document.getElementById('mobile-stock-only').checked = false;
+            document.getElementById('sort-select').value = 'default';
+            applyFilters();
+        }
+
+        // Inicializar cuando el DOM cargue
+        document.addEventListener('DOMContentLoaded', () => {
+            initColecciones();
+            document.getElementById('sort-select').addEventListener('change', applySorting);
+            document.getElementById('mobile-stock-only').addEventListener('change', applyFilters);
+        });
     </script>
 </body>
 </html>
