@@ -1,30 +1,4 @@
-// Inicializar iconos de la interfaz al cargar
-lucide.createIcons();
-
-// ==========================================
-// REFERENCIAS AL DOM
-// ==========================================
-const form = document.getElementById('productForm');
-const editor = document.getElementById('descriptionEditor');
-const formatBtns = document.querySelectorAll('.format-btn');
-const alertBox = document.getElementById('alertBox');
-const alertIcon = document.getElementById('alertIcon');
-const alertMessage = document.getElementById('alertMessage');
-const submitBtn = document.getElementById('submitBtn');
-const btnText = document.getElementById('btnText');
-const btnIcon = document.getElementById('btnIcon');
-
-// Gestión de Imágenes
-const imageUrlList = document.getElementById('image-url-list');
-const processUrlsBtn = document.getElementById('process-urls-btn');
-const imageSortableList = document.getElementById('image-sortable-list');
-const singleImageInputsContainer = document.getElementById('single-image-inputs-container');
-const addSingleUrlFieldBtn = document.getElementById('add-single-url-field-btn');
-const imagePreviewModal = document.getElementById('image-preview-modal');
-const previewImage = document.getElementById('preview-image');
-const closePreviewBtn = document.getElementById('close-preview-btn');
-let sortable = null;
-
+// ... existing code ...
 // Escáner de Código de Barras
 const scanBarcodeBtn = document.getElementById('scan-barcode-btn');
 const scannerContainer = document.getElementById('scanner-container');
@@ -32,236 +6,260 @@ const closeScannerBtn = document.getElementById('close-scanner-btn');
 const barcodeInput = document.getElementById('barcode');
 let html5QrCode = null;
 
+// Vistas y Navegación (Inventario)
+const tabCreate = document.getElementById('tab-create');
+const tabInventory = document.getElementById('tab-inventory');
+const viewCreate = document.getElementById('view-create');
+const viewInventory = document.getElementById('view-inventory');
+const inventoryTableBody = document.getElementById('inventory-table-body');
+const refreshInventoryBtn = document.getElementById('refresh-inventory-btn');
+
+// Modal de Eliminación
+const deleteConfirmModal = document.getElementById('delete-confirm-modal');
+const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+
+// Estado Global
+let editingProductId = null;
+let productsList = [];
+let productToDelete = null;
 
 // ==========================================
 // 1. LÓGICA DEL EDITOR DE TEXTO (WORD)
 // ==========================================
-formatBtns.forEach(btn => {
-    btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const command = btn.getAttribute('data-command');
-        const value = btn.getAttribute('data-value') || null;
-        document.execCommand(command, false, value);
-        editor.focus();
-    });
-});
-
-
-// ==========================================
-// 2. LÓGICA DE ALERTAS (UI)
-// ==========================================
-function showAlert(type, message) {
-    alertBox.classList.remove('hidden', 'bg-green-50', 'text-green-800', 'border-green-200', 'bg-red-50', 'text-red-800', 'border-red-200');
-    
-    if (type === 'success') {
-        alertBox.classList.add('bg-green-50', 'text-green-800', 'border-green-200');
-        alertIcon.setAttribute('data-lucide', 'check-circle');
-    } else {
-        alertBox.classList.add('bg-red-50', 'text-red-800', 'border-red-200');
-        alertIcon.setAttribute('data-lucide', 'alert-circle');
-    }
-    
-    alertMessage.textContent = message;
-    lucide.createIcons();
-    
-    // Ocultar automáticamente tras 5 segundos si es éxito
-    if(type === 'success') {
-        setTimeout(() => alertBox.classList.add('hidden'), 5000);
-    }
-}
-
-
-// ==========================================
-// 3. LÓGICA DE GESTIÓN DE IMÁGENES
-// ==========================================
-function convertGoogleDriveUrl(url) {
-    if (!url) return '';
-    const regex = /\/file\/d\/([a-zA-Z0-9_-]+)/;
-    const match = url.match(regex);
-    return (match && match[1]) ? `https://lh3.googleusercontent.com/d/${match[1]}=w1000?authuser=0` : url;
-}
-
-const updateImageNumbers = () => {
-    const imageItems = imageSortableList.querySelectorAll('div[data-url]');
-    imageItems.forEach((item, index) => {
-        const numberEl = item.querySelector('.image-number');
-        const statusEl = item.querySelector('.image-status');
-        
-        if (numberEl && statusEl) {
-            numberEl.textContent = `${index + 1}.`;
-            if (index === 0) {
-                // Estilos Imagen Principal
-                numberEl.className = 'image-number text-sm font-bold text-indigo-400 w-5 text-center flex-shrink-0';
-                item.className = 'flex items-center space-x-3 p-2 bg-gray-900 rounded-lg border border-indigo-500/50 group transition-all';
-                statusEl.textContent = 'PRINCIPAL';
-                statusEl.className = 'image-status ml-auto text-[10px] font-bold px-2 py-1 rounded bg-indigo-900/50 text-indigo-300 border border-indigo-700/50 hidden sm:inline-block';
-            } else if (index < 8) {
-                // Estilos Fotos Adicionales (Se guardan)
-                numberEl.className = 'image-number text-sm font-semibold text-gray-400 w-5 text-center flex-shrink-0';
-                item.className = 'flex items-center space-x-3 p-2 bg-gray-900 rounded-lg border border-gray-700 group transition-all';
-                statusEl.textContent = 'SE GUARDARÁ';
-                statusEl.className = 'image-status ml-auto text-[10px] font-bold px-2 py-1 rounded bg-green-900/50 text-green-300 border border-green-700/50 hidden sm:inline-block';
-            } else {
-                // Estilos Fotos Ignoradas (No se guardan)
-                numberEl.className = 'image-number text-sm font-bold text-red-500 w-5 text-center flex-shrink-0';
-                item.className = 'flex items-center space-x-3 p-2 bg-gray-900/50 rounded-lg border border-red-900/50 opacity-60 group transition-all';
-                statusEl.textContent = 'NO SE GUARDARÁ';
-                statusEl.className = 'image-status ml-auto text-[10px] font-bold px-2 py-1 rounded bg-red-900/50 text-red-300 border border-red-700/50 hidden sm:inline-block';
-            }
-        }
-    });
-};
-
-const addUrlToSorter = (url) => {
-    if (!url) return;
-    const existingUrls = Array.from(imageSortableList.querySelectorAll('div[data-url]')).map(div => div.dataset.url);
-    if (existingUrls.includes(url)) {
-        showAlert('error', 'Esa imagen ya se encuentra en la lista.');
-        return;
-    }
-
-    // Cambiado límite de 8 a 20
-    if (existingUrls.length >= 20) {
-        showAlert('error', 'Puedes agregar un máximo de 20 fotos a la lista para organizar.');
-        return;
-    }
-
-    const div = document.createElement('div');
-    div.dataset.url = url;
-
-    // Se agregan las clases base, que luego `updateImageNumbers` reemplazará para darle el color correcto.
-    div.innerHTML = `
-        <span class="image-number"></span>
-        <svg class="w-6 h-6 text-gray-500 drag-handle cursor-grab hover:text-gray-300 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-        <img src="${url}" onerror="this.onerror=null;this.src='https://placehold.co/40x40/1f2937/9ca3af?text=Err';" class="w-12 h-12 rounded shadow-sm object-cover bg-gray-800 cursor-pointer hover:opacity-80 transition-opacity ring-1 ring-gray-600 flex-shrink-0">
-        <p class="text-xs text-gray-400 truncate px-2 flex-grow min-w-0">${url}</p>
-        <span class="image-status"></span>
-        <button type="button" class="text-xl text-red-500 hover:text-red-400 remove-image-btn p-1 font-bold flex-shrink-0">&times;</button>
-    `;
-
-    div.querySelector('img').addEventListener('click', () => openImagePreview(url));
-    div.querySelector('.remove-image-btn').addEventListener('click', () => {
-        div.remove();
-        updateImageNumbers();
-    });
-
-    imageSortableList.appendChild(div);
-    updateImageNumbers();
-};
-
-const createNewSingleImageInput = () => {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'flex items-center space-x-2 single-url-wrapper';
-
-    wrapper.innerHTML = `
-        <input type="url" class="w-full px-3 py-2 bg-gray-900 border border-gray-600 text-white text-sm rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 placeholder-gray-500" placeholder="Pegar URL y presionar Guardar">
-        <button type="button" class="text-sm bg-indigo-600 text-white font-medium px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors save-single-url-btn">Guardar</button>
-        <button type="button" class="text-xl text-gray-500 hover:text-red-500 font-bold px-2 py-1 rounded-lg transition-colors remove-single-url-btn">&times;</button>
-    `;
-
-    const input = wrapper.querySelector('input');
-    const saveBtn = wrapper.querySelector('.save-single-url-btn');
-    const removeBtn = wrapper.querySelector('.remove-single-url-btn');
-
-    const saveUrlAction = () => {
-        const url = convertGoogleDriveUrl(input.value.trim());
-        if (url) {
-            addUrlToSorter(url);
-            input.value = '';
-        }
-    };
-
-    input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            saveUrlAction();
-        }
-    });
-
-    saveBtn.addEventListener('click', saveUrlAction);
-    removeBtn.addEventListener('click', () => wrapper.remove());
-
-    singleImageInputsContainer.appendChild(wrapper);
-    input.focus();
-};
-
-processUrlsBtn.addEventListener('click', () => {
-    const urls = imageUrlList.value.split(',')
-        .map(url => convertGoogleDriveUrl(url.trim()))
-        .filter(url => url);
-        
-    urls.forEach(url => addUrlToSorter(url));
-    imageUrlList.value = ''; 
-});
-
-addSingleUrlFieldBtn.addEventListener('click', createNewSingleImageInput);
-
-function openImagePreview(imageUrl) {
-    if (imageUrl && !imageUrl.includes('placehold.co')) {
-        previewImage.src = imageUrl;
-        imagePreviewModal.classList.remove('hidden');
-    }
-}
-function closeImagePreview() {
-    imagePreviewModal.classList.add('hidden');
-    previewImage.src = '';
-}
-closePreviewBtn.addEventListener('click', closeImagePreview);
-imagePreviewModal.addEventListener('click', (e) => {
-    if (e.target === imagePreviewModal) closeImagePreview();
-});
-
-sortable = new Sortable(imageSortableList, {
-    animation: 150,
-    handle: '.drag-handle',
-    ghostClass: 'sortable-ghost',
-    onEnd: function () {
-        updateImageNumbers();
-    }
-});
-
-// Inicializar un input vacío por defecto
-createNewSingleImageInput();
-
-
-// ==========================================
-// 4. LÓGICA DEL ESCÁNER DE CÓDIGOS DE BARRAS
-// ==========================================
-function startScanner() {
-    scannerContainer.classList.remove('hidden');
-    scannerContainer.classList.add('flex');
-
-    if (!html5QrCode) {
-        html5QrCode = new Html5Qrcode("reader");
-    }
-
-    const qrCodeSuccessCallback = (decodedText, decodedResult) => {
-        barcodeInput.value = decodedText;
-        stopScanner();
-        showAlert('success', 'Código escaneado correctamente.');
-    };
-
-    const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-    
-    html5QrCode.start({ facingMode: "environment" }, config, qrCodeSuccessCallback)
-        .catch(err => {
-            console.error(`Error al iniciar escáner: ${err}`);
-            showAlert('error', 'No se pudo acceder a la cámara. Verifica los permisos.');
-            stopScanner();
-        });
-}
-
-function stopScanner() {
-    if (html5QrCode && html5QrCode.isScanning) {
-        html5QrCode.stop().then(() => {}).catch(err => console.error(err));
-    }
-    scannerContainer.classList.add('hidden');
-    scannerContainer.classList.remove('flex');
-}
-
+// ... existing code ...
 scanBarcodeBtn.addEventListener('click', startScanner);
 closeScannerBtn.addEventListener('click', stopScanner);
 
+
+// ==========================================
+// 4.5 LÓGICA DE INVENTARIO (PESTAÑAS Y TABLA)
+// ==========================================
+
+function switchTab(tab) {
+    if (tab === 'create') {
+        viewCreate.classList.remove('hidden');
+        viewInventory.classList.add('hidden');
+        
+        tabCreate.classList.add('text-indigo-400', 'border-indigo-400');
+        tabCreate.classList.remove('text-gray-400', 'border-transparent');
+        
+        tabInventory.classList.remove('text-indigo-400', 'border-indigo-400');
+        tabInventory.classList.add('text-gray-400', 'border-transparent');
+    } else {
+        viewCreate.classList.add('hidden');
+        viewInventory.classList.remove('hidden');
+        
+        tabInventory.classList.add('text-indigo-400', 'border-indigo-400');
+        tabInventory.classList.remove('text-gray-400', 'border-transparent');
+        
+        tabCreate.classList.remove('text-indigo-400', 'border-indigo-400');
+        tabCreate.classList.add('text-gray-400', 'border-transparent');
+        
+        loadInventory(); // Cargar datos al entrar a la pestaña de Inventario
+    }
+}
+
+tabCreate.addEventListener('click', () => switchTab('create'));
+tabInventory.addEventListener('click', () => switchTab('inventory'));
+refreshInventoryBtn.addEventListener('click', loadInventory);
+
+async function loadInventory() {
+    inventoryTableBody.innerHTML = `
+        <tr>
+            <td colspan="5" class="px-4 py-8 text-center text-gray-500">
+                <div class="flex flex-col items-center justify-center gap-2">
+                    <i data-lucide="loader-2" class="h-6 w-6 animate-spin"></i>
+                    <span>Cargando inventario...</span>
+                </div>
+            </td>
+        </tr>
+    `;
+    lucide.createIcons();
+
+    try {
+        const response = await fetch('/.netlify/functions/products');
+        const data = await response.json();
+        
+        if (data.status === 'success') {
+            productsList = data.data;
+            renderInventoryTable(productsList);
+        } else {
+            throw new Error('No se pudo cargar el inventario.');
+        }
+    } catch (error) {
+        console.error(error);
+        inventoryTableBody.innerHTML = `
+            <tr>
+                <td colspan="5" class="px-4 py-8 text-center text-red-400">
+                    Ocurrió un error al cargar los productos.
+                </td>
+            </tr>
+        `;
+        showAlert('error', 'Error al cargar el inventario de la base de datos.');
+    }
+}
+
+function renderInventoryTable(products) {
+    inventoryTableBody.innerHTML = '';
+    
+    if (products.length === 0) {
+        inventoryTableBody.innerHTML = `
+            <tr>
+                <td colspan="5" class="px-4 py-8 text-center text-gray-500">
+                    No hay productos registrados en el inventario.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
+    products.forEach(p => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-gray-800/50 transition-colors group';
+        
+        const imageUrl = p.image_link || 'https://placehold.co/40x40/1f2937/9ca3af?text=No+Img';
+        const priceStr = parseFloat(p.price).toFixed(2);
+        const stockStr = p.quantity_to_sell_on_facebook || 0;
+        
+        tr.innerHTML = `
+            <td class="px-4 py-3">
+                <img src="${imageUrl}" onerror="this.onerror=null;this.src='https://placehold.co/40x40/1f2937/9ca3af?text=Err';" class="w-10 h-10 rounded object-cover border border-gray-600 bg-gray-800 cursor-pointer hover:opacity-80 transition-opacity" onclick="openImagePreview('${imageUrl}')">
+            </td>
+            <td class="px-4 py-3 font-medium text-gray-200">
+                <div class="line-clamp-2" title="${p.title}">${p.title}</div>
+                <div class="text-xs text-gray-500 mt-0.5">${p.brand || 'Sin marca'} | ${p.category || 'Sin categoría'}</div>
+            </td>
+            <td class="px-4 py-3 text-indigo-300 font-semibold">$${priceStr}</td>
+            <td class="px-4 py-3">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${stockStr > 0 ? 'bg-green-900/50 text-green-400' : 'bg-red-900/50 text-red-400'}">
+                    ${stockStr}
+                </span>
+            </td>
+            <td class="px-4 py-3 text-right">
+                <div class="flex items-center justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                    <button onclick="editProduct(${p.id})" class="p-1.5 bg-indigo-900/50 hover:bg-indigo-600 text-indigo-300 hover:text-white rounded transition-colors" title="Editar">
+                        <i data-lucide="edit-2" class="w-4 h-4"></i>
+                    </button>
+                    <button onclick="promptDeleteProduct(${p.id})" class="p-1.5 bg-red-900/50 hover:bg-red-600 text-red-400 hover:text-white rounded transition-colors" title="Eliminar">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        inventoryTableBody.appendChild(tr);
+    });
+    
+    lucide.createIcons();
+}
+
+// Llenar datos en el formulario para Editar
+window.editProduct = (id) => {
+    const product = productsList.find(p => p.id === id);
+    if (!product) return;
+    
+    editingProductId = product.id;
+    
+    // Llenar campos de texto
+    document.getElementById('name').value = product.title || '';
+    document.querySelector('input[name="category"]').value = product.category || '';
+    document.getElementById('brand').value = product.brand || '';
+    document.getElementById('gtin').value = product.gtin || '';
+    document.getElementById('barcode').value = product.barcode || '';
+    document.querySelector('input[name="link"]').value = product.link || '';
+    document.querySelector('input[name="price"]').value = product.price || '';
+    document.querySelector('input[name="sale_price"]').value = product.sale_price || '';
+    document.querySelector('input[name="wholesale_price"]').value = product.wholesale_price || '';
+    document.querySelector('input[name="purchase_price"]').value = product.purchase_price || '';
+    document.querySelector('input[name="quantity_to_sell_on_facebook"]').value = product.quantity_to_sell_on_facebook || '';
+    
+    // Llenar Selects
+    document.querySelector('select[name="availability"]').value = product.availability || 'in stock';
+    document.querySelector('select[name="condition"]').value = product.condition || 'new';
+    
+    // Llenar WYSIWYG
+    editor.innerHTML = product.description || '';
+    
+    // Limpiar y Llenar Imágenes (Ignorando nulos)
+    imageSortableList.innerHTML = '';
+    const urls = [
+        product.image_link, product.foto_1, product.foto_2, product.foto_3, 
+        product.foto_4, product.foto_5, product.foto_6, product.foto_7
+    ].filter(Boolean);
+    
+    urls.forEach(url => addUrlToSorter(url));
+    
+    // Cambiar texto de botón para que indique edición
+    btnText.textContent = 'Actualizar Producto';
+    btnIcon.setAttribute('data-lucide', 'refresh-cw');
+    
+    // Mover a la pestaña y arriba
+    switchTab('create');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    lucide.createIcons();
+};
+
+// Modal de Confirmación y Eliminado
+window.promptDeleteProduct = (id) => {
+    productToDelete = id;
+    deleteConfirmModal.classList.remove('hidden');
+};
+
+cancelDeleteBtn.addEventListener('click', () => {
+    productToDelete = null;
+    deleteConfirmModal.classList.add('hidden');
+});
+
+confirmDeleteBtn.addEventListener('click', async () => {
+    if (!productToDelete) return;
+    
+    const originalBtnHtml = confirmDeleteBtn.innerHTML;
+    confirmDeleteBtn.innerHTML = '<i data-lucide="loader-2" class="h-4 w-4 animate-spin"></i> Eliminando...';
+    confirmDeleteBtn.disabled = true;
+    lucide.createIcons();
+
+    try {
+        const response = await fetch('/.netlify/functions/products', {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: productToDelete })
+        });
+
+        if (!response.ok) throw new Error('Error al eliminar el producto de la base de datos.');
+        
+        showAlert('success', 'Producto eliminado permanentemente.');
+        deleteConfirmModal.classList.add('hidden');
+        
+        // Refrescar inventario automáticamente
+        loadInventory();
+        
+        // Si justo estábamos editando el mismo producto que borramos, limpiar el form
+        if (editingProductId === productToDelete) {
+            resetFormState();
+        }
+    } catch (error) {
+        console.error(error);
+        showAlert('error', error.message);
+    } finally {
+        confirmDeleteBtn.innerHTML = originalBtnHtml;
+        confirmDeleteBtn.disabled = false;
+        productToDelete = null;
+        lucide.createIcons();
+    }
+});
+
+function resetFormState() {
+    form.reset();
+    editor.innerHTML = ''; 
+    imageSortableList.innerHTML = '';
+    singleImageInputsContainer.innerHTML = ''; 
+    createNewSingleImageInput(); 
+    
+    editingProductId = null;
+    btnText.textContent = 'Guardar Producto';
+    btnIcon.setAttribute('data-lucide', 'save');
+    lucide.createIcons();
+}
 
 // ==========================================
 // 5. LÓGICA DE ENVÍO DE DATOS
@@ -270,45 +268,22 @@ form.addEventListener('submit', async (e) => {
     e.preventDefault();
     
     // Validar Descripción HTML
-    const descriptionHtml = editor.innerHTML.trim();
-    if (!descriptionHtml) {
-        showAlert('error', 'La descripción no puede estar vacía.');
-        return;
-    }
-
-    // Extraer Imágenes ordenadas
-    const imageItems = imageSortableList.querySelectorAll('div[data-url]');
-    if (imageItems.length === 0) {
-        showAlert('error', 'Debes agregar al menos la Imagen Principal.');
-        return;
-    }
-
-    // Estado Cargando
-    submitBtn.disabled = true;
-    btnText.textContent = 'Guardando...';
-    btnIcon.setAttribute('data-lucide', 'loader-2');
-    btnIcon.classList.add('animate-spin');
-    lucide.createIcons();
-
-    // Recopilar FormData nativo
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    
-    // Inyectar HTML y Fotos mapeadas al objeto final
-    data.description = descriptionHtml;
-    data.image_link = imageItems[0]?.dataset.url || '';
-    data.foto_1 = imageItems[1]?.dataset.url || null;
-    data.foto_2 = imageItems[2]?.dataset.url || null;
-    data.foto_3 = imageItems[3]?.dataset.url || null;
-    data.foto_4 = imageItems[4]?.dataset.url || null;
+// ... existing code ...
     data.foto_5 = imageItems[5]?.dataset.url || null;
     data.foto_6 = imageItems[6]?.dataset.url || null;
     data.foto_7 = imageItems[7]?.dataset.url || null;
 
+    // Si estamos editando un producto, adjuntamos el ID al objeto que enviaremos
+    if (editingProductId) {
+        data.id = editingProductId;
+    }
+
     try {
-        // ENLACE CORREGIDO: Llamando a products.js en lugar de addProduct.js
+        // Determinamos el método: si hay ID editando es un PUT (Actualizar), si no, es un POST (Crear)
+        const method = editingProductId ? 'PUT' : 'POST';
+
         const response = await fetch('/.netlify/functions/products', {
-            method: 'POST',
+            method: method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
@@ -316,25 +291,23 @@ form.addEventListener('submit', async (e) => {
         // Si la base de datos responde con un error, tratamos de leer su mensaje real
         if (!response.ok) {
             let errorMsg = 'Error al conectar con la base de datos.';
-            try {
-                const errorData = await response.json();
-                errorMsg = errorData.message || errorMsg;
-            } catch (e) {
-                // Falla al parsear JSON, conservamos el mensaje genérico
+// ... existing code ...
             }
             throw new Error(errorMsg);
         }
 
-        showAlert('success', '¡Producto guardado exitosamente en la Base de Datos!');
+        const successMessage = editingProductId ? '¡Producto actualizado exitosamente!' : '¡Producto guardado exitosamente!';
+        showAlert('success', successMessage);
         
         // Limpiar todo después de guardar
-        form.reset();
-        editor.innerHTML = ''; 
-        imageSortableList.innerHTML = '';
-        singleImageInputsContainer.innerHTML = ''; 
-        createNewSingleImageInput(); 
+        resetFormState();
         
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Comportamiento post-guardado
+        if (method === 'PUT') {
+            switchTab('inventory'); // Regresar al inventario después de actualizar
+        } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' }); // Quedarse en form si solo fue nuevo registro
+        }
 
     } catch (error) {
         // Muestra en la alerta exactamente qué fue lo que falló en Neon DB
@@ -343,8 +316,8 @@ form.addEventListener('submit', async (e) => {
     } finally {
         // Restaurar estado del botón
         submitBtn.disabled = false;
-        btnText.textContent = 'Guardar Producto';
-        btnIcon.setAttribute('data-lucide', 'save');
+        btnText.textContent = editingProductId ? 'Actualizar Producto' : 'Guardar Producto';
+        btnIcon.setAttribute('data-lucide', editingProductId ? 'refresh-cw' : 'save');
         btnIcon.classList.remove('animate-spin');
         lucide.createIcons();
     }
