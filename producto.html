@@ -34,6 +34,9 @@
         
         /* Estilos de Producto */
         .thumb-active { border-color: #111827 !important; opacity: 1 !important; }
+        
+        /* Efecto Hover para tarjetas (Importado de colecciones) */
+        .product-card:hover .product-img { transform: scale(1.05); }
     </style>
 </head>
 <body class="bg-white text-gray-800 font-sans antialiased">
@@ -172,10 +175,11 @@
             </div>
         </div>
 
-        <!-- SECCIÓN: PRODUCTOS COMPLEMENTARIOS (Upsell block) -->
+        <!-- SECCIÓN: PRODUCTOS COMPLEMENTARIOS (Estilo Colecciones + Carrusel móvil) -->
         <section class="mt-24 pt-10 border-t border-gray-200">
             <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center sm:text-left">Productos que también te pueden interesar</h2>
-            <div id="related-products-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+            <!-- Carrusel en Móvil / Grilla en Desktop -->
+            <div id="related-products-grid" class="flex md:grid md:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto md:overflow-visible pb-4 hide-scrollbar snap-x snap-mandatory">
                 <!-- Upsells inyectados desde base de datos -->
             </div>
         </section>
@@ -252,8 +256,9 @@
         // 2. Cargar sugerencias
         async function fetchRelatedProducts(brand, category, currentId) {
             try {
-                // Pasamos brand, category y el ID actual para excluirlo de la búsqueda
-                const url = `/.netlify/functions/get_tienda?brand=${encodeURIComponent(brand || '')}&category=${encodeURIComponent(category || '')}&exclude_id=${currentId}&limit=4`;
+                // Pasamos brand, category y el ID actual (validando que no sea undefined)
+                const safeId = currentId ? currentId : '';
+                const url = `/.netlify/functions/get_tienda?brand=${encodeURIComponent(brand || '')}&category=${encodeURIComponent(category || '')}&exclude_id=${safeId}&limit=4`;
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Error cargando relacionados');
                 return await response.json();
@@ -342,27 +347,51 @@
                 });
             }
 
-            // Cargar Upsell / Sugerencias
-            const related = await fetchRelatedProducts(product.brand, product.category, product.id);
+            // Cargar Upsell / Sugerencias (Enviando el ID para que la Base de Datos no falle)
+            const safeBrand = product.brand || '';
+            const safeCategory = product.category || '';
+            const related = await fetchRelatedProducts(safeBrand, safeCategory, product.id);
+            
             const grid = document.getElementById('related-products-grid');
             grid.innerHTML = '';
             
             let upsellCount = 0;
             related.forEach((item) => {
-                // Limitamos a 4 (la base de datos ya excluyó el producto actual)
-                if (upsellCount >= 4) return; 
+                // Evitamos sugerir el mismo producto y limitamos a 4
+                if (item.id == product.id || upsellCount >= 4) return; 
                 
-                const itemSalePrice = parseFloat(item.sale_price) || parseFloat(item.price) || 0;
-                const hiddenClass = upsellCount > 1 ? 'hidden md:block' : '';
+                const itemPrice = parseFloat(item.price) || 0;
+                const itemSalePrice = parseFloat(item.sale_price) || itemPrice || 0;
                 
-                // Renderizado asegurando enlace exacto y Lazy Loading en imágenes sugeridas
+                // Lógica visual de Precios/Ofertas basada en diseño de Colecciones
+                let priceHtml = '';
+                let badgeHtml = '';
+                
+                if (itemPrice > itemSalePrice) {
+                    // Producto en oferta
+                    badgeHtml = `<span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 uppercase rounded z-10 shadow-sm">Oferta</span>`;
+                    priceHtml = `
+                        <span class="font-bold text-[14px] sm:text-base text-red-600">Bs. ${itemSalePrice.toFixed(2)}</span>
+                        <span class="text-gray-400 line-through text-[12px] sm:text-[13px]">Bs. ${itemPrice.toFixed(2)}</span>
+                    `;
+                } else {
+                    // Precio normal
+                    priceHtml = `<span class="font-bold text-[14px] sm:text-base text-black">Bs. ${itemSalePrice.toFixed(2)}</span>`;
+                }
+
+                // Renderizado idéntico a colecciones.html, forzando ancho en móvil para el carrusel
                 grid.innerHTML += `
-                <a href="producto.html?id=${item.id}" class="product-card group cursor-pointer ${hiddenClass}">
-                    <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-3">
-                        <img src="${item.image_link}" loading="lazy" decoding="async" alt="${item.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                <a href="producto.html?id=${item.id}" class="product-card group relative flex flex-col cursor-pointer flex-shrink-0 w-[70%] sm:w-[45%] md:w-auto snap-start">
+                    <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
+                        ${badgeHtml}
+                        <img src="${item.image_link}" loading="lazy" decoding="async" alt="${item.title}" class="product-img w-full h-full object-cover transition-transform duration-700">
                     </div>
-                    <h3 class="text-[13px] sm:text-[14px] font-bold text-gray-900 group-hover:underline line-clamp-2">${item.title}</h3>
-                    <div class="mt-1 font-bold text-black text-[13px]">Bs. ${itemSalePrice.toFixed(2)}</div>
+                    <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline line-clamp-2">${item.title}</h3>
+                    <!-- Categoría como subtítulo (Para emular el estilo de colecciones) -->
+                    <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1 line-clamp-1">${item.category || item.brand || ''}</p>
+                    <div class="mt-auto pt-2 flex items-center gap-2">
+                        ${priceHtml}
+                    </div>
                 </a>`;
                 upsellCount++;
             });
