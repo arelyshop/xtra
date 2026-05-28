@@ -21,9 +21,7 @@ exports.handler = async (event, context) => {
         const sql = neon(process.env.DATABASE_URL);
 
         // 2. Extraer los parámetros de la URL
-        // Ejemplo: /.netlify/functions/get_tienda?id=123
-        // Ejemplo: /.netlify/functions/get_tienda?brand=UGREEN&category=Audio&limit=4
-        const { id, brand, category, limit } = event.queryStringParameters || {};
+        const { id, brand, category, limit, exclude_id } = event.queryStringParameters || {};
 
         // CASO A: Buscar un producto específico por ID
         if (id) {
@@ -51,13 +49,30 @@ exports.handler = async (event, context) => {
         // CASO B: Buscar productos relacionados (Upsell)
         if (brand || category) {
             const limitNum = parseInt(limit) || 4;
+            const b = brand || '';
+            const c = category || '';
             
-            // Busca productos de la misma marca o categoría (excluyendo el que se está viendo si es posible)
-            const result = await sql`
-                SELECT * FROM products 
-                WHERE brand = ${brand} OR category = ${category}
-                LIMIT ${limitNum}
-            `;
+            // Busca productos de la misma marca O categoría (excluyendo el que se está viendo)
+            let result;
+            if (exclude_id) {
+                result = await sql`
+                    SELECT * FROM products 
+                    WHERE id != ${exclude_id}
+                      AND (
+                          (brand = ${b} AND brand != '') 
+                          OR 
+                          (category = ${c} AND category != '')
+                      )
+                    LIMIT ${limitNum}
+                `;
+            } else {
+                result = await sql`
+                    SELECT * FROM products 
+                    WHERE (brand = ${b} AND brand != '') 
+                       OR (category = ${c} AND category != '')
+                    LIMIT ${limitNum}
+                `;
+            }
 
             return {
                 statusCode: 200,
