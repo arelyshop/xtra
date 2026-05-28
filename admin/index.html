@@ -370,11 +370,9 @@
         const editor = document.getElementById('descriptionEditor');
         const formatBtns = document.querySelectorAll('.format-btn');
         const alertBox = document.getElementById('alertBox');
-        const alertIcon = document.getElementById('alertIcon');
         const alertMessage = document.getElementById('alertMessage');
         const submitBtn = document.getElementById('submitBtn');
         const btnText = document.getElementById('btnText');
-        const btnIcon = document.getElementById('btnIcon');
 
         // Navegación
         const tabAdd = document.getElementById('tab-add');
@@ -385,13 +383,11 @@
         // Elementos Dinámicos Modo Edición
         const formHeaderTitle = document.getElementById('form-header-title');
         const formHeaderSubtitle = document.getElementById('form-header-subtitle');
-        const formHeaderIcon = document.getElementById('form-header-icon');
         const cancelEditBtn = document.getElementById('cancelEditBtn');
         const tabAddText = document.getElementById('tab-add-text');
 
         // Botón Refrescar
         const refreshDbBtn = document.getElementById('refresh-db-btn');
-        const refreshDbIcon = document.getElementById('refresh-db-icon');
 
         // Inventario y Búsqueda
         const productsTableBody = document.getElementById('productsTableBody');
@@ -457,23 +453,44 @@
         });
 
         // ==========================================
+        // UTILIDAD PARA ACTUALIZAR ICONOS LUCIDE
+        // ==========================================
+        function updateIcon(elementId, iconName, extraClasses = '') {
+            const el = document.getElementById(elementId);
+            if (el) {
+                const newIcon = document.createElement('i');
+                newIcon.id = elementId;
+                newIcon.setAttribute('data-lucide', iconName);
+                if (extraClasses) newIcon.className = extraClasses;
+                el.parentNode.replaceChild(newIcon, el);
+            }
+        }
+
+        // ==========================================
         // BOTÓN REFRESCAR BASE DE DATOS
         // ==========================================
         refreshDbBtn.addEventListener('click', async () => {
-            refreshDbIcon.classList.add('animate-spin');
+            const currentIcon = document.getElementById('refresh-db-icon');
+            if (currentIcon) currentIcon.classList.add('animate-spin');
             refreshDbBtn.disabled = true;
             
-            await loadProducts(); // Vuelve a hacer el GET a la base de datos
-            
-            // Si había una búsqueda activa, la re-aplicamos
-            if (searchInput.value.trim() !== '') {
-                searchInput.dispatchEvent(new Event('input'));
-            } else {
-                showAlert('success', 'Inventario actualizado.');
+            try {
+                await loadProducts(); // Vuelve a hacer el GET a la base de datos
+                
+                // Si había una búsqueda activa, la re-aplicamos
+                if (searchInput.value.trim() !== '') {
+                    searchInput.dispatchEvent(new Event('input'));
+                } else {
+                    showAlert('success', 'Inventario actualizado.');
+                }
+            } catch (error) {
+                console.error("Error al refrescar", error);
+            } finally {
+                // Buscamos de nuevo por si Lucide reemplazó el nodo
+                const updatedIcon = document.getElementById('refresh-db-icon');
+                if (updatedIcon) updatedIcon.classList.remove('animate-spin');
+                refreshDbBtn.disabled = false;
             }
-            
-            refreshDbIcon.classList.remove('animate-spin');
-            refreshDbBtn.disabled = false;
         });
 
         // ==========================================
@@ -575,11 +592,11 @@
             // Cambiar UI de Formulario
             formHeaderTitle.textContent = "Editar Producto";
             formHeaderSubtitle.textContent = `Modificando ID: #${product.id}`;
-            formHeaderIcon.setAttribute('data-lucide', 'edit-3');
+            updateIcon('form-header-icon', 'edit-3', 'h-7 w-7 text-indigo-400');
             cancelEditBtn.classList.remove('hidden');
             tabAddText.textContent = "Editar Producto";
             btnText.textContent = "Actualizar Cambios";
-            btnIcon.setAttribute('data-lucide', 'refresh-cw');
+            updateIcon('btnIcon', 'refresh-cw', 'h-6 w-6');
             lucide.createIcons();
 
             // Poblar campos de texto y selects
@@ -624,11 +641,11 @@
 
             formHeaderTitle.textContent = "Gestión de Productos";
             formHeaderSubtitle.textContent = "Registra nuevos productos en el catálogo";
-            formHeaderIcon.setAttribute('data-lucide', 'package');
+            updateIcon('form-header-icon', 'package', 'h-7 w-7 text-indigo-400');
             cancelEditBtn.classList.add('hidden');
             tabAddText.textContent = "Nuevo Producto";
             btnText.textContent = "Guardar Producto";
-            btnIcon.setAttribute('data-lucide', 'save');
+            updateIcon('btnIcon', 'save', 'h-6 w-6');
             lucide.createIcons();
         }
 
@@ -687,13 +704,15 @@
 
         function showAlert(type, message) {
             alertBox.classList.remove('hidden', 'bg-green-50', 'text-green-800', 'border-green-200', 'bg-red-50', 'text-red-800', 'border-red-200');
+            
             if (type === 'success') {
                 alertBox.classList.add('bg-green-50', 'text-green-800', 'border-green-200');
-                alertIcon.setAttribute('data-lucide', 'check-circle');
+                updateIcon('alertIcon', 'check-circle', 'h-5 w-5');
             } else {
                 alertBox.classList.add('bg-red-50', 'text-red-800', 'border-red-200');
-                alertIcon.setAttribute('data-lucide', 'alert-circle');
+                updateIcon('alertIcon', 'alert-circle', 'h-5 w-5');
             }
+            
             alertMessage.textContent = message;
             lucide.createIcons();
             
@@ -832,8 +851,7 @@
 
             submitBtn.disabled = true;
             btnText.textContent = currentEditId ? 'Actualizando...' : 'Guardando...';
-            btnIcon.setAttribute('data-lucide', 'loader-2');
-            btnIcon.classList.add('animate-spin');
+            updateIcon('btnIcon', 'loader-2', 'h-6 w-6 animate-spin');
             lucide.createIcons();
 
             const formData = new FormData(form);
@@ -877,8 +895,7 @@
             } finally {
                 submitBtn.disabled = false;
                 btnText.textContent = currentEditId ? 'Actualizar Cambios' : 'Guardar Producto';
-                btnIcon.setAttribute('data-lucide', currentEditId ? 'refresh-cw' : 'save');
-                btnIcon.classList.remove('animate-spin');
+                updateIcon('btnIcon', currentEditId ? 'refresh-cw' : 'save', 'h-6 w-6');
                 lucide.createIcons();
             }
         });
