@@ -286,10 +286,11 @@
             document.getElementById('prod-brand').textContent = product.brand || 'N/A';
             document.getElementById('prod-sku').textContent = product.gtin || 'N/A';
             
-            // Formateo de descripción: Negritas entre asteriscos y saltos de línea
+            // Formateo de descripción: Negritas entre ** o * y saltos de línea
             let rawDesc = product.description || '';
             let formattedDesc = rawDesc
-                .replace(/\*([^\*]+)\*/g, '<strong class="font-bold text-gray-900">$1</strong>')
+                .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-gray-900">$1</strong>') // Detecta formato **texto**
+                .replace(/\*([^*]+)\*/g, '<strong class="font-bold text-gray-900">$1</strong>')     // Detecta formato *texto*
                 .replace(/\n/g, '<br>');
             document.getElementById('prod-desc').innerHTML = formattedDesc;
 
