@@ -224,10 +224,10 @@
 
                 // Lógica de visualización
                 if (isOutOfStock) {
-                    // Si está agotado: Marca de agua central inclinada, sin emoji, foto en escala de grises
+                    // Si está agotado: Marca de agua central, solo texto gris, a 45 grados y +20% de tamaño
                     badgeHtml = `
                         <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-                            <span class="bg-black/70 backdrop-blur-sm border border-white/20 text-white text-[14px] font-black px-6 py-2 uppercase rounded-sm tracking-[0.2em] transform -rotate-12 shadow-2xl">Agotado</span>
+                            <span class="text-gray-500 text-[17px] font-black uppercase tracking-[0.2em] transform -rotate-45">Agotado</span>
                         </div>`;
                     imageClasses += ' grayscale opacity-50'; // Aplica el filtro gris a la foto
                     
