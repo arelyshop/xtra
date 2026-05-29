@@ -216,19 +216,31 @@
             filteredProducts.forEach(item => {
                 const price = parseFloat(item.price) || 0;
                 const salePrice = parseFloat(item.sale_price) || price;
+                const isOutOfStock = (item.availability || '').trim().toLowerCase() === 'out of stock';
                 
                 let badgeHtml = '';
                 let priceHtml = '';
+                let imageClasses = 'product-img w-full h-full object-cover transition-transform duration-700';
 
-                // Verificamos si hay oferta real
-                if (price > salePrice) {
-                    badgeHtml = `<span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 uppercase rounded z-10 shadow-sm">Oferta</span>`;
-                    priceHtml = `
-                        <span class="font-bold text-[14px] sm:text-base text-red-600">Bs. ${salePrice.toFixed(2)}</span>
-                        <span class="text-gray-400 line-through text-[12px] sm:text-[13px]">Bs. ${price.toFixed(2)}</span>
-                    `;
+                // Lógica de visualización
+                if (isOutOfStock) {
+                    // Si está agotado: Etiqueta gris con carita triste, foto en escala de grises y opaca
+                    badgeHtml = `<span class="absolute top-2 left-2 bg-gray-700/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 uppercase rounded z-10 shadow-sm tracking-wide">Agotado 😔</span>`;
+                    imageClasses += ' grayscale opacity-60'; // Aplica el filtro gris a la foto
+                    
+                    // Mostramos el precio pero en color gris para mantener la coherencia de que no se puede comprar
+                    priceHtml = `<span class="font-bold text-[14px] sm:text-base text-gray-500">Bs. ${salePrice.toFixed(2)}</span>`;
                 } else {
-                    priceHtml = `<span class="font-bold text-[14px] sm:text-base text-black">Bs. ${salePrice.toFixed(2)}</span>`;
+                    // Si hay stock, verificamos si hay oferta real
+                    if (price > salePrice) {
+                        badgeHtml = `<span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 uppercase rounded z-10 shadow-sm">Oferta</span>`;
+                        priceHtml = `
+                            <span class="font-bold text-[14px] sm:text-base text-red-600">Bs. ${salePrice.toFixed(2)}</span>
+                            <span class="text-gray-400 line-through text-[12px] sm:text-[13px]">Bs. ${price.toFixed(2)}</span>
+                        `;
+                    } else {
+                        priceHtml = `<span class="font-bold text-[14px] sm:text-base text-black">Bs. ${salePrice.toFixed(2)}</span>`;
+                    }
                 }
 
                 // Injectamos la tarjeta con loading="lazy" en la imagen para máxima velocidad
@@ -236,7 +248,7 @@
                 <a href="producto.html?id=${item.id}" class="product-card group relative flex flex-col cursor-pointer">
                     <div class="relative bg-gray-100 rounded-lg overflow-hidden aspect-square mb-4">
                         ${badgeHtml}
-                        <img src="${item.image_link}" loading="lazy" decoding="async" alt="${item.title}" class="product-img w-full h-full object-cover transition-transform duration-700">
+                        <img src="${item.image_link}" loading="lazy" decoding="async" alt="${item.title}" class="${imageClasses}">
                     </div>
                     <h3 class="text-[14px] sm:text-base font-bold text-gray-900 group-hover:underline line-clamp-2">${item.title}</h3>
                     <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1 line-clamp-1">${item.category || item.brand || 'Varios'}</p>
