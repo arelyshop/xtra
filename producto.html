@@ -64,7 +64,7 @@
                 <!-- Imagen Principal -->
                 <div id="main-image-container" class="relative bg-gray-100 rounded-lg shadow-md overflow-hidden aspect-square mb-4 group cursor-zoom-in" onclick="openLightbox(event)">
                     <!-- Imagen dinámica (Optimizada para máxima velocidad de carga inicial sin lazy load) -->
-                    <img id="main-image" src="" alt="Cargando producto" fetchpriority="high" decoding="sync" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 opacity-0 transition-opacity duration-300">
+                    <img id="main-image" src="" alt="Cargando producto" fetchpriority="high" decoding="sync" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 opacity-0 transition-opacity duration-300">
                     
                     <!-- Flecha Izquierda -->
                     <button onclick="navigateMainImage(event, -1)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 shadow-md rounded-full w-9 h-9 flex items-center justify-center z-20 transition">
@@ -341,8 +341,8 @@
                     const btn = document.createElement('button');
                     btn.onclick = () => changeMainImage(index);
                     btn.className = `thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded-md shadow-sm hover:shadow-md border-2 overflow-hidden aspect-square transition snap-start ${index === 0 ? 'thumb-active border-transparent opacity-100' : 'border-transparent opacity-60 hover:opacity-100'}`;
-                    // Aplicamos lazy loading a las miniaturas
-                    btn.innerHTML = `<img src="${imgUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover" alt="Vista ${index + 1}">`;
+                    // Aplicamos lazy loading a las miniaturas y encaje completo con object-contain
+                    btn.innerHTML = `<img src="${imgUrl}" loading="lazy" decoding="async" class="w-full h-full object-contain" alt="Vista ${index + 1}">`;
                     thumbContainer.appendChild(btn);
                 });
             }
