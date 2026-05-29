@@ -224,9 +224,12 @@
 
                 // Lógica de visualización
                 if (isOutOfStock) {
-                    // Si está agotado: Etiqueta gris con carita triste, foto en escala de grises y opaca
-                    badgeHtml = `<span class="absolute top-2 left-2 bg-gray-700/90 backdrop-blur-sm text-white text-[10px] font-bold px-2 py-1 uppercase rounded z-10 shadow-sm tracking-wide">Agotado 😔</span>`;
-                    imageClasses += ' grayscale opacity-60'; // Aplica el filtro gris a la foto
+                    // Si está agotado: Marca de agua central inclinada, sin emoji, foto en escala de grises
+                    badgeHtml = `
+                        <div class="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
+                            <span class="bg-black/70 backdrop-blur-sm border border-white/20 text-white text-[14px] font-black px-6 py-2 uppercase rounded-sm tracking-[0.2em] transform -rotate-12 shadow-2xl">Agotado</span>
+                        </div>`;
+                    imageClasses += ' grayscale opacity-50'; // Aplica el filtro gris a la foto
                     
                     // Mostramos el precio pero en color gris para mantener la coherencia de que no se puede comprar
                     priceHtml = `<span class="font-bold text-[14px] sm:text-base text-gray-500">Bs. ${salePrice.toFixed(2)}</span>`;
