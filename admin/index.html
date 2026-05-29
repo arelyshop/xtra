@@ -203,8 +203,11 @@
                                     
                                     <div class="space-y-5">
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-300 mb-1">Enlace del Producto en la Tienda (URL) *</label>
-                                            <input required type="url" name="link" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="https://mi-tienda.com/producto">
+                                            <label class="block text-sm font-medium text-gray-300 mb-1 flex justify-between items-center">
+                                                Enlace del Producto (URL)
+                                                <span class="text-xs text-indigo-400 font-normal">Autogenerado</span>
+                                            </label>
+                                            <input readonly type="url" id="productLink" name="link" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-gray-400 rounded-lg outline-none cursor-not-allowed bg-opacity-50" value="https://arelyshop.com/producto.html?id=(Autogenerado)" title="El enlace se genera automáticamente con el ID">
                                         </div>
 
                                         <div class="bg-gray-900 p-4 rounded-lg border border-gray-700">
@@ -753,7 +756,7 @@
             document.querySelector('[name="brand"]').value = product.brand || '';
             document.querySelector('[name="gtin"]').value = product.gtin || '';
             document.querySelector('[name="barcode"]').value = product.barcode || '';
-            document.querySelector('[name="link"]').value = product.link || '';
+            document.getElementById('productLink').value = `https://arelyshop.com/producto.html?id=${product.id}`;
             document.querySelector('[name="price"]').value = product.price || '';
             document.querySelector('[name="sale_price"]').value = product.sale_price || '';
             document.querySelector('[name="wholesale_price"]').value = product.wholesale_price || '';
@@ -970,6 +973,17 @@
             const data = Object.fromEntries(formData.entries());
             
             data.description = descriptionText;
+            
+            // Lógica de URL autogenerada
+            if (currentEditId) {
+                // Si estamos editando, guardamos la URL forzada con el ID real
+                data.link = `https://arelyshop.com/producto.html?id=${currentEditId}`;
+            } else {
+                // Al ser un producto nuevo (POST), no sabemos el ID aún (lo da la DB). 
+                // Lo enviamos vacío.
+                data.link = "";
+            }
+            
             data.image_link = imageItems[0]?.dataset.url || '';
             data.foto_1 = imageItems[1]?.dataset.url || null;
             data.foto_2 = imageItems[2]?.dataset.url || null;
