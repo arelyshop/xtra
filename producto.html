@@ -112,14 +112,14 @@
                 </div>
                 
                 <!-- Precio -->
-                <div class="flex items-end gap-3 mb-6">
+                <div class="flex items-end gap-3 mb-4 lg:mb-6">
                     <span id="prod-sale-price" class="text-2xl font-bold text-black">Bs. 0.00</span>
                     <span id="prod-price" class="text-base text-gray-400 line-through mb-0.5 hidden">Bs. 0.00</span>
                     <span id="prod-savings" class="text-[12px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded mb-1 hidden">Ahorras Bs. 0.00</span>
                 </div>
 
                 <!-- Barra de Urgencia / Stock -->
-                <div id="stock-container" class="bg-gray-50 border border-gray-100 p-4 rounded-lg mb-8 hidden">
+                <div id="stock-container" class="bg-gray-50 border border-gray-100 p-3 sm:p-4 rounded-lg mb-5 lg:mb-8 hidden">
                     <p class="text-[14px] text-gray-800 mb-2 font-medium"><i class="fa-solid fa-fire text-orange-500 mr-1"></i> ¡Date prisa! Solo quedan <strong id="prod-stock">0</strong> artículos en stock.</p>
                     <div class="w-full bg-gray-200 rounded-full h-2">
                         <div id="stock-bar-fill" class="bg-gradient-to-r from-red-500 to-yellow-400 h-2 rounded-full" style="width: 0%"></div>
@@ -131,7 +131,7 @@
                     
                     <!-- BOTONES IN STOCK -->
                     <div id="in-stock-buttons" class="hidden flex-col">
-                        <div class="flex flex-row gap-3 mb-4">
+                        <div class="flex flex-row gap-3 mb-3 lg:mb-4">
                             <!-- Selector de Cantidad -->
                             <div class="flex items-center border border-gray-300 rounded h-12 w-28 sm:w-32 bg-white flex-shrink-0">
                                 <button onclick="updateQty(-1)" class="w-10 h-full flex justify-center items-center text-gray-500 hover:text-black hover:bg-gray-50 transition"><i class="fa-solid fa-minus text-xs"></i></button>
@@ -146,13 +146,13 @@
                         </div>
                         
                         <!-- Botón Compra Dinámica (Comprar Ahora -> WhatsApp) -->
-                        <button id="buy-now-whatsapp" data-name="" data-sku="" data-price="" class="w-full bg-[#128c7e] text-white h-12 rounded font-bold hover:bg-[#0f7569] transition shadow-lg mb-8 flex items-center justify-center gap-2">
-                            <i class="fa-brands fa-whatsapp text-xl"></i> Comprar ahora
+                        <button id="buy-now-whatsapp" data-name="" data-sku="" data-price="" class="w-full bg-[#128c7e] text-white h-12 rounded font-bold hover:bg-[#0f7569] transition shadow-lg mb-5 lg:mb-8 flex items-center justify-center gap-2">
+                            <i class="fa-brands fa-whatsapp text-xl"></i> ¡Pídelo por WhatsApp!
                         </button>
                     </div>
 
                     <!-- BOTÓN OUT OF STOCK -->
-                    <button id="out-of-stock-btn" class="hidden w-full bg-gray-400 text-white h-12 rounded font-bold cursor-not-allowed mb-8 flex items-center justify-center gap-2 transition" disabled>
+                    <button id="out-of-stock-btn" class="hidden w-full bg-gray-400 text-white h-12 rounded font-bold cursor-not-allowed mb-5 lg:mb-8 flex items-center justify-center gap-2 transition" disabled>
                         <i class="fa-solid fa-ban text-lg"></i> Agotado
                     </button>
                 </div>
