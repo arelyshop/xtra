@@ -512,10 +512,10 @@
         // Lógica Zoom
         let currentScale = 1, touchStartDist = 0, initialScale = 1, isPinching = false, isDragging = false;
         let startX = 0, startY = 0, translateX = 0, translateY = 0, lbSwipeStartX = 0, isLbSwiping = false;
-        let lastTapX = 0, lastTapY = 0; // Variable para guardar el toque exacto en móviles
 
         function toggleZoom(e) {
             e.stopPropagation(); 
+            // Se eliminó la restricción táctil para permitir el zoom con un tap en móvil
             
             const img = document.getElementById('lightbox-img');
             const hint = document.getElementById('zoom-hint');
@@ -529,19 +529,9 @@
                 
                 const rect = img.getBoundingClientRect();
                 
-                let clientX = e.clientX;
-                let clientY = e.clientY;
-                
-                // Si es un dispositivo móvil (o un tap), forzamos usar la coordenada real del dedo
-                // ya que los eventos 'click' simulados en móvil suelen enviar coordenadas inexactas o ceros.
-                if (window.matchMedia("(pointer: coarse)").matches || e.pointerType === 'touch' || (clientX === 0 && clientY === 0)) {
-                    clientX = lastTapX || clientX;
-                    clientY = lastTapY || clientY;
-                }
-
-                // Fallback de seguridad al centro
-                clientX = clientX || (rect.left + rect.width / 2);
-                clientY = clientY || (rect.top + rect.height / 2);
+                // Aseguramos capturar las coordenadas correctas ya sea por ratón o por toque
+                const clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches.length > 0 ? e.touches[0].clientX : rect.left + rect.width / 2);
+                const clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches.length > 0 ? e.touches[0].clientY : rect.top + rect.height / 2);
 
                 const x = ((clientX - rect.left) / rect.width) * 100;
                 const y = ((clientY - rect.top) / rect.height) * 100;
@@ -581,10 +571,6 @@
                 initialScale = currentScale;
                 lightboxImgNode.style.transition = 'none';
             } else if (e.touches.length === 1) {
-                // Registrar siempre la última posición tocada para usarla si hace el click para zoom
-                lastTapX = e.touches[0].clientX;
-                lastTapY = e.touches[0].clientY;
-
                 if (currentScale > 1) {
                     isDragging = true; isPinching = false; isLbSwiping = false;
                     startX = e.touches[0].clientX - translateX;
