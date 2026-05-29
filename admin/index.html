@@ -12,6 +12,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <!-- HTML5 QR Code para el escáner -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <!-- PapaParse para lectura de CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     
     <style>
         /* Estilos para el drag and drop (arrastrar y soltar) */
@@ -104,9 +106,12 @@
             </div>
             
             <!-- Pestañas de Navegación -->
-            <div class="max-w-5xl mx-auto px-4 mt-2 flex gap-6">
+            <div class="max-w-5xl mx-auto px-4 mt-2 flex gap-6 overflow-x-auto whitespace-nowrap">
                 <button id="tab-add" class="pb-3 border-b-2 border-indigo-500 text-indigo-400 font-semibold flex items-center gap-2 transition-colors">
                     <i data-lucide="plus-circle" class="w-5 h-5"></i> <span id="tab-add-text">Nuevo Producto</span>
+                </button>
+                <button id="tab-csv" class="pb-3 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-semibold flex items-center gap-2 transition-colors">
+                    <i data-lucide="upload-cloud" class="w-5 h-5"></i> Carga Masiva (CSV)
                 </button>
                 <button id="tab-list" class="pb-3 border-b-2 border-transparent text-gray-400 hover:text-gray-200 font-semibold flex items-center gap-2 transition-colors">
                     <i data-lucide="list" class="w-5 h-5"></i> Inventario
@@ -344,6 +349,51 @@
                     </div>
                 </div>
 
+                <!-- ========================================== -->
+                <!-- VISTA: CARGA MASIVA CSV -->
+                <!-- ========================================== -->
+                <div id="view-csv-upload" class="hidden">
+                    <div class="mb-8 flex items-center gap-3">
+                        <div class="bg-gray-800 p-2 rounded-lg border border-gray-700">
+                            <i data-lucide="file-spreadsheet" class="h-7 w-7 text-green-400"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl font-bold text-white">Carga Masiva de Productos</h1>
+                            <p class="text-gray-400 mt-1">Sube un archivo CSV para importar múltiples productos a la vez</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800 p-6 md:p-8 rounded-xl shadow-md border border-gray-700 max-w-3xl mx-auto">
+                        <h2 class="text-xl font-semibold mb-2 text-white">Instrucciones</h2>
+                        <p class="text-sm text-gray-300 mb-4">El archivo <strong class="text-white">.csv</strong> debe contener las siguientes columnas en su primera fila (encabezados):</p>
+                        
+                        <div class="bg-gray-900 p-4 rounded-lg border border-gray-700 mb-6 overflow-x-auto">
+                            <code class="text-indigo-300 text-xs tracking-wide">title,description,availability,condition,price,sale_price,link,image_link,brand,quantity_to_sell_on_facebook,gtin,barcode,category,wholesale_price,purchase_price,foto_1,foto_2,foto_3,foto_4,foto_5,foto_6,foto_7</code>
+                        </div>
+
+                        <div class="space-y-4 border-2 border-dashed border-gray-600 p-6 rounded-xl bg-gray-900/50 text-center hover:border-indigo-500 transition-colors">
+                            <input type="file" id="csvFileInput" accept=".csv" class="block w-full text-sm text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700 cursor-pointer">
+                            <p class="text-xs text-gray-500">Separado por comas (,). Las celdas vacías serán ignoradas o establecidas como nulas.</p>
+                        </div>
+
+                        <!-- Barra de progreso -->
+                        <div id="csvProgressContainer" class="hidden mt-6 bg-gray-900 p-4 rounded-lg border border-gray-700">
+                            <div class="flex justify-between items-end mb-2">
+                                <p class="text-sm font-medium text-gray-300" id="csvProgressText">Procesando 0 de 0...</p>
+                                <span class="text-xs text-indigo-400 font-bold" id="csvProgressPercent">0%</span>
+                            </div>
+                            <div class="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
+                                <div id="csvProgressBar" class="bg-indigo-600 h-3 rounded-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <button type="button" id="startCsvUploadBtn" class="mt-6 w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-xl shadow-md transition-all text-lg">
+                            <i data-lucide="upload" id="csvBtnIcon" class="h-6 w-6"></i>
+                            <span id="csvBtnText">Comenzar Importación</span>
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </main>
 
@@ -425,8 +475,10 @@
 
         // Navegación
         const tabAdd = document.getElementById('tab-add');
+        const tabCsv = document.getElementById('tab-csv');
         const tabList = document.getElementById('tab-list');
         const viewAdd = document.getElementById('view-add-product');
+        const viewCsv = document.getElementById('view-csv-upload');
         const viewList = document.getElementById('view-list-products');
         
         // Elementos Dinámicos Modo Edición
@@ -461,6 +513,16 @@
         const closeScannerBtn = document.getElementById('close-scanner-btn');
         const barcodeInput = document.getElementById('barcode');
         let html5QrCode = null;
+
+        // Elementos Carga Masiva (CSV)
+        const csvFileInput = document.getElementById('csvFileInput');
+        const startCsvUploadBtn = document.getElementById('startCsvUploadBtn');
+        const csvProgressContainer = document.getElementById('csvProgressContainer');
+        const csvProgressText = document.getElementById('csvProgressText');
+        const csvProgressPercent = document.getElementById('csvProgressPercent');
+        const csvProgressBar = document.getElementById('csvProgressBar');
+        const csvBtnText = document.getElementById('csvBtnText');
+        let parsedCsvData = [];
 
         // ESTADO GLOBAL
         let allProducts = [];
@@ -566,23 +628,31 @@
         // 0. NAVEGACIÓN Y TABS
         // ==========================================
         function switchTab(view) {
-            // Estilos de pestañas
+            // Reiniciar todos los tabs y vistas
+            [tabAdd, tabList, tabCsv].forEach(t => {
+                if (t) {
+                    t.classList.replace('border-indigo-500', 'border-transparent');
+                    t.classList.replace('text-indigo-400', 'text-gray-400');
+                }
+            });
+            
+            [viewAdd, viewList, viewCsv].forEach(v => {
+                if (v) v.classList.add('hidden');
+            });
+
+            // Estilos de pestañas activas
             if (view === 'add') {
                 tabAdd.classList.replace('border-transparent', 'border-indigo-500');
                 tabAdd.classList.replace('text-gray-400', 'text-indigo-400');
-                tabList.classList.replace('border-indigo-500', 'border-transparent');
-                tabList.classList.replace('text-indigo-400', 'text-gray-400');
-                
                 viewAdd.classList.remove('hidden');
-                viewList.classList.add('hidden');
+            } else if (view === 'csv') {
+                tabCsv.classList.replace('border-transparent', 'border-indigo-500');
+                tabCsv.classList.replace('text-gray-400', 'text-indigo-400');
+                viewCsv.classList.remove('hidden');
             } else {
                 tabList.classList.replace('border-transparent', 'border-indigo-500');
                 tabList.classList.replace('text-gray-400', 'text-indigo-400');
-                tabAdd.classList.replace('border-indigo-500', 'border-transparent');
-                tabAdd.classList.replace('text-indigo-400', 'text-gray-400');
-                
                 viewList.classList.remove('hidden');
-                viewAdd.classList.add('hidden');
                 
                 // Solo cargar productos si no se han cargado antes
                 if (!isDataLoaded) {
@@ -594,6 +664,10 @@
         tabAdd.addEventListener('click', () => {
             if(!currentEditId) resetFormToCreateMode();
             switchTab('add');
+        });
+        tabCsv.addEventListener('click', () => {
+            resetFormToCreateMode();
+            switchTab('csv');
         });
         tabList.addEventListener('click', () => switchTab('list'));
         cancelEditBtn.addEventListener('click', () => {
@@ -1026,6 +1100,103 @@
                 updateIcon('btnIcon', currentEditId ? 'refresh-cw' : 'save', 'h-6 w-6');
                 lucide.createIcons();
             }
+        });
+
+        // ==========================================
+        // 6. LÓGICA DE CARGA MASIVA (CSV)
+        // ==========================================
+        
+        // Leer el archivo localmente al seleccionarlo
+        csvFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) {
+                parsedCsvData = [];
+                return;
+            }
+
+            Papa.parse(file, {
+                header: true, // Usa la primera fila como nombres de propiedades (las columnas esperadas)
+                skipEmptyLines: true, // Ignora filas vacías
+                complete: function(results) {
+                    parsedCsvData = results.data;
+                    showAlert('success', `Archivo leído. Se encontraron ${parsedCsvData.length} productos listos para importar.`);
+                },
+                error: function(error) {
+                    showAlert('error', 'Ocurrió un error al intentar leer el archivo CSV.');
+                    console.error(error);
+                }
+            });
+        });
+
+        // Procesar y subir al servidor
+        startCsvUploadBtn.addEventListener('click', async () => {
+            if (parsedCsvData.length === 0) {
+                return showAlert('error', 'Por favor, selecciona un archivo CSV válido primero.');
+            }
+
+            // Bloquear botón y mostrar interfaz de carga
+            startCsvUploadBtn.disabled = true;
+            csvBtnText.textContent = "Importando Productos...";
+            updateIcon('csvBtnIcon', 'loader-2', 'h-6 w-6 animate-spin');
+            csvProgressContainer.classList.remove('hidden');
+            lucide.createIcons();
+
+            let successCount = 0;
+            let errorCount = 0;
+
+            // Bucle secuencial para subir cada producto (Previene sobrecargar el servidor backend de Netlify)
+            for (let i = 0; i < parsedCsvData.length; i++) {
+                const row = parsedCsvData[i];
+                
+                // Formatear los datos de la fila (reemplaza espacios vacíos por null/vacío)
+                const data = {};
+                for (const key in row) {
+                    let value = row[key] ? row[key].trim() : "";
+                    data[key] = value === "" ? null : value;
+                }
+
+                // Lógica requerida por la web para los enlaces nuevos (Enviarlo vacío)
+                if(!data.link) data.link = "";
+
+                try {
+                    const response = await fetch('/.netlify/functions/products', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+
+                    if (!response.ok) throw new Error(`Fallo en la fila ${i+1}`);
+                    successCount++;
+                } catch (error) {
+                    console.error(`Error importando fila ${i + 1}:`, error);
+                    errorCount++;
+                }
+
+                // Actualizar barra de progreso visual
+                const progress = Math.round(((i + 1) / parsedCsvData.length) * 100);
+                csvProgressBar.style.width = `${progress}%`;
+                csvProgressPercent.textContent = `${progress}%`;
+                csvProgressText.textContent = `Procesando ${i + 1} de ${parsedCsvData.length} productos...`;
+            }
+
+            // Restaurar estado al terminar
+            startCsvUploadBtn.disabled = false;
+            csvBtnText.textContent = "Comenzar Importación";
+            updateIcon('csvBtnIcon', 'upload', 'h-6 w-6');
+            lucide.createIcons();
+            
+            // Mostrar resumen
+            if (errorCount === 0) {
+                showAlert('success', `¡Importación finalizada! ${successCount} productos subidos correctamente.`);
+            } else {
+                showAlert('error', `Importación terminada con errores. Exitosos: ${successCount}. Errores: ${errorCount}. Verifica la consola para más detalles.`);
+            }
+            
+            // Limpiar
+            isDataLoaded = false; // Fuerza a recargar la base de datos la próxima vez que abras el inventario
+            parsedCsvData = [];
+            csvFileInput.value = ''; 
+            setTimeout(() => csvProgressContainer.classList.add('hidden'), 5000);
         });
     </script>
 </body>
