@@ -165,9 +165,9 @@
                 </div>
 
                 <!-- Descripción Completa -->
-                <div class="text-[15px] text-gray-600 leading-relaxed">
-                    <h2 class="text-lg font-bold text-gray-900 mb-3">Descripción completa</h2>
-                    <div id="prod-desc" class="space-y-4">
+                <div class="text-[14px] text-gray-600 leading-snug">
+                    <h2 class="text-lg font-bold text-gray-900 mb-2">Descripción completa</h2>
+                    <div id="prod-desc">
                         <!-- Descripción inyectada desde base de datos -->
                     </div>
                 </div>
@@ -285,7 +285,13 @@
             document.getElementById('prod-title').textContent = product.title;
             document.getElementById('prod-brand').textContent = product.brand || 'N/A';
             document.getElementById('prod-sku').textContent = product.gtin || 'N/A';
-            document.getElementById('prod-desc').innerHTML = product.description || '';
+            
+            // Formateo de descripción: Negritas entre asteriscos y saltos de línea
+            let rawDesc = product.description || '';
+            let formattedDesc = rawDesc
+                .replace(/\*([^\*]+)\*/g, '<strong class="font-bold text-gray-900">$1</strong>')
+                .replace(/\n/g, '<br>');
+            document.getElementById('prod-desc').innerHTML = formattedDesc;
 
             // Precios
             document.getElementById('prod-sale-price').textContent = `Bs. ${salePrice.toFixed(2)}`;
