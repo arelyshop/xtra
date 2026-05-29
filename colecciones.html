@@ -233,13 +233,13 @@
                 } else {
                     // Si hay stock, verificamos si hay oferta real
                     if (price > salePrice) {
-                        badgeHtml = `<span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-1 uppercase rounded z-10 shadow-sm">Oferta</span>`;
+                        badgeHtml = `<span class="absolute top-2 left-2 bg-gradient-to-r from-red-500 to-yellow-400 text-white text-[10px] font-bold px-2 py-1 uppercase rounded z-10 shadow-sm flex items-center gap-1"><i class="fa-solid fa-fire"></i> Oferta</span>`;
                         priceHtml = `
-                            <span class="font-extrabold text-[14px] sm:text-base text-red-600 leading-none">Bs. ${salePrice.toFixed(2)}</span>
-                            <span class="text-gray-400 line-through text-[12px] sm:text-[13px] leading-none">Bs. ${price.toFixed(2)}</span>
+                            <span class="font-bold text-[14px] sm:text-base text-red-600">Bs. ${salePrice.toFixed(2)}</span>
+                            <span class="text-gray-400 line-through text-[12px] sm:text-[13px]">Bs. ${price.toFixed(2)}</span>
                         `;
                     } else {
-                        priceHtml = `<span class="font-extrabold text-[14px] sm:text-base text-black leading-none">Bs. ${salePrice.toFixed(2)}</span>`;
+                        priceHtml = `<span class="font-bold text-[14px] sm:text-base text-black">Bs. ${salePrice.toFixed(2)}</span>`;
                     }
                 }
 
