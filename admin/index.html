@@ -185,7 +185,12 @@
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
                                                 <label class="block text-sm font-medium text-gray-300 mb-1">GTIN</label>
-                                                <input type="text" id="gtin" name="gtin" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. 012345678905">
+                                                <div class="flex items-center space-x-2">
+                                                    <input type="text" id="gtin" name="gtin" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. ASP1">
+                                                    <button type="button" id="generate-gtin-btn" class="text-sm bg-indigo-700 text-white font-bold p-2.5 rounded-lg hover:bg-indigo-600 border border-indigo-600 transition-colors flex-shrink-0" title="Generar código ASP automático">
+                                                        <i data-lucide="sparkles" id="gtin-sparkle-icon" class="h-5 w-5"></i>
+                                                    </button>
+                                                </div>
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-medium text-gray-300 mb-1">Código de Barras (Barcode)</label>
@@ -472,6 +477,7 @@
         const alertMessage = document.getElementById('alertMessage');
         const submitBtn = document.getElementById('submitBtn');
         const btnText = document.getElementById('btnText');
+        const generateGtinBtn = document.getElementById('generate-gtin-btn');
 
         // Navegación
         const tabAdd = document.getElementById('tab-add');
@@ -1025,6 +1031,55 @@
         scanBarcodeBtn.addEventListener('click', () => startScanner('form'));
         scanSearchBtn.addEventListener('click', () => startScanner('search'));
         closeScannerBtn.addEventListener('click', stopScanner);
+
+        // ==========================================
+        // GENERADOR DE GTIN (ASP)
+        // ==========================================
+        generateGtinBtn.addEventListener('click', async () => {
+            // Animación de carga
+            const btnIcon = document.getElementById('gtin-sparkle-icon');
+            if(btnIcon) updateIcon('gtin-sparkle-icon', 'loader-2', 'h-5 w-5 animate-spin');
+            generateGtinBtn.disabled = true;
+
+            try {
+                // Si los datos no han sido cargados aún, los descargamos para revisar
+                if (!isDataLoaded) {
+                    await loadProducts();
+                }
+
+                let maxAspNum = 0;
+                
+                // Recorremos todos los productos buscando el prefijo ASP
+                allProducts.forEach(p => {
+                    if (p.gtin && typeof p.gtin === 'string' && p.gtin.toUpperCase().startsWith('ASP')) {
+                        // Extraemos la parte numérica después de "ASP"
+                        const numPart = p.gtin.substring(3);
+                        const num = parseInt(numPart, 10);
+                        
+                        // Validamos que sea un número y buscamos el mayor
+                        if (!isNaN(num) && num > maxAspNum) {
+                            maxAspNum = num;
+                        }
+                    }
+                });
+
+                // Sugerimos el siguiente número autoincrementado
+                const nextAsp = `ASP${maxAspNum + 1}`;
+                document.getElementById('gtin').value = nextAsp;
+                
+                showAlert('success', `Código ${nextAsp} generado automáticamente.`);
+
+            } catch (error) {
+                showAlert('error', 'Error al consultar códigos GTIN existentes.');
+                console.error(error);
+            } finally {
+                // Restauramos el botón
+                const updatedIcon = document.getElementById('gtin-sparkle-icon');
+                if(updatedIcon) updateIcon('gtin-sparkle-icon', 'sparkles', 'h-5 w-5');
+                generateGtinBtn.disabled = false;
+                lucide.createIcons();
+            }
+        });
 
         // ==========================================
         // 5. ENVÍO DEL FORMULARIO (POST / PUT)
