@@ -449,11 +449,17 @@
             
             // Efecto deslizamiento del carrusel Principal
             const track = document.getElementById('carousel-track');
-            if(track) track.style.transform = `translateX(-${index * 100}%)`;
+            if(track) {
+                track.style.transition = ''; // Restaura animaciones de tailwind
+                track.style.transform = `translateX(-${index * 100}%)`;
+            }
             
             // Efecto deslizamiento del carrusel Lightbox
             const lbTrack = document.getElementById('lightbox-track');
-            if(lbTrack) lbTrack.style.transform = `translateX(-${index * 100}%)`;
+            if(lbTrack) {
+                lbTrack.style.transition = ''; // Restaura animaciones de tailwind
+                lbTrack.style.transform = `translateX(-${index * 100}%)`;
+            }
 
             // Actualizar el contador de la vista completa
             const lbCounter = document.getElementById('lightbox-counter');
@@ -489,7 +495,8 @@
         }
 
         function openLightbox(e) {
-            if (isSwipingMain || galleryImages.length === 0) return;
+            // Evita que un simple toque al arrastrar abra la imagen gigante
+            if (isMainDragging || galleryImages.length === 0) return;
 
             const lightbox = document.getElementById('lightbox');
             
@@ -521,42 +528,103 @@
             resetZoom();
         }
 
-        // Swipe Principal
+        // ==========================================
+        // SWIPE PRINCIPAL CON ARRASTRE EN TIEMPO REAL
+        // ==========================================
         const mainImageContainer = document.getElementById('main-image-container');
-        let mainTouchStartX = 0;
-        let isSwipingMain = false; // <-- ESTA VARIABLE SE HABÍA BORRADO
+        let mainDragStartX = 0;
+        let mainDragStartY = 0;
+        let mainDragOffset = 0;
+        let isMainDragging = false;
+        let mainIsScrolling = null; // null: inicio, true: scroll vertical, false: scroll horizontal
 
         if (mainImageContainer) {
             mainImageContainer.addEventListener('touchstart', (e) => {
-                mainTouchStartX = e.changedTouches[0].screenX;
-                isSwipingMain = false;
+                if (e.touches.length > 1) return; // Ignora multitouch aquí
+                mainDragStartX = e.touches[0].clientX;
+                mainDragStartY = e.touches[0].clientY;
+                isMainDragging = true;
+                mainIsScrolling = null;
+                mainDragOffset = 0;
+                
+                // Desactiva la transición temporalmente para que la pista siga al dedo sin retraso
+                const track = document.getElementById('carousel-track');
+                if (track) track.style.transition = 'none';
             }, {passive: true});
 
             mainImageContainer.addEventListener('touchmove', (e) => {
-                let currentX = e.changedTouches[0].screenX;
-                if (Math.abs(currentX - mainTouchStartX) > 15) isSwipingMain = true;
-            }, {passive: true});
+                if (!isMainDragging) return;
+                
+                const currentX = e.touches[0].clientX;
+                const currentY = e.touches[0].clientY;
+                const deltaX = currentX - mainDragStartX;
+                const deltaY = currentY - mainDragStartY;
+
+                // Determina rápidamente si la persona intenta ir hacia abajo (scroll) o a los lados (swipe)
+                if (mainIsScrolling === null) {
+                    mainIsScrolling = Math.abs(deltaY) > Math.abs(deltaX);
+                }
+
+                // Si va hacia abajo, abortamos el arrastre del carrusel y dejamos que la página baje normal
+                if (mainIsScrolling) return; 
+                
+                // Evitamos que la página brinque hacia los lados mientras deslizamos la imagen
+                if (e.cancelable) e.preventDefault(); 
+
+                // Crea resistencia si intentas deslizar en la primera o última foto
+                if ((currentImageIndex === 0 && deltaX > 0) || (currentImageIndex === galleryImages.length - 1 && deltaX < 0)) {
+                    mainDragOffset = deltaX * 0.3; 
+                } else {
+                    mainDragOffset = deltaX;
+                }
+
+                // Calcula y aplica el movimiento exacto
+                const trackWidth = mainImageContainer.offsetWidth;
+                const percentOffset = (mainDragOffset / trackWidth) * 100;
+                const baseOffset = -(currentImageIndex * 100);
+                
+                const track = document.getElementById('carousel-track');
+                if (track) track.style.transform = `translateX(${baseOffset + percentOffset}%)`;
+            }, {passive: false});
 
             mainImageContainer.addEventListener('touchend', (e) => {
-                let mainTouchEndX = e.changedTouches[0].screenX;
-                const threshold = 40;
-                if (mainTouchStartX - mainTouchEndX > threshold) navigateMainImage(null, 1);
-                else if (mainTouchEndX - mainTouchStartX > threshold) navigateMainImage(null, -1);
-                setTimeout(() => { isSwipingMain = false; }, 50);
+                if (!isMainDragging || mainIsScrolling) {
+                    isMainDragging = false;
+                    return;
+                }
+                isMainDragging = false;
+                
+                // Restaura la animación CSS natural
+                const track = document.getElementById('carousel-track');
+                if (track) track.style.transition = ''; 
+                
+                // Umbral: ¿Se movió lo suficiente como para cambiar de foto?
+                const threshold = 50; 
+                if (mainDragOffset < -threshold && currentImageIndex < galleryImages.length - 1) {
+                    navigateMainImage(null, 1);
+                } else if (mainDragOffset > threshold && currentImageIndex > 0) {
+                    navigateMainImage(null, -1);
+                } else {
+                    // Si no se movió lo suficiente, rebota a la posición actual
+                    changeMainImage(currentImageIndex); 
+                }
             });
         }
 
-        // Lógica Zoom adaptada al carrusel Lightbox
+
+        // ==========================================
+        // LÓGICA DE LIGHTBOX (ZOOM + SWIPE EN TIEMPO REAL)
+        // ==========================================
         let currentScale = 1, touchStartDist = 0, initialScale = 1, isPinching = false, isDragging = false;
         let startX = 0, startY = 0, translateX = 0, translateY = 0, lbSwipeStartX = 0, isLbSwiping = false;
-        let lastTapX = 0, lastTapY = 0; // Variable para guardar el toque exacto en móviles
-        let zoomOriginTimeout; // Controla el temporizador de centrado automático
+        let lastTapX = 0, lastTapY = 0; 
+        let zoomOriginTimeout; 
+        let lbDragOffset = 0;
 
         function toggleZoom(e) {
             e.stopPropagation(); 
             clearTimeout(zoomOriginTimeout);
             
-            // Apuntamos a la imagen activa en ese momento
             const img = document.getElementById('lb-img-' + currentImageIndex);
             const hint = document.getElementById('zoom-hint');
             
@@ -599,7 +667,6 @@
             translateX = 0;
             translateY = 0;
             
-            // Reseteamos todas las imágenes por seguridad
             galleryImages.forEach((_, i) => {
                const img = document.getElementById('lb-img-' + i);
                if(img) {
@@ -608,7 +675,6 @@
                }
             });
             
-            // Centramos el origen de la imagen activa
             const activeImg = document.getElementById('lb-img-' + currentImageIndex);
             if(activeImg) {
                 clearTimeout(zoomOriginTimeout);
@@ -622,7 +688,6 @@
             }
         }
 
-        // Aplicamos los eventos táctiles al contenedor global de la pista, no a una sola imagen
         const lightboxTrackContainer = document.getElementById('lightbox-track-container');
         if(lightboxTrackContainer) {
             lightboxTrackContainer.addEventListener('touchstart', (e) => {
@@ -639,12 +704,18 @@
                     lastTapY = e.touches[0].clientY;
 
                     if (currentScale > 1) {
+                        // Modo arrastre de imagen ampliada
                         isDragging = true; isPinching = false; isLbSwiping = false;
                         startX = e.touches[0].clientX - translateX;
                         startY = e.touches[0].clientY - translateY;
                         img.style.transition = 'none';
                     } else {
-                        isLbSwiping = true; lbSwipeStartX = e.touches[0].clientX;
+                        // Modo arrastre del carrusel Lightbox
+                        isLbSwiping = true; 
+                        lbSwipeStartX = e.touches[0].clientX;
+                        lbDragOffset = 0;
+                        const lbTrack = document.getElementById('lightbox-track');
+                        if(lbTrack) lbTrack.style.transition = 'none';
                     }
                 }
             });
@@ -654,6 +725,7 @@
                 if (!img) return;
 
                 if (isPinching && e.touches.length === 2) {
+                    // Acción de pellizcar para Zoom
                     e.preventDefault();
                     const currentDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
                     currentScale = Math.min(Math.max(1, initialScale * (currentDist / touchStartDist)), 4);
@@ -662,28 +734,59 @@
                     const hint = document.getElementById('zoom-hint');
                     if(hint) hint.classList.add('opacity-0');
                 } else if (isDragging && e.touches.length === 1) {
+                    // Mover la imagen ampliada
                     e.preventDefault();
                     translateX = e.touches[0].clientX - startX;
                     translateY = e.touches[0].clientY - startY;
                     img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+                } else if (isLbSwiping && e.touches.length === 1) {
+                    // ARRASTRE DEL CARRUSEL LIGHTBOX EN TIEMPO REAL
+                    const currentX = e.touches[0].clientX;
+                    const deltaX = currentX - lbSwipeStartX;
+                    
+                    if ((currentImageIndex === 0 && deltaX > 0) || (currentImageIndex === galleryImages.length - 1 && deltaX < 0)) {
+                        lbDragOffset = deltaX * 0.3; // Resistencia
+                    } else {
+                        lbDragOffset = deltaX;
+                    }
+
+                    const trackWidth = lightboxTrackContainer.offsetWidth;
+                    const percentOffset = (lbDragOffset / trackWidth) * 100;
+                    const baseOffset = -(currentImageIndex * 100);
+                    
+                    const lbTrack = document.getElementById('lightbox-track');
+                    if(lbTrack) lbTrack.style.transform = `translateX(${baseOffset + percentOffset}%)`;
                 }
             });
 
             lightboxTrackContainer.addEventListener('touchend', (e) => {
                 const img = document.getElementById('lb-img-' + currentImageIndex);
                 
-                if (isLbSwiping && e.changedTouches.length === 1 && currentScale === 1) {
-                    let lbSwipeEndX = e.changedTouches[0].clientX;
-                    const threshold = 40;
-                    if (lbSwipeStartX - lbSwipeEndX > threshold) navigateLightbox(1);
-                    else if (lbSwipeEndX - lbSwipeStartX > threshold) navigateLightbox(-1);
+                // Finaliza el deslizamiento del carrusel
+                if (isLbSwiping && currentScale === 1) {
                     isLbSwiping = false;
+                    const lbTrack = document.getElementById('lightbox-track');
+                    if(lbTrack) lbTrack.style.transition = ''; 
+                    
+                    const threshold = 50;
+                    if (lbDragOffset < -threshold && currentImageIndex < galleryImages.length - 1) {
+                        navigateLightbox(1);
+                    } else if (lbDragOffset > threshold && currentImageIndex > 0) {
+                        navigateLightbox(-1);
+                    } else {
+                        changeMainImage(currentImageIndex); // Rebote
+                    }
                 }
+                
                 if (e.touches.length < 2) isPinching = false;
                 if (e.touches.length === 0) isDragging = false;
                 
-                if(img) img.style.transition = 'transform 0.3s ease-out';
-                if (currentScale <= 1) resetZoom();
+                if(img && currentScale > 1) {
+                    img.style.transition = 'transform 0.3s ease-out';
+                }
+                if (currentScale <= 1 && !isLbSwiping) {
+                    resetZoom(); 
+                }
             });
         }
 
