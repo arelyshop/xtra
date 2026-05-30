@@ -81,10 +81,13 @@ exports.handler = async (event, context) => {
             };
         }
 
-        // CASO C: Si no mandan parámetros, devolver los primeros 10 productos (catálogo general)
+        // CASO C: Catálogo general. 
+        // ¡CORRECCIÓN AQUÍ! Ahora respeta el "limit" que envía la página web. Si no envían nada, devuelve 10.
+        const generalLimit = parseInt(limit) || 10;
+
         const result = await sql`
             SELECT * FROM products 
-            LIMIT 10
+            LIMIT ${generalLimit}
         `;
 
         return {
