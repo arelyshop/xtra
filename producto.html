@@ -199,10 +199,13 @@
         <!-- Navegación Izquierda -->
         <button onclick="navigateLightbox(-1); event.stopPropagation();" class="absolute left-2 sm:left-10 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-white border border-gray-200 text-black hover:bg-gray-100 rounded-full flex items-center justify-center text-xl z-50 shadow-sm transition"><i class="fa-solid fa-chevron-left"></i></button>
         
-        <!-- Contenedor Imagen Zoom -->
-        <div class="relative w-full max-w-6xl h-[80vh] flex items-center justify-center overflow-hidden group" onclick="if(event.target === this) closeLightbox()">
-            <!-- La imagen es ahora el único elemento con la función y el cursor de zoom -->
-            <img id="lightbox-img" src="" alt="Vista ampliada" onclick="toggleZoom(event)" class="max-w-full max-h-full object-contain transition-transform duration-300 origin-center select-none cursor-zoom-in relative z-20" style="transform: translate(0px, 0px) scale(1);">
+        <!-- Contenedor Imagen Zoom (Ahora con carrusel interno) -->
+        <div id="lightbox-track-container" class="relative w-full max-w-6xl h-[80vh] flex items-center justify-center overflow-hidden group" onclick="if(event.target === this || event.target.id === 'lightbox-track' || event.target.classList.contains('lb-slide-wrapper')) closeLightbox()">
+            
+            <!-- Pista del carrusel para el Lightbox -->
+            <div id="lightbox-track" class="flex w-full h-full transition-transform duration-500 ease-out items-center" style="transform: translateX(0%);">
+                <!-- Se inyectan las imágenes por JS -->
+            </div>
             
             <!-- Hint overlay (Desaparece al hacer zoom o al salir el hover) -->
             <div id="zoom-hint" class="absolute bottom-8 bg-black/80 text-white px-5 py-2.5 rounded-full text-sm font-medium tracking-wide opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none shadow-lg z-30">
@@ -214,7 +217,7 @@
         <button onclick="navigateLightbox(1); event.stopPropagation();" class="absolute right-2 sm:right-10 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-white border border-gray-200 text-black hover:bg-gray-100 rounded-full flex items-center justify-center text-xl z-50 shadow-sm transition"><i class="fa-solid fa-chevron-right"></i></button>
 
         <!-- Contador de fotos -->
-        <div class="absolute bottom-6 font-bold text-gray-800 text-sm tracking-widest uppercase bg-white px-4 py-1.5 rounded-full shadow-sm border border-gray-200 pointer-events-none">
+        <div class="absolute bottom-6 font-bold text-gray-800 text-sm tracking-widest uppercase bg-white px-4 py-1.5 rounded-full shadow-sm border border-gray-200 pointer-events-none z-50">
             <span id="lightbox-counter">1</span> / <span id="lightbox-counter-total">1</span>
         </div>
     </div>
@@ -337,15 +340,26 @@
             galleryImages = photoFields.map(f => product[f]).filter(img => img && img.trim() !== '');
             
             if (galleryImages.length > 0) {
-                // 1. Llenamos la pista del carrusel principal
+                // 1. Llenamos las pistas de los carruseles (Principal y Lightbox)
                 const track = document.getElementById('carousel-track');
+                const lbTrack = document.getElementById('lightbox-track');
                 track.innerHTML = '';
+                lbTrack.innerHTML = '';
                 
                 galleryImages.forEach((imgUrl, index) => {
                     // Solo la primera imagen carga con prioridad alta
                     const fetchPriority = index === 0 ? 'high' : 'auto';
                     const loadingAttr = index === 0 ? 'eager' : 'lazy';
+                    
+                    // Inyección Carrusel Principal
                     track.innerHTML += `<img src="${imgUrl}" fetchpriority="${fetchPriority}" loading="${loadingAttr}" decoding="async" alt="${product.title} - vista ${index + 1}" class="w-full h-full object-contain flex-shrink-0 transition-transform duration-500 group-hover:scale-105">`;
+                    
+                    // Inyección Carrusel Lightbox
+                    lbTrack.innerHTML += `
+                        <div class="lb-slide-wrapper w-full h-full flex-shrink-0 flex items-center justify-center">
+                            <img id="lb-img-${index}" src="${imgUrl}" loading="${loadingAttr}" decoding="async" alt="Vista ampliada ${index + 1}" onclick="toggleZoom(event)" class="max-w-full max-h-full object-contain transition-transform duration-300 origin-center select-none cursor-zoom-in relative z-20" style="transform: translate(0px, 0px) scale(1);">
+                        </div>
+                    `;
                 });
                 
                 document.getElementById('lightbox-counter-total').textContent = galleryImages.length;
@@ -433,12 +447,17 @@
         function changeMainImage(index) {
             currentImageIndex = index;
             
-            // Efecto deslizamiento del carrusel
+            // Efecto deslizamiento del carrusel Principal
             const track = document.getElementById('carousel-track');
-            if(track) {
-                // Desplaza el contenedor -100% por cada índice (ej. index 1 = -100%, index 2 = -200%)
-                track.style.transform = `translateX(-${index * 100}%)`;
-            }
+            if(track) track.style.transform = `translateX(-${index * 100}%)`;
+            
+            // Efecto deslizamiento del carrusel Lightbox
+            const lbTrack = document.getElementById('lightbox-track');
+            if(lbTrack) lbTrack.style.transform = `translateX(-${index * 100}%)`;
+
+            // Actualizar el contador de la vista completa
+            const lbCounter = document.getElementById('lightbox-counter');
+            if(lbCounter) lbCounter.innerText = index + 1;
             
             const btns = document.querySelectorAll('.thumbnail-btn');
             btns.forEach((btn, i) => {
@@ -473,8 +492,6 @@
             if (isSwipingMain || galleryImages.length === 0) return;
 
             const lightbox = document.getElementById('lightbox');
-            document.getElementById('lightbox-img').src = galleryImages[currentImageIndex];
-            document.getElementById('lightbox-counter').innerText = currentImageIndex + 1;
             
             lightbox.classList.remove('hidden');
             lightbox.classList.add('flex');
@@ -496,21 +513,18 @@
 
         function navigateLightbox(dir) {
             if(galleryImages.length === 0) return;
-            currentImageIndex += dir;
-            if (currentImageIndex < 0) currentImageIndex = galleryImages.length - 1;
-            if (currentImageIndex >= galleryImages.length) currentImageIndex = 0;
+            let newIndex = currentImageIndex + dir;
+            if (newIndex < 0) newIndex = galleryImages.length - 1;
+            if (newIndex >= galleryImages.length) newIndex = 0;
             
-            document.getElementById('lightbox-img').src = galleryImages[currentImageIndex];
-            document.getElementById('lightbox-counter').innerText = currentImageIndex + 1;
-            
-            changeMainImage(currentImageIndex);
+            changeMainImage(newIndex);
             resetZoom();
         }
 
         // Swipe Principal
         const mainImageContainer = document.getElementById('main-image-container');
         let mainTouchStartX = 0;
-        let isSwipingMain = false;
+        let isSwipingMain = false; // <-- ESTA VARIABLE SE HABÍA BORRADO
 
         if (mainImageContainer) {
             mainImageContainer.addEventListener('touchstart', (e) => {
@@ -532,7 +546,7 @@
             });
         }
 
-        // Lógica Zoom
+        // Lógica Zoom adaptada al carrusel Lightbox
         let currentScale = 1, touchStartDist = 0, initialScale = 1, isPinching = false, isDragging = false;
         let startX = 0, startY = 0, translateX = 0, translateY = 0, lbSwipeStartX = 0, isLbSwiping = false;
         let lastTapX = 0, lastTapY = 0; // Variable para guardar el toque exacto en móviles
@@ -540,10 +554,14 @@
 
         function toggleZoom(e) {
             e.stopPropagation(); 
-            clearTimeout(zoomOriginTimeout); // Evita que un reset pendiente centre la imagen automáticamente
+            clearTimeout(zoomOriginTimeout);
             
-            const img = document.getElementById('lightbox-img');
+            // Apuntamos a la imagen activa en ese momento
+            const img = document.getElementById('lb-img-' + currentImageIndex);
             const hint = document.getElementById('zoom-hint');
+            
+            if(!img) return;
+
             isZoomed = !isZoomed;
             
             if (isZoomed) {
@@ -557,13 +575,11 @@
                 let clientX = e.clientX;
                 let clientY = e.clientY;
                 
-                // Si es un dispositivo móvil (o un tap), forzamos usar la coordenada real del dedo
                 if (window.matchMedia("(pointer: coarse)").matches || e.pointerType === 'touch' || (clientX === 0 && clientY === 0)) {
                     clientX = lastTapX || clientX;
                     clientY = lastTapY || clientY;
                 }
 
-                // Fallback de seguridad al centro
                 clientX = clientX || (rect.left + rect.width / 2);
                 clientY = clientY || (rect.top + rect.height / 2);
 
@@ -583,73 +599,93 @@
             translateX = 0;
             translateY = 0;
             
-            const img = document.getElementById('lightbox-img');
-            const hint = document.getElementById('zoom-hint');
+            // Reseteamos todas las imágenes por seguridad
+            galleryImages.forEach((_, i) => {
+               const img = document.getElementById('lb-img-' + i);
+               if(img) {
+                   img.classList.replace('cursor-zoom-out', 'cursor-zoom-in');
+                   img.style.transform = 'translate(0px, 0px) scale(1)';
+               }
+            });
             
-            if(img) {
-                img.classList.replace('cursor-zoom-out', 'cursor-zoom-in');
-                img.style.transform = 'translate(0px, 0px) scale(1)';
-                
-                // Asignamos el timeout a la variable para poder cancelarlo si hacemos click
+            // Centramos el origen de la imagen activa
+            const activeImg = document.getElementById('lb-img-' + currentImageIndex);
+            if(activeImg) {
                 clearTimeout(zoomOriginTimeout);
-                zoomOriginTimeout = setTimeout(() => { img.style.transformOrigin = 'center center'; }, 300);
+                zoomOriginTimeout = setTimeout(() => { activeImg.style.transformOrigin = 'center center'; }, 300);
             }
+            
+            const hint = document.getElementById('zoom-hint');
             if(hint) {
                 hint.classList.remove('opacity-0');
                 hint.classList.add('group-hover:opacity-100');
             }
         }
 
-        const lightboxImgNode = document.getElementById('lightbox-img');
-        lightboxImgNode.addEventListener('touchstart', (e) => {
-            if (e.touches.length === 2) {
-                isPinching = true; isDragging = false; isLbSwiping = false;
-                touchStartDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-                initialScale = currentScale;
-                lightboxImgNode.style.transition = 'none';
-            } else if (e.touches.length === 1) {
-                if (currentScale > 1) {
-                    isDragging = true; isPinching = false; isLbSwiping = false;
-                    startX = e.touches[0].clientX - translateX;
-                    startY = e.touches[0].clientY - translateY;
-                    lightboxImgNode.style.transition = 'none';
-                } else {
-                    isLbSwiping = true; lbSwipeStartX = e.touches[0].clientX;
+        // Aplicamos los eventos táctiles al contenedor global de la pista, no a una sola imagen
+        const lightboxTrackContainer = document.getElementById('lightbox-track-container');
+        if(lightboxTrackContainer) {
+            lightboxTrackContainer.addEventListener('touchstart', (e) => {
+                const img = document.getElementById('lb-img-' + currentImageIndex);
+                if (!img) return;
+
+                if (e.touches.length === 2) {
+                    isPinching = true; isDragging = false; isLbSwiping = false;
+                    touchStartDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                    initialScale = currentScale;
+                    img.style.transition = 'none';
+                } else if (e.touches.length === 1) {
+                    lastTapX = e.touches[0].clientX;
+                    lastTapY = e.touches[0].clientY;
+
+                    if (currentScale > 1) {
+                        isDragging = true; isPinching = false; isLbSwiping = false;
+                        startX = e.touches[0].clientX - translateX;
+                        startY = e.touches[0].clientY - translateY;
+                        img.style.transition = 'none';
+                    } else {
+                        isLbSwiping = true; lbSwipeStartX = e.touches[0].clientX;
+                    }
                 }
-            }
-        });
+            });
 
-        lightboxImgNode.addEventListener('touchmove', (e) => {
-            if (isPinching && e.touches.length === 2) {
-                e.preventDefault();
-                const currentDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-                currentScale = Math.min(Math.max(1, initialScale * (currentDist / touchStartDist)), 4);
-                lightboxImgNode.style.transformOrigin = 'center center';
-                lightboxImgNode.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
-                const hint = document.getElementById('zoom-hint');
-                if(hint) hint.classList.add('opacity-0');
-            } else if (isDragging && e.touches.length === 1) {
-                e.preventDefault();
-                translateX = e.touches[0].clientX - startX;
-                translateY = e.touches[0].clientY - startY;
-                lightboxImgNode.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
-            }
-        });
+            lightboxTrackContainer.addEventListener('touchmove', (e) => {
+                const img = document.getElementById('lb-img-' + currentImageIndex);
+                if (!img) return;
 
-        lightboxImgNode.addEventListener('touchend', (e) => {
-            if (isLbSwiping && e.changedTouches.length === 1 && currentScale === 1) {
-                let lbSwipeEndX = e.changedTouches[0].clientX;
-                const threshold = 40;
-                if (lbSwipeStartX - lbSwipeEndX > threshold) navigateLightbox(1);
-                else if (lbSwipeEndX - lbSwipeStartX > threshold) navigateLightbox(-1);
-                isLbSwiping = false;
-            }
-            if (e.touches.length < 2) isPinching = false;
-            if (e.touches.length === 0) isDragging = false;
-            
-            lightboxImgNode.style.transition = 'transform 0.3s ease-out';
-            if (currentScale <= 1) resetZoom();
-        });
+                if (isPinching && e.touches.length === 2) {
+                    e.preventDefault();
+                    const currentDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                    currentScale = Math.min(Math.max(1, initialScale * (currentDist / touchStartDist)), 4);
+                    img.style.transformOrigin = 'center center';
+                    img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+                    const hint = document.getElementById('zoom-hint');
+                    if(hint) hint.classList.add('opacity-0');
+                } else if (isDragging && e.touches.length === 1) {
+                    e.preventDefault();
+                    translateX = e.touches[0].clientX - startX;
+                    translateY = e.touches[0].clientY - startY;
+                    img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+                }
+            });
+
+            lightboxTrackContainer.addEventListener('touchend', (e) => {
+                const img = document.getElementById('lb-img-' + currentImageIndex);
+                
+                if (isLbSwiping && e.changedTouches.length === 1 && currentScale === 1) {
+                    let lbSwipeEndX = e.changedTouches[0].clientX;
+                    const threshold = 40;
+                    if (lbSwipeStartX - lbSwipeEndX > threshold) navigateLightbox(1);
+                    else if (lbSwipeEndX - lbSwipeStartX > threshold) navigateLightbox(-1);
+                    isLbSwiping = false;
+                }
+                if (e.touches.length < 2) isPinching = false;
+                if (e.touches.length === 0) isDragging = false;
+                
+                if(img) img.style.transition = 'transform 0.3s ease-out';
+                if (currentScale <= 1) resetZoom();
+            });
+        }
 
         document.addEventListener('keydown', (e) => {
             const lightbox = document.getElementById('lightbox');
