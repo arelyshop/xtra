@@ -63,8 +63,10 @@
             <div class="w-full lg:w-1/2 lg:sticky lg:top-6 lg:z-10">
                 <!-- Imagen Principal -->
                 <div id="main-image-container" class="relative bg-gray-100 rounded-lg shadow-md overflow-hidden aspect-square mb-4 group cursor-zoom-in" onclick="openLightbox(event)">
-                    <!-- Imagen dinámica (Optimizada para máxima velocidad de carga inicial sin lazy load) -->
-                    <img id="main-image" src="" alt="Cargando producto" fetchpriority="high" decoding="sync" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105 opacity-0 transition-opacity duration-300">
+                    <!-- Pista del carrusel (Contiene todas las imágenes alineadas horizontalmente) -->
+                    <div id="carousel-track" class="flex w-full h-full transition-transform duration-500 ease-out" style="transform: translateX(0%);">
+                        <!-- Las imágenes se insertan aquí dinámicamente vía JS -->
+                    </div>
                     
                     <!-- Flecha Izquierda -->
                     <button onclick="navigateMainImage(event, -1)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 shadow-md rounded-full w-9 h-9 flex items-center justify-center z-20 transition">
@@ -335,12 +337,20 @@
             galleryImages = photoFields.map(f => product[f]).filter(img => img && img.trim() !== '');
             
             if (galleryImages.length > 0) {
-                const mainImg = document.getElementById('main-image');
-                mainImg.src = galleryImages[0];
-                mainImg.classList.remove('opacity-0');
+                // 1. Llenamos la pista del carrusel principal
+                const track = document.getElementById('carousel-track');
+                track.innerHTML = '';
+                
+                galleryImages.forEach((imgUrl, index) => {
+                    // Solo la primera imagen carga con prioridad alta
+                    const fetchPriority = index === 0 ? 'high' : 'auto';
+                    const loadingAttr = index === 0 ? 'eager' : 'lazy';
+                    track.innerHTML += `<img src="${imgUrl}" fetchpriority="${fetchPriority}" loading="${loadingAttr}" decoding="async" alt="${product.title} - vista ${index + 1}" class="w-full h-full object-contain flex-shrink-0 transition-transform duration-500 group-hover:scale-105">`;
+                });
                 
                 document.getElementById('lightbox-counter-total').textContent = galleryImages.length;
                 
+                // 2. Llenamos las miniaturas
                 const thumbContainer = document.getElementById('thumbnails-container');
                 thumbContainer.innerHTML = ''; 
                 
@@ -422,7 +432,13 @@
 
         function changeMainImage(index) {
             currentImageIndex = index;
-            document.getElementById('main-image').src = galleryImages[index];
+            
+            // Efecto deslizamiento del carrusel
+            const track = document.getElementById('carousel-track');
+            if(track) {
+                // Desplaza el contenedor -100% por cada índice (ej. index 1 = -100%, index 2 = -200%)
+                track.style.transform = `translateX(-${index * 100}%)`;
+            }
             
             const btns = document.querySelectorAll('.thumbnail-btn');
             btns.forEach((btn, i) => {
