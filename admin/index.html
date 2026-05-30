@@ -168,11 +168,49 @@
                                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div>
                                                 <label class="block text-sm font-medium text-gray-300 mb-1">Categoría *</label>
-                                                <input required type="text" name="category" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. Electrónica">
+                                                <select required id="categorySelect" name="category" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none mb-2">
+                                                    <option value="">Seleccionar categoría...</option>
+                                                    <option value="Cargadores">Cargadores</option>
+                                                    <option value="Cables & Conectores">Cables & Conectores</option>
+                                                    <option value="Hubs & Adaptadores">Hubs & Adaptadores</option>
+                                                    <option value="Powerbanks">Powerbanks</option>
+                                                    <option value="Mochilas & Fundas">Mochilas & Fundas</option>
+                                                    <option value="Accesorios para Laptop">Accesorios para Laptop</option>
+                                                    <option value="Audio & Video">Audio & Video</option>
+                                                    <option value="Teclados & Mouse">Teclados & Mouse</option>
+                                                    <option value="Organizadores & Neceseres">Organizadores & Neceseres</option>
+                                                    <option value="Juguetes & Niños">Juguetes & Niños</option>
+                                                    <option value="Herramientas">Herramientas</option>
+                                                    <option value="Mascotas">Mascotas</option>
+                                                    <option value="custom">Otra...</option>
+                                                </select>
+                                                <input type="text" id="categoryCustom" class="hidden w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Escribe la categoría">
                                             </div>
                                             <div>
                                                 <label class="block text-sm font-medium text-gray-300 mb-1">Marca *</label>
-                                                <input required type="text" id="brand" name="brand" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Ej. Nike">
+                                                <select required id="brandSelect" name="brand" class="w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none mb-2">
+                                                    <option value="">Seleccionar marca...</option>
+                                                    <option value="UGREEN">UGREEN</option>
+                                                    <option value="BASEUS">BASEUS</option>
+                                                    <option value="ANKER">ANKER</option>
+                                                    <option value="HAVIT">HAVIT</option>
+                                                    <option value="TP-LINK">TP-LINK</option>
+                                                    <option value="KLIP-XTREME">KLIP-XTREME</option>
+                                                    <option value="DIMAX">DIMAX</option>
+                                                    <option value="MAONO">MAONO</option>
+                                                    <option value="AMAZON">AMAZON</option>
+                                                    <option value="BOYA">BOYA</option>
+                                                    <option value="NETAC">NETAC</option>
+                                                    <option value="BLACKVIEW">BLACKVIEW</option>
+                                                    <option value="ORICO">ORICO</option>
+                                                    <option value="BELKIN">BELKIN</option>
+                                                    <option value="VENTION">VENTION</option>
+                                                    <option value="TOLSEN">TOLSEN</option>
+                                                    <option value="BENFEI">BENFEI</option>
+                                                    <option value="UNI">UNI</option>
+                                                    <option value="custom">Otra...</option>
+                                                </select>
+                                                <input type="text" id="brandCustom" class="hidden w-full px-4 py-2 bg-gray-900 border border-gray-600 text-white rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none placeholder-gray-500" placeholder="Escribe la marca">
                                             </div>
                                         </div>
 
@@ -493,6 +531,12 @@
         const cancelEditBtn = document.getElementById('cancelEditBtn');
         const tabAddText = document.getElementById('tab-add-text');
 
+        // Elementos Selectores Personalizables
+        const categorySelect = document.getElementById('categorySelect');
+        const categoryCustom = document.getElementById('categoryCustom');
+        const brandSelect = document.getElementById('brandSelect');
+        const brandCustom = document.getElementById('brandCustom');
+
         // Botón Refrescar
         const refreshDbBtn = document.getElementById('refresh-db-btn');
 
@@ -550,6 +594,51 @@
                 el.parentNode.replaceChild(newIcon, el);
             }
         }
+
+        // ==========================================
+        // UTILIDAD PARA SELECTORES CON OPCIÓN "OTRA"
+        // ==========================================
+        function handleCustomSelect(selectEl, customInputEl, inputName) {
+            if (selectEl.value === 'custom') {
+                customInputEl.classList.remove('hidden');
+                customInputEl.name = inputName; // El input de texto recibe el 'name'
+                customInputEl.required = true;
+                selectEl.removeAttribute('name'); // Quitamos el name al select
+            } else {
+                customInputEl.classList.add('hidden');
+                customInputEl.removeAttribute('name');
+                customInputEl.required = false;
+                selectEl.name = inputName; // El select recibe el 'name' de vuelta
+            }
+        }
+
+        // Determina qué mostrar según el valor (para edición)
+        function setSelectOrCustom(selectEl, customInputEl, value, inputName) {
+            if (!value) {
+                selectEl.value = '';
+                handleCustomSelect(selectEl, customInputEl, inputName);
+                customInputEl.value = '';
+                return;
+            }
+            
+            // Verifica si el valor coincide con alguna opción (ignorando 'custom')
+            const optionExists = Array.from(selectEl.options).some(opt => opt.value === value && opt.value !== 'custom');
+            
+            if (optionExists) {
+                selectEl.value = value;
+                handleCustomSelect(selectEl, customInputEl, inputName);
+                customInputEl.value = '';
+            } else {
+                selectEl.value = 'custom';
+                handleCustomSelect(selectEl, customInputEl, inputName);
+                customInputEl.value = value;
+            }
+        }
+
+        // Listeners para detectar cambios
+        categorySelect.addEventListener('change', () => handleCustomSelect(categorySelect, categoryCustom, 'category'));
+        brandSelect.addEventListener('change', () => handleCustomSelect(brandSelect, brandCustom, 'brand'));
+
 
         // ==========================================
         // SISTEMA DE AUTENTICACIÓN (LOGIN)
@@ -832,8 +921,8 @@
 
             // Poblar campos de texto y selects
             document.querySelector('[name="title"]').value = product.title || '';
-            document.querySelector('[name="category"]').value = product.category || '';
-            document.querySelector('[name="brand"]').value = product.brand || '';
+            setSelectOrCustom(categorySelect, categoryCustom, product.category, 'category');
+            setSelectOrCustom(brandSelect, brandCustom, product.brand, 'brand');
             document.querySelector('[name="gtin"]').value = product.gtin || '';
             document.querySelector('[name="barcode"]').value = product.barcode || '';
             document.getElementById('productLink').value = `https://arelyshop.com/producto.html?id=${product.id}`;
@@ -865,6 +954,11 @@
         function resetFormToCreateMode() {
             currentEditId = null;
             form.reset();
+            
+            // Restablecer campos personalizables a su estado original (ocultos)
+            handleCustomSelect(categorySelect, categoryCustom, 'category');
+            handleCustomSelect(brandSelect, brandCustom, 'brand');
+            
             editor.value = '';
             imageSortableList.innerHTML = '';
             singleImageInputsContainer.innerHTML = '';
