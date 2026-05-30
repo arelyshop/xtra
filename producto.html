@@ -624,9 +624,12 @@
         let lastTapX = 0, lastTapY = 0; 
         let zoomOriginTimeout; 
         let lbDragOffset = 0;
+        let isMouseDown = false;
+        let mouseDragMoved = false;
 
         function toggleZoom(e) {
             e.stopPropagation(); 
+            if (mouseDragMoved) return; // Evita quitar el zoom si se estaba arrastrando la imagen
             clearTimeout(zoomOriginTimeout);
             
             const img = document.getElementById('lb-img-' + currentImageIndex);
@@ -670,11 +673,14 @@
             currentScale = 1;
             translateX = 0;
             translateY = 0;
+            mouseDragMoved = false;
             
             galleryImages.forEach((_, i) => {
                const img = document.getElementById('lb-img-' + i);
                if(img) {
-                   img.classList.replace('cursor-zoom-out', 'cursor-zoom-in');
+                   img.classList.remove('cursor-zoom-out');
+                   img.classList.add('cursor-zoom-in');
+                   img.style.cursor = '';
                    img.style.transform = 'translate(0px, 0px) scale(1)';
                }
             });
@@ -790,6 +796,49 @@
                 }
                 if (currentScale <= 1 && !isLbSwiping) {
                     resetZoom(); 
+                }
+            });
+
+            // --- EVENTOS DE MOUSE PARA MOVER ZOOM EN ESCRITORIO ---
+            lightboxTrackContainer.addEventListener('mousedown', (e) => {
+                const img = document.getElementById('lb-img-' + currentImageIndex);
+                // Solo activar si hay zoom y es clic izquierdo
+                if (!img || currentScale <= 1 || e.button !== 0) return; 
+                
+                e.preventDefault(); // Evita arrastrar la imagen por defecto del navegador (Ghost Image)
+                isMouseDown = true;
+                mouseDragMoved = false;
+                
+                startX = e.clientX - translateX;
+                startY = e.clientY - translateY;
+                img.style.transition = 'none';
+                img.classList.remove('cursor-zoom-out');
+                img.style.cursor = 'grabbing'; // Cambia el cursor a una manito agarrando
+            });
+
+            lightboxTrackContainer.addEventListener('mousemove', (e) => {
+                if (!isMouseDown) return;
+                mouseDragMoved = true;
+                
+                const img = document.getElementById('lb-img-' + currentImageIndex);
+                if (!img) return;
+                
+                translateX = e.clientX - startX;
+                translateY = e.clientY - startY;
+                img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+            });
+
+            window.addEventListener('mouseup', () => {
+                if (isMouseDown) {
+                    isMouseDown = false;
+                    const img = document.getElementById('lb-img-' + currentImageIndex);
+                    if (img) {
+                        img.style.transition = 'transform 0.3s ease-out';
+                        img.style.cursor = '';
+                        if (currentScale > 1) img.classList.add('cursor-zoom-out');
+                    }
+                    // Pequeño retraso antes de permitir el click para que no haga zoom out accidental
+                    setTimeout(() => mouseDragMoved = false, 50);
                 }
             });
         }
