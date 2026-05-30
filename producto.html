@@ -351,8 +351,12 @@
                     const fetchPriority = index === 0 ? 'high' : 'auto';
                     const loadingAttr = index === 0 ? 'eager' : 'lazy';
                     
-                    // Inyección Carrusel Principal
-                    track.innerHTML += `<img src="${imgUrl}" fetchpriority="${fetchPriority}" loading="${loadingAttr}" decoding="async" alt="${product.title} - vista ${index + 1}" class="w-full h-full object-contain flex-shrink-0 transition-transform duration-500 group-hover:scale-105">`;
+                    // Inyección Carrusel Principal (Envuelto en un div con overflow-hidden para evitar cruces visuales en el zoom)
+                    track.innerHTML += `
+                        <div class="w-full h-full flex-shrink-0 overflow-hidden">
+                            <img src="${imgUrl}" fetchpriority="${fetchPriority}" loading="${loadingAttr}" decoding="async" alt="${product.title} - vista ${index + 1}" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105">
+                        </div>
+                    `;
                     
                     // Inyección Carrusel Lightbox
                     lbTrack.innerHTML += `
