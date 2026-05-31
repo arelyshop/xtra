@@ -1,4 +1,5 @@
-const { Pool } = require('pg');
+// Cambiamos 'pg' por '@neondatabase/serverless' que es lo que tienes instalado
+const { Pool } = require('@neondatabase/serverless');
 
 // Configuración de la conexión a la base de datos Neon
 // Asegúrate de tener configurada la variable de entorno DATABASE_URL en Netlify
