@@ -24,21 +24,24 @@ exports.handler = async (event, context) => {
   try {
     const client = await pool.connect();
     
-    // IMPORTANTE: Ajusta esta consulta SQL con los nombres reales de tus tablas y columnas.
-    // Estos son los campos requeridos mínimos/recomendados por Facebook.
+    // Consulta SQL actualizada para apuntar a la nueva tabla "products"
+    // Se extraen directamente los nombres de columna porque coinciden con los requeridos por Facebook
     const query = `
       SELECT 
         id, 
-        titulo AS title, 
-        descripcion AS description, 
-        disponibilidad AS availability, 
-        condicion AS condition, 
-        precio AS price, 
-        enlace_producto AS link, 
-        enlace_imagen AS image_link, 
-        marca AS brand 
-      FROM productos
-      WHERE estado = 'activo'
+        title, 
+        description, 
+        availability, 
+        condition, 
+        price, 
+        sale_price,
+        link, 
+        image_link, 
+        brand,
+        quantity_to_sell_on_facebook,
+        gtin
+      FROM products
+      WHERE quantity_to_sell_on_facebook > 0
     `;
     
     const result = await client.query(query);
@@ -50,18 +53,45 @@ exports.handler = async (event, context) => {
       return { statusCode: 200, body: "No hay productos disponibles." };
     }
 
-    // Obtener los nombres de las columnas (cabeceras del CSV)
-    const headers = Object.keys(productos[0]);
+    // Definimos todas las cabeceras exactas que Facebook pide (Obligatorias y Opcionales)
+    const facebookHeaders = [
+      "id", "title", "description", "availability", "condition", "price",
+      "link", "image_link", "brand", "google_product_category", "fb_product_category",
+      "quantity_to_sell_on_facebook", "sale_price", "sale_price_effective_date", 
+      "item_group_id", "gender", "color", "size", "age_group", "material", "pattern", 
+      "shipping", "shipping_weight", "offer_disclaimer", "offer_disclaimer_url", 
+      "video[0].url", "video[0].tag[0]", "gtin", "product_tags[0]", "product_tags[1]", 
+      "compatible_devices[0]", "product_height", "product_length", "product_width", 
+      "connector_type", "product_weight", "standard_features[0]", "usb_technology", 
+      "usb_type", "wireless_technologies[0]", "bluetooth_technology", "cable_length", 
+      "headphone_features[0]", "max_load_weight", "maximum_screen_size", 
+      "minimum_screen_size", "mount_type"
+    ];
     
     // Construir el CSV
     const csvRows = [];
     
     // 1. Agregar la fila de cabeceras
-    csvRows.push(headers.join(','));
+    csvRows.push(facebookHeaders.join(','));
     
     // 2. Agregar los datos de cada producto
     productos.forEach(producto => {
-      const row = headers.map(header => escapeCSV(producto[header]));
+      const row = facebookHeaders.map(header => {
+        let value = '';
+        
+        // Lógica especial para agregar la moneda a los precios
+        if (header === 'price' && producto.price) {
+          value = `${producto.price} BOB`;
+        } else if (header === 'sale_price' && producto.sale_price) {
+          value = `${producto.sale_price} BOB`;
+        } else if (producto[header] !== undefined && producto[header] !== null) {
+          // Si la columna existe en nuestra consulta a la BD, la asignamos
+          value = producto[header];
+        }
+        
+        // Escapamos el valor para evitar problemas con comas en las descripciones
+        return escapeCSV(value);
+      });
       csvRows.push(row.join(','));
     });
 
