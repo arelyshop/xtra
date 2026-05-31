@@ -25,8 +25,9 @@ exports.handler = async (event, context) => {
   try {
     const client = await pool.connect();
     
-    // Consulta SQL actualizada para apuntar a la nueva tabla "products"
-    // Se extraen directamente los nombres de columna porque coinciden con los requeridos por Facebook
+    // Consulta SQL ACTUALIZADA: 
+    // Se quitó el filtro WHERE para traer TODOS los productos de la tabla.
+    // También se quitó "quantity_to_sell_on_facebook" del SELECT para que su valor quede vacío en el CSV.
     const query = `
       SELECT 
         id, 
@@ -39,10 +40,8 @@ exports.handler = async (event, context) => {
         link, 
         image_link, 
         brand,
-        quantity_to_sell_on_facebook,
         gtin
       FROM products
-      WHERE quantity_to_sell_on_facebook > 0
     `;
     
     const result = await client.query(query);
