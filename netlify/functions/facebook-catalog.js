@@ -28,6 +28,7 @@ exports.handler = async (event, context) => {
     // Consulta SQL ACTUALIZADA: 
     // Se quitó el filtro WHERE para traer TODOS los productos de la tabla.
     // También se quitó "quantity_to_sell_on_facebook" del SELECT para que su valor quede vacío en el CSV.
+    // Se agregó ORDER BY id ASC para que el archivo esté ordenado por ID.
     const query = `
       SELECT 
         id, 
@@ -42,6 +43,7 @@ exports.handler = async (event, context) => {
         brand,
         gtin
       FROM products
+      ORDER BY id ASC
     `;
     
     const result = await client.query(query);
