@@ -3,35 +3,58 @@
     🚀 <strong>50% OFF</strong> ALL INTERIOR PRODUCTS
 </div>
 
+<!-- 2. Top Bar (USPs / Propuestas de Valor del JSON) -->
+<div class="bg-gray-50 text-gray-600 py-2.5 border-b border-gray-200 hidden md:block text-[13px]">
+    <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+        <ul class="flex space-x-8">
+            <li class="flex items-center space-x-2">
+                <i class="fa-solid fa-right-left text-gray-400"></i>
+                <span><a href="#" class="hover:underline"><strong>Free exchange</strong></a> of products within 30 days</span>
+            </li>
+            <li class="flex items-center space-x-2">
+                <i class="fa-solid fa-store text-gray-400"></i>
+                <span>Pickup in <strong>16 stores</strong> international</span>
+            </li>
+            <li class="flex items-center space-x-2">
+                <i class="fa-solid fa-star text-gray-400"></i>
+                <span><strong>Premium brand products</strong> for an affordable price</span>
+            </li>
+        </ul>
+        <div class="flex space-x-6">
+            <a href="#" class="hover:text-black font-medium transition">Customer service</a>
+        </div>
+    </div>
+</div>
+
 <!-- 3. Header Principal (Sticky) -->
-<header class="bg-black border-b border-gray-800 sticky top-0 z-40 shadow-sm text-white">
+<header class="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 py-3 lg:py-5">
         <div class="flex justify-between items-center gap-4 lg:gap-8">
             
             <!-- Menú Hamburguesa (Móvil) & Búsqueda (Izquierda) -->
             <div class="flex items-center gap-4 lg:hidden w-1/3">
-                <button id="mobile-menu-btn" class="text-2xl text-gray-300 hover:text-white focus:outline-none">
+                <button id="mobile-menu-btn" class="text-2xl text-gray-700 hover:text-black focus:outline-none">
                     <i class="fa-solid fa-bars"></i>
                 </button>
             </div>
 
             <!-- Logo (Basado en layout_2 y layout_mobile: logo_center) -->
             <div class="flex justify-center lg:justify-start lg:w-1/3 w-1/3">
-                <a href="index.html" class="flex items-center">
-                    <img src="images/logo-escritorio.svg" alt="ArelyShop Logo" class="h-[60px] -my-2.5 lg:my-0 lg:h-[43px] w-auto">
+                <a href="index.html" class="text-xl lg:text-2xl font-bold tracking-tighter text-black uppercase">
+                    ARELYSHOP.COM
                 </a>
             </div>
 
             <!-- Barra de Búsqueda Central (Desktop) -->
             <div class="hidden lg:flex lg:w-1/3 justify-center relative">
                 <form class="w-full max-w-lg flex relative z-20">
-                    <input type="text" id="desktop-search" placeholder="Search..." autocomplete="off" class="w-full border border-gray-300 rounded-l-md py-2.5 px-4 focus:outline-none focus:border-gray-400 text-[14px] transition-colors bg-white text-black">
+                    <input type="text" id="desktop-search" placeholder="Search..." autocomplete="off" class="w-full border border-gray-300 rounded-l-md py-2.5 px-4 focus:outline-none focus:border-gray-400 text-[14px] transition-colors bg-white">
                     <button type="submit" class="bg-gray-50 text-gray-800 border border-l-0 border-gray-300 px-6 rounded-r-md hover:bg-gray-200 transition-colors">
                         <i class="fa-solid fa-magnifying-glass"></i>
                     </button>
                 </form>
                 <!-- Cajón de Búsqueda Fija (Autocomplete Desktop) -->
-                <div id="desktop-search-results" class="absolute top-[100%] left-0 w-full bg-white shadow-xl border border-gray-100 rounded-b-md hidden z-10 max-h-[70vh] overflow-y-auto pt-2 text-black">
+                <div id="desktop-search-results" class="absolute top-[100%] left-0 w-full bg-white shadow-xl border border-gray-100 rounded-b-md hidden z-10 max-h-[70vh] overflow-y-auto pt-2">
                     <!-- Los resultados se inyectan dinámicamente aquí -->
                 </div>
             </div>
@@ -43,15 +66,15 @@
                 <a href="https://wa.me/59100000000" target="_blank" class="hidden sm:flex items-center gap-2.5 group mr-2">
                     <img src="images/whatsapp-icon.svg" alt="WhatsApp" class="w-8 h-8 group-hover:scale-110 transition-transform">
                     <div class="flex flex-col text-left">
-                        <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider leading-none mb-0.5">Contáctanos</span>
-                        <span class="text-[13px] font-bold text-white leading-none group-hover:text-[#128c7e] transition-colors">por WhatsApp!</span>
+                        <span class="text-[10px] text-gray-500 font-bold uppercase tracking-wider leading-none mb-0.5">Contáctanos</span>
+                        <span class="text-[13px] font-bold text-gray-900 leading-none group-hover:text-[#128c7e] transition-colors">por WhatsApp!</span>
                     </div>
                 </a>
                 
-                <a href="#" id="cart-btn" class="text-[22px] text-gray-300 hover:text-white relative group flex items-center gap-2 cursor-pointer">
+                <a href="#" id="cart-btn" class="text-[22px] text-gray-700 hover:text-black relative group flex items-center gap-2 cursor-pointer">
                     <div class="relative">
                         <i class="fa-solid fa-cart-shopping"></i>
-                        <span class="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full">3</span>
+                        <span class="absolute -top-2 -right-2 bg-black text-white text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full">3</span>
                     </div>
                 </a>
             </div>
@@ -60,26 +83,27 @@
         <!-- Búsqueda Móvil (Siempre Desplegada) -->
         <div class="mt-3 lg:hidden w-full relative z-40">
             <form class="w-full flex relative z-20">
-                <input type="text" id="mobile-search" placeholder="Buscar productos..." autocomplete="off" class="w-full border border-gray-300 rounded-l-md py-2.5 px-4 focus:outline-none focus:border-gray-400 text-[14px] bg-white text-black">
+                <input type="text" id="mobile-search" placeholder="Buscar productos..." autocomplete="off" class="w-full border border-gray-300 rounded-l-md py-2.5 px-4 focus:outline-none focus:border-gray-400 text-[14px] bg-white">
                 <button type="submit" class="bg-gray-50 text-gray-800 border border-l-0 border-gray-300 px-5 rounded-r-md hover:bg-gray-200 transition-colors">
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
             </form>
             <!-- Cajón de Búsqueda Fija (Autocomplete Móvil) -->
-            <div id="mobile-search-results" class="absolute top-[100%] left-0 w-full bg-white shadow-2xl border border-gray-100 rounded-b-md hidden max-h-[70vh] overflow-y-auto z-10 pt-2 text-black">
+            <div id="mobile-search-results" class="absolute top-[100%] left-0 w-full bg-white shadow-2xl border border-gray-100 rounded-b-md hidden max-h-[70vh] overflow-y-auto z-10 pt-2">
                 <!-- Los resultados se inyectan dinámicamente aquí -->
             </div>
         </div>
     </div>
 
     <!-- 4. Barra de Navegación Menú (Desktop) -->
-    <nav class="hidden lg:block border-t border-gray-200 bg-white relative">
+    <nav class="hidden lg:block border-t border-gray-100 relative">
         <div class="max-w-7xl mx-auto px-4">
             <ul class="flex space-x-8 text-[14px] font-medium text-gray-700">
                 <li class="py-4 border-b-2 border-transparent hover:border-black hover:text-black cursor-pointer transition">
                     <a href="index.html">Home</a>
                 </li>
-                
+
+                <!-- Nuevo Enlace agregado -->
                 <li class="py-4 border-b-2 border-transparent hover:border-black hover:text-black cursor-pointer transition">
                     <a href="#">Ver Catalogo</a>
                 </li>
@@ -89,7 +113,7 @@
                     <a href="colecciones.html">Catalog <i class="fa-solid fa-chevron-down text-[10px] ml-1 opacity-50"></i></a>
                     
                     <!-- Contenedor del Mega Menú -->
-                    <div class="absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-50 text-black">
+                    <div class="absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-50">
                         <div class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-4 gap-8">
                             
                             <!-- Columna de Enlaces 1 con Imágenes Dropdown (show_dropdown_images) -->
@@ -136,6 +160,7 @@
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </li>
@@ -145,7 +170,7 @@
                     <a href="#">Marcas <i class="fa-solid fa-chevron-down text-[10px] ml-1 opacity-50"></i></a>
                     
                     <!-- Contenedor del Mega Menú -->
-                    <div class="absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-50 text-black">
+                    <div class="absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-50">
                         <div class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-4 gap-8">
                             
                             <!-- Columna de Enlaces 1 con Imágenes Dropdown (show_dropdown_images) -->
@@ -192,6 +217,7 @@
                                     </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </li>
@@ -214,7 +240,7 @@
 <!-- 5. Menú Lateral Móvil (Drawer) -->
 <div id="mobile-menu-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-all duration-500"></div>
 <div id="mobile-menu" class="fixed top-0 left-0 w-4/5 max-w-sm h-full bg-white z-50 mobile-menu-inactive transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-2xl overflow-y-auto">
-    <div class="p-4 border-b flex justify-between items-center text-black">
+    <div class="p-4 border-b flex justify-between items-center">
         <span class="font-bold text-lg">MENÚ</span>
         <button id="close-mobile-btn" class="text-gray-500 hover:text-black text-2xl">
             <i class="fa-solid fa-xmark"></i>
@@ -224,9 +250,7 @@
     <!-- Links Móviles -->
     <ul class="text-gray-800 text-base font-medium">
         <li class="border-b"><a href="index.html" class="block p-4 hover:bg-gray-50">Inicio</a></li>
-        <li class="border-b"><a href="#" class="block p-4 hover:bg-gray-50">Ver Catalogo</a></li>
         <li class="border-b"><a href="colecciones.html" class="block p-4 hover:bg-gray-50 flex justify-between">Catálogo <i class="fa-solid fa-chevron-right text-sm text-gray-400"></i></a></li>
-        <li class="border-b"><a href="#" class="block p-4 hover:bg-gray-50 flex justify-between">Marcas <i class="fa-solid fa-chevron-right text-sm text-gray-400"></i></a></li>
         <li class="border-b"><a href="#" class="block p-4 hover:bg-gray-50 flex justify-between">Colecciones <i class="fa-solid fa-chevron-right text-sm text-gray-400"></i></a></li>
         <li class="border-b"><a href="#" class="block p-4 hover:bg-gray-50">Sobre Nosotros</a></li>
         <li class="border-b bg-red-50"><a href="#" class="block p-4 text-red-600">Ofertas (Sale)</a></li>
@@ -242,7 +266,7 @@
 
 <!-- 6. Carrito Lateral (Side Cart) - Implementado desde theme.liquid -->
 <div id="side-drawer-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-all duration-500"></div>
-<div id="side-cart" class="fixed top-0 right-0 w-4/5 max-w-sm h-full bg-white z-50 cart-inactive transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-2xl flex flex-col text-black">
+<div id="side-cart" class="fixed top-0 right-0 w-4/5 max-w-sm h-full bg-white z-50 cart-inactive transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-2xl flex flex-col">
     <div class="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
         <h2 class="font-bold text-lg flex items-center gap-2">
             <i class="fa-solid fa-cart-shopping"></i> Tu Carrito (3)
