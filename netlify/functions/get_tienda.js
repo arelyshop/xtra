@@ -17,10 +17,9 @@ exports.handler = async (event, context) => {
 
     try {
         // 1. Conectar a la base de datos de Neon
-        // Asegúrate de agregar DATABASE_URL en las variables de entorno de Netlify
         const sql = neon(process.env.DATABASE_URL);
 
-        // 2. Extraer los parámetros de la URL (AÑADIMOS 'search' AQUÍ)
+        // 2. Extraer los parámetros de la URL
         const { id, brand, category, limit, exclude_id, search } = event.queryStringParameters || {};
 
         // CASO A: Buscar un producto específico por ID
@@ -52,11 +51,15 @@ exports.handler = async (event, context) => {
             // Usamos % para buscar coincidencias parciales con ILIKE (no distingue mayúsculas)
             const searchPattern = `%${search}%`; 
             
+            // Agregamos ORDER BY con un CASE para priorizar los que coinciden en el title
             const result = await sql`
                 SELECT * FROM products 
                 WHERE title ILIKE ${searchPattern} 
                    OR description ILIKE ${searchPattern}
                    OR gtin ILIKE ${searchPattern}
+                ORDER BY 
+                   (CASE WHEN title ILIKE ${searchPattern} THEN 0 ELSE 1 END),
+                   title ASC
                 LIMIT ${limitNum}
             `;
             
@@ -73,7 +76,6 @@ exports.handler = async (event, context) => {
             const b = brand || '';
             const c = category || '';
             
-            // Busca productos de la misma marca O categoría (excluyendo el que se está viendo)
             let result;
             if (exclude_id) {
                 result = await sql`
@@ -98,12 +100,11 @@ exports.handler = async (event, context) => {
             return {
                 statusCode: 200,
                 headers,
-                body: JSON.stringify(result) // Devolvemos un array de productos
+                body: JSON.stringify(result)
             };
         }
 
-        // CASO D: Catálogo general. [Antes era el Caso C]
-        // ¡CORRECCIÓN AQUÍ! Ahora respeta el "limit" que envía la página web. Si no envían nada, devuelve 10.
+        // CASO D: Catálogo general
         const generalLimit = parseInt(limit) || 10;
 
         const result = await sql`
