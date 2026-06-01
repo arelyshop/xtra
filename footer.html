@@ -53,14 +53,8 @@
     <div class="bg-gray-50 border-t border-gray-200 py-8">
         <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6 text-[13px] text-gray-500">
             
-            <!-- Selectores de Idioma/País -->
-            <div class="flex space-x-6 items-center">
-                <button class="hover:text-black flex items-center gap-1.5 transition-colors">España (EUR €) <i class="fa-solid fa-chevron-down text-[10px]"></i></button>
-                <button class="hover:text-black flex items-center gap-1.5 transition-colors">Español <i class="fa-solid fa-chevron-down text-[10px]"></i></button>
-            </div>
-
-            <!-- Copyright -->
-            <p class="text-center">&copy; 2026 ARELYSHOP.COM. <a href="#" class="hover:underline">Desarrollado por Shopify</a></p>
+            <!-- Copyright (Año dinámico) -->
+            <p class="text-center">&copy; <span id="current-year"></span> Arelyshop.com. Todos los derechos reservados.</p>
 
             <!-- Métodos de pago (show_payment_methods: true) -->
             <ul class="flex space-x-3 text-2xl text-gray-400">
