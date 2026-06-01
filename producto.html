@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cargando Producto... - ARELYSHOP.COM</title>
+    <!-- Importar fuente Inter de Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <!-- Usamos Tailwind CSS para emular el diseño de manera rápida y limpia -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome para los iconos -->
@@ -12,6 +17,9 @@
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
                     colors: {
                         primary: '#111827',
                         secondary: '#f3f4f6',
@@ -40,10 +48,8 @@
     </style>
 </head>
 <body class="bg-white text-gray-800 font-sans antialiased">
-
     <!-- Inyección automática del Header -->
     <div id="header-container"></div>
-
     <!-- Contenido Principal: Página de Producto -->
     <main class="max-w-7xl mx-auto px-4 py-4 lg:py-10">
         
@@ -55,7 +61,6 @@
             <i class="fa-solid fa-chevron-right text-[9px]"></i>
             <span id="br-title" class="text-gray-900 font-medium line-clamp-1">Cargando...</span>
         </nav>
-
         <!-- Layout del Producto -->
         <div class="flex flex-col lg:flex-row gap-10 lg:gap-16 lg:items-start">
             
@@ -72,12 +77,10 @@
                     <button onclick="navigateMainImage(event, -1)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 shadow-md rounded-full w-9 h-9 flex items-center justify-center z-20 transition">
                         <i class="fa-solid fa-chevron-left text-[13px]"></i>
                     </button>
-
                     <!-- Flecha Derecha -->
                     <button onclick="navigateMainImage(event, 1)" class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 shadow-md rounded-full w-9 h-9 flex items-center justify-center z-20 transition">
                         <i class="fa-solid fa-chevron-right text-[13px]"></i>
                     </button>
-
                     <!-- Icono flotante indicador de zoom -->
                     <div class="absolute bottom-4 right-4 bg-white/90 text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
                         <i class="fa-solid fa-expand"></i>
@@ -87,16 +90,15 @@
                 <!-- Miniaturas (Thumbnails) inyectadas desde Neon -->
                 <div class="relative">
                     <div id="thumbnails-container" class="flex lg:grid lg:grid-cols-4 gap-3 overflow-x-auto lg:overflow-visible hide-scrollbar scroll-smooth snap-x lg:snap-none">
-                        <!-- Las miniaturas se insertan aquí vía JS -->
+                        <!-- Las miniaturas se insertan aquí a JS -->
                     </div>
                 </div>
             </div>
-
             <!-- 2. INFORMACIÓN DEL PRODUCTO -->
             <div class="w-full lg:w-1/2 flex flex-col">
                 
                 <!-- Título -->
-                <h1 id="prod-title" class="text-lg lg:text-xl font-bold tracking-tight text-gray-900 mb-2 leading-tight">
+                <h1 id="prod-title" class="text-lg lg:text-xl font-semibold tracking-tight text-gray-900 mb-2 leading-tight">
                     Cargando producto...
                 </h1>
                 
@@ -115,11 +117,10 @@
                 
                 <!-- Precio -->
                 <div class="flex items-end gap-3 mb-4 lg:mb-6">
-                    <span id="prod-sale-price" class="text-2xl font-bold text-black">Bs. 0.00</span>
+                    <span id="prod-sale-price" class="text-2xl font-semibold text-gray-900">Bs. 0.00</span>
                     <span id="prod-price" class="text-base text-gray-400 line-through mb-0.5 hidden">Bs. 0.00</span>
                     <span id="prod-savings" class="text-[12px] font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded mb-1 hidden">Ahorras Bs. 0.00</span>
                 </div>
-
                 <!-- Barra de Urgencia / Stock -->
                 <div id="stock-container" class="bg-gray-50 border border-gray-100 p-3 sm:p-4 rounded-lg mb-5 lg:mb-8 hidden">
                     <p class="text-[14px] text-gray-800 mb-2 font-medium"><i class="fa-solid fa-fire text-orange-500 mr-1"></i> ¡Date prisa! Solo quedan <strong id="prod-stock">0</strong> artículos en stock.</p>
@@ -127,7 +128,6 @@
                         <div id="stock-bar-fill" class="bg-gradient-to-r from-red-500 to-yellow-400 h-2 rounded-full" style="width: 0%"></div>
                     </div>
                 </div>
-
                 <!-- Controles de Compra Dinámicos -->
                 <div id="product-actions-container">
                     
@@ -152,20 +152,17 @@
                             <i class="fa-brands fa-whatsapp text-xl"></i> ¡Pídelo por WhatsApp!
                         </button>
                     </div>
-
                     <!-- BOTÓN OUT OF STOCK -->
                     <button id="out-of-stock-btn" class="hidden w-full bg-gray-400 text-white h-12 rounded font-bold cursor-not-allowed mb-5 lg:mb-8 flex items-center justify-center gap-2 transition" disabled>
                         <i class="fa-solid fa-ban text-lg"></i> Agotado
                     </button>
                 </div>
-
                 <!-- Bloque de Confianza (Trustbadges) -->
                 <div class="flex items-center justify-center gap-6 py-4 border-t border-b border-gray-100 mb-8 text-gray-500 text-[13px]">
                     <div class="flex flex-col items-center gap-1"><i class="fa-solid fa-shield-halved text-xl"></i> Pago Seguro</div>
                     <div class="flex flex-col items-center gap-1"><i class="fa-solid fa-truck-fast text-xl"></i> Envío Rápido</div>
                     <div class="flex flex-col items-center gap-1"><i class="fa-solid fa-rotate-left text-xl"></i> 30 Días Devolución</div>
                 </div>
-
                 <!-- Descripción Completa -->
                 <div class="text-[16px] text-gray-600 leading-snug">
                     <h2 class="text-xl font-bold text-gray-900 mb-3">Descripción:</h2>
@@ -173,10 +170,8 @@
                         <!-- Descripción inyectada desde base de datos -->
                     </div>
                 </div>
-
             </div>
         </div>
-
         <!-- SECCIÓN: PRODUCTOS COMPLEMENTARIOS (Estilo Colecciones + Carrusel móvil) -->
         <section class="mt-24 pt-10 border-t border-gray-200">
             <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center sm:text-left">Productos que también te pueden interesar</h2>
@@ -185,12 +180,9 @@
                 <!-- Upsells inyectados desde base de datos -->
             </div>
         </section>
-
     </main>
-
     <!-- Inyección automática del Footer -->
     <div id="footer-container"></div>
-
     <!-- MODAL LIGHTBOX DE GALERÍA -->
     <div id="lightbox" class="fixed inset-0 bg-white/95 backdrop-blur-sm z-[100] hidden flex-col items-center justify-center opacity-0 transition-opacity duration-300 touch-none" onclick="if(event.target === this) closeLightbox()">
         <!-- Botón Cerrar -->
@@ -212,16 +204,13 @@
                 <i class="fa-solid fa-magnifying-glass-plus mr-2"></i> Haz clic en la imagen para ampliar
             </div>
         </div>
-
         <!-- Navegación Derecha -->
         <button onclick="navigateLightbox(1); event.stopPropagation();" class="absolute right-2 sm:right-10 top-1/2 -translate-y-1/2 w-10 h-10 sm:w-12 sm:h-12 bg-white border border-gray-200 text-black hover:bg-gray-100 rounded-full flex items-center justify-center text-xl z-50 shadow-sm transition"><i class="fa-solid fa-chevron-right"></i></button>
-
         <!-- Contador de fotos -->
         <div class="absolute bottom-6 font-bold text-gray-800 text-sm tracking-widest uppercase bg-white px-4 py-1.5 rounded-full shadow-sm border border-gray-200 pointer-events-none z-50">
             <span id="lightbox-counter">1</span> / <span id="lightbox-counter-total">1</span>
         </div>
     </div>
-
     <!-- Script principal de la página -->
     <script>
         // Cargar Header y Footer globales
@@ -236,12 +225,10 @@
             script.src = 'js/main.js';
             document.body.appendChild(script);
         }).catch(err => console.error('Error cargando componentes:', err));
-
         // --- LÓGICA DE DATOS DINÁMICOS DESDE NEON ---
         let galleryImages = [];
         let currentImageIndex = 0;
         let isZoomed = false;
-
         // 1. Cargar producto principal por ID
         async function fetchProductData() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -257,7 +244,6 @@
                 return null;
             }
         }
-
         // 2. Cargar sugerencias
         async function fetchRelatedProducts(brand, category, currentId) {
             try {
@@ -272,18 +258,15 @@
                 return [];
             }
         }
-
         // 3. Inicializador
         async function initProductPage() {
             const product = await fetchProductData();
             if (!product) return;
-
             // Procesamiento de campos
             const price = parseFloat(product.price) || 0;
             const salePrice = parseFloat(product.sale_price) || price;
             const stockQty = parseInt(product.quantity_to_sell_on_facebook) || 0;
             const availability = (product.availability || '').trim().toLowerCase();
-
             // Textos básicos
             document.title = `${product.title} - ARELYSHOP.COM`;
             document.getElementById('br-title').textContent = product.title;
@@ -291,14 +274,13 @@
             document.getElementById('prod-brand').textContent = product.brand || 'N/A';
             document.getElementById('prod-sku').textContent = product.gtin || 'N/A';
             
-            // Formateo de descripción: Negritas entre ** o * y saltos de línea
+            // Formateo de descripción: Negritas entre ** o * y saltos de l
             let rawDesc = product.description || '';
             let formattedDesc = rawDesc
                 .replace(/\*\*([^*]+)\*\*/g, '<strong class="font-bold text-gray-900">$1</strong>') // Detecta formato **texto**
                 .replace(/\*([^*]+)\*/g, '<strong class="font-bold text-gray-900">$1</strong>')     // Detecta formato *texto*
                 .replace(/\n/g, '<br>');
             document.getElementById('prod-desc').innerHTML = formattedDesc;
-
             // Precios
             document.getElementById('prod-sale-price').textContent = `Bs. ${salePrice.toFixed(2)}`;
             if (price > salePrice) {
@@ -309,7 +291,6 @@
                 document.getElementById('prod-savings').textContent = `Ahorras Bs. ${savings.toFixed(2)}`;
                 document.getElementById('prod-savings').classList.remove('hidden');
             }
-
             // Barra de Stock
             if (stockQty > 0) {
                 document.getElementById('stock-container').classList.remove('hidden');
@@ -318,7 +299,6 @@
                 const percentage = Math.min((stockQty / 15) * 100, 100);
                 document.getElementById('stock-bar-fill').style.width = `${percentage}%`;
             }
-
             // Disponibilidad (Botones In Stock vs Agotado)
             if (availability === 'in stock') {
                 document.getElementById('in-stock-buttons').classList.remove('hidden');
@@ -334,7 +314,6 @@
                 document.getElementById('out-of-stock-btn').classList.remove('hidden');
                 document.getElementById('out-of-stock-btn').classList.add('flex');
             }
-
             // Mapeo Dinámico de Imágenes (image_link + foto_1 a foto_7)
             const photoFields = ['image_link', 'foto_1', 'foto_2', 'foto_3', 'foto_4', 'foto_5', 'foto_6', 'foto_7'];
             galleryImages = photoFields.map(f => product[f]).filter(img => img && img.trim() !== '');
@@ -381,7 +360,6 @@
                     thumbContainer.appendChild(btn);
                 });
             }
-
             // Cargar Upsell / Sugerencias (Enviando el ID para que la Base de Datos no falle)
             const safeBrand = product.brand || '';
             const safeCategory = product.category || '';
@@ -392,46 +370,41 @@
             
             let upsellCount = 0;
             related.forEach((item) => {
-                // Evitamos sugerir el mismo producto y limitamos a 4
-                if (item.id == product.id || upsellCount >= 4) return; 
+                const isOutOfStock = (item.availability || '').trim().toLowerCase() === 'out of stock';
+                
+                // NUEVA REGLA ESTRICTA: Ignorar el producto si no está disponible o si ya sugerimos 4
+                if (item.id == product.id || upsellCount >= 4 || isOutOfStock) return; 
                 
                 const itemPrice = parseFloat(item.price) || 0;
                 const itemSalePrice = parseFloat(item.sale_price) || itemPrice || 0;
-                const isOutOfStock = (item.availability || '').trim().toLowerCase() === 'out of stock';
                 
-                // Lógica visual de Precios/Ofertas/Agotado basada en diseño de Colecciones
+                // Lógica visual de Precios/Ofertas idéntica a colecciones.html
                 let priceHtml = '';
                 let badgeHtml = '';
                 let imageClasses = 'product-img w-full h-full object-cover transition-transform duration-700';
+                const imageLink = item.image_link || 'https://placehold.co/400x400?text=No+Image';
                 
-                if (isOutOfStock) {
-                    // Producto Agotado (Esquina gris degradada y foto gris)
-                    badgeHtml = `<span class="absolute bottom-2 left-2 bg-gradient-to-r from-gray-600 to-gray-400 text-white text-[10px] font-bold px-2 py-1 uppercase rounded z-10 shadow-sm flex items-center gap-1"><i class="fa-solid fa-ban"></i> Agotado</span>`;
-                    imageClasses += ' grayscale opacity-50';
-                    priceHtml = `<span class="font-extrabold text-[14px] sm:text-base text-gray-500 leading-none">Bs. ${itemSalePrice.toFixed(2)}</span>`;
+                if (itemPrice > itemSalePrice) {
+                    // Producto en oferta
+                    badgeHtml = `<span class="absolute bottom-2 left-2 bg-gradient-to-r from-red-500 to-yellow-400 text-white text-[10px] sm:text-xs font-bold px-2 py-1 sm:px-2.5 sm:py-1.5 uppercase rounded z-10 shadow-sm flex items-center gap-1"><i class="fa-solid fa-fire"></i> Oferta</span>`;
+                    priceHtml = `
+                        <span class="font-semibold text-[14px] sm:text-lg lg:text-xl text-red-600 leading-none">Bs. ${itemSalePrice.toFixed(2)}</span>
+                        <span class="text-gray-400 line-through text-[11px] sm:text-[14px] leading-none">Bs. ${itemPrice.toFixed(2)}</span>
+                    `;
                 } else {
-                    if (itemPrice > itemSalePrice) {
-                        // Producto en oferta (Degradado rojo-amarillo)
-                        badgeHtml = `<span class="absolute bottom-2 left-2 bg-gradient-to-r from-red-500 to-yellow-400 text-white text-[10px] font-bold px-2 py-1 uppercase rounded z-10 shadow-sm flex items-center gap-1"><i class="fa-solid fa-fire"></i> Oferta</span>`;
-                        priceHtml = `
-                            <span class="font-extrabold text-[14px] sm:text-base text-red-600 leading-none">Bs. ${itemSalePrice.toFixed(2)}</span>
-                            <span class="text-gray-400 line-through text-[12px] sm:text-[13px] leading-none">Bs. ${itemPrice.toFixed(2)}</span>
-                        `;
-                    } else {
-                        // Precio normal
-                        priceHtml = `<span class="font-extrabold text-[14px] sm:text-base text-black leading-none">Bs. ${itemSalePrice.toFixed(2)}</span>`;
-                    }
+                    // Precio normal
+                    priceHtml = `<span class="font-semibold text-[14px] sm:text-lg lg:text-xl text-gray-900 leading-none">Bs. ${itemSalePrice.toFixed(2)}</span>`;
                 }
-
-                // Renderizado idéntico a colecciones.html, forzando ancho en móvil para el carrusel
+                
+                // Renderizado idéntico a colecciones.html manteniendo la clase w-[70%] y snap-start del carrusel móvil
                 grid.innerHTML += `
                 <a href="producto.html?id=${item.id}" class="product-card group relative flex flex-col cursor-pointer flex-shrink-0 w-[70%] sm:w-[45%] md:w-auto snap-start bg-white rounded-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_25px_-5px_rgba(0,0,0,0.12)] border border-gray-100 transition-all duration-300 overflow-hidden">
-                    <div class="relative bg-gray-100 aspect-square">
+                    <div class="relative bg-gray-100 aspect-square overflow-hidden">
                         ${badgeHtml}
-                        <img src="${item.image_link}" loading="lazy" decoding="async" alt="${item.title}" class="${imageClasses}">
+                        <img src="${imageLink}" loading="lazy" decoding="async" alt="${item.title}" class="${imageClasses}">
                     </div>
                     <div class="flex flex-col flex-1 p-3 pt-2">
-                        <h3 class="text-[14px] sm:text-base font-bold leading-tight text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">${item.title}</h3>
+                        <h3 class="text-[14px] sm:text-base font-medium leading-tight text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2">${item.title}</h3>
                         <p class="text-gray-500 text-[12px] sm:text-[13px] mt-0.5 mb-1 line-clamp-1">${item.category || item.brand || 'Varios'}</p>
                         <div class="mt-auto pt-0.5 flex items-center gap-1.5">
                             ${priceHtml}
@@ -441,13 +414,9 @@
                 upsellCount++;
             });
         }
-
         // Ejecutar inicializador al cargar el DOM
         document.addEventListener('DOMContentLoaded', initProductPage);
-
-
         // --- FUNCIONES DE INTERFAZ (Galería, Zoom y Botones) ---
-
         function changeMainImage(index) {
             currentImageIndex = index;
             
@@ -464,7 +433,6 @@
                 lbTrack.style.transition = ''; // Restaura animaciones de tailwind
                 lbTrack.style.transform = `translateX(-${index * 100}%)`;
             }
-
             // Actualizar el contador de la vista completa
             const lbCounter = document.getElementById('lightbox-counter');
             if(lbCounter) lbCounter.innerText = index + 1;
@@ -487,7 +455,6 @@
                btns[index].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
             }
         }
-
         function navigateMainImage(e, direction) {
             if (e && e.stopPropagation) e.stopPropagation();
             if(galleryImages.length === 0) return;
@@ -497,11 +464,9 @@
             if (newIndex >= galleryImages.length) newIndex = 0;
             changeMainImage(newIndex);
         }
-
         function openLightbox(e) {
             // Evita que un simple toque al arrastrar abra la imagen gigante
             if (isMainDragging || galleryImages.length === 0) return;
-
             const lightbox = document.getElementById('lightbox');
             
             lightbox.classList.remove('hidden');
@@ -511,7 +476,6 @@
             document.body.style.overflow = 'hidden';
             resetZoom();
         }
-
         function closeLightbox() {
             const lightbox = document.getElementById('lightbox');
             lightbox.classList.add('opacity-0');
@@ -521,7 +485,6 @@
                 document.body.style.overflow = '';
             }, 300);
         }
-
         function navigateLightbox(dir) {
             if(galleryImages.length === 0) return;
             let newIndex = currentImageIndex + dir;
@@ -531,7 +494,6 @@
             changeMainImage(newIndex);
             resetZoom();
         }
-
         // ==========================================
         // SWIPE PRINCIPAL CON ARRASTRE EN TIEMPO REAL
         // ==========================================
@@ -541,7 +503,6 @@
         let mainDragOffset = 0;
         let isMainDragging = false;
         let mainIsScrolling = null; // null: inicio, true: scroll vertical, false: scroll horizontal
-
         if (mainImageContainer) {
             mainImageContainer.addEventListener('touchstart', (e) => {
                 if (e.touches.length > 1) return; // Ignora multitouch aquí
@@ -555,7 +516,6 @@
                 const track = document.getElementById('carousel-track');
                 if (track) track.style.transition = 'none';
             }, {passive: true});
-
             mainImageContainer.addEventListener('touchmove', (e) => {
                 if (!isMainDragging) return;
                 
@@ -563,25 +523,21 @@
                 const currentY = e.touches[0].clientY;
                 const deltaX = currentX - mainDragStartX;
                 const deltaY = currentY - mainDragStartY;
-
                 // Determina rápidamente si la persona intenta ir hacia abajo (scroll) o a los lados (swipe)
                 if (mainIsScrolling === null) {
                     mainIsScrolling = Math.abs(deltaY) > Math.abs(deltaX);
                 }
-
                 // Si va hacia abajo, abortamos el arrastre del carrusel y dejamos que la página baje normal
                 if (mainIsScrolling) return; 
                 
                 // Evitamos que la página brinque hacia los lados mientras deslizamos la imagen
                 if (e.cancelable) e.preventDefault(); 
-
                 // Crea resistencia si intentas deslizar en la primera o última foto
                 if ((currentImageIndex === 0 && deltaX > 0) || (currentImageIndex === galleryImages.length - 1 && deltaX < 0)) {
                     mainDragOffset = deltaX * 0.3; 
                 } else {
                     mainDragOffset = deltaX;
                 }
-
                 // Calcula y aplica el movimiento exacto
                 const trackWidth = mainImageContainer.offsetWidth;
                 const percentOffset = (mainDragOffset / trackWidth) * 100;
@@ -590,7 +546,6 @@
                 const track = document.getElementById('carousel-track');
                 if (track) track.style.transform = `translateX(${baseOffset + percentOffset}%)`;
             }, {passive: false});
-
             mainImageContainer.addEventListener('touchend', (e) => {
                 if (!isMainDragging || mainIsScrolling) {
                     isMainDragging = false;
@@ -614,8 +569,6 @@
                 }
             });
         }
-
-
         // ==========================================
         // LÓGICA DE LIGHTBOX (ZOOM + SWIPE EN TIEMPO REAL)
         // ==========================================
@@ -626,7 +579,6 @@
         let lbDragOffset = 0;
         let isMouseDown = false;
         let mouseDragMoved = false;
-
         function toggleZoom(e) {
             e.stopPropagation(); 
             if (mouseDragMoved) return; // Evita quitar el zoom si se estaba arrastrando la imagen
@@ -636,7 +588,6 @@
             const hint = document.getElementById('zoom-hint');
             
             if(!img) return;
-
             isZoomed = !isZoomed;
             
             if (isZoomed) {
@@ -654,10 +605,8 @@
                     clientX = lastTapX || clientX;
                     clientY = lastTapY || clientY;
                 }
-
                 clientX = clientX || (rect.left + rect.width / 2);
                 clientY = clientY || (rect.top + rect.height / 2);
-
                 const x = ((clientX - rect.left) / rect.width) * 100;
                 const y = ((clientY - rect.top) / rect.height) * 100;
                 
@@ -667,7 +616,6 @@
                 resetZoom();
             }
         }
-
         function resetZoom() {
             isZoomed = false;
             currentScale = 1;
@@ -697,13 +645,11 @@
                 hint.classList.add('group-hover:opacity-100');
             }
         }
-
         const lightboxTrackContainer = document.getElementById('lightbox-track-container');
         if(lightboxTrackContainer) {
             lightboxTrackContainer.addEventListener('touchstart', (e) => {
                 const img = document.getElementById('lb-img-' + currentImageIndex);
                 if (!img) return;
-
                 if (e.touches.length === 2) {
                     isPinching = true; isDragging = false; isLbSwiping = false;
                     touchStartDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
@@ -712,7 +658,6 @@
                 } else if (e.touches.length === 1) {
                     lastTapX = e.touches[0].clientX;
                     lastTapY = e.touches[0].clientY;
-
                     if (currentScale > 1) {
                         // Modo arrastre de imagen ampliada
                         isDragging = true; isPinching = false; isLbSwiping = false;
@@ -729,11 +674,9 @@
                     }
                 }
             });
-
             lightboxTrackContainer.addEventListener('touchmove', (e) => {
                 const img = document.getElementById('lb-img-' + currentImageIndex);
                 if (!img) return;
-
                 if (isPinching && e.touches.length === 2) {
                     // Acción de pellizcar para Zoom
                     e.preventDefault();
@@ -759,7 +702,6 @@
                     } else {
                         lbDragOffset = deltaX;
                     }
-
                     const trackWidth = lightboxTrackContainer.offsetWidth;
                     const percentOffset = (lbDragOffset / trackWidth) * 100;
                     const baseOffset = -(currentImageIndex * 100);
@@ -768,7 +710,6 @@
                     if(lbTrack) lbTrack.style.transform = `translateX(${baseOffset + percentOffset}%)`;
                 }
             });
-
             lightboxTrackContainer.addEventListener('touchend', (e) => {
                 const img = document.getElementById('lb-img-' + currentImageIndex);
                 
@@ -798,7 +739,6 @@
                     resetZoom(); 
                 }
             });
-
             // --- EVENTOS DE MOUSE PARA MOVER ZOOM EN ESCRITORIO ---
             lightboxTrackContainer.addEventListener('mousedown', (e) => {
                 const img = document.getElementById('lb-img-' + currentImageIndex);
@@ -815,7 +755,6 @@
                 img.classList.remove('cursor-zoom-out');
                 img.style.cursor = 'grabbing'; // Cambia el cursor a una manito agarrando
             });
-
             lightboxTrackContainer.addEventListener('mousemove', (e) => {
                 if (!isMouseDown) return;
                 mouseDragMoved = true;
@@ -827,7 +766,6 @@
                 translateY = e.clientY - startY;
                 img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
             });
-
             window.addEventListener('mouseup', () => {
                 if (isMouseDown) {
                     isMouseDown = false;
@@ -842,7 +780,6 @@
                 }
             });
         }
-
         document.addEventListener('keydown', (e) => {
             const lightbox = document.getElementById('lightbox');
             if (!lightbox.classList.contains('hidden')) {
@@ -851,7 +788,6 @@
                 if (e.key === 'ArrowRight') navigateLightbox(1);
             }
         });
-
         // Controles de cantidad
         function updateQty(change) {
             const input = document.getElementById('qty-input');
@@ -859,7 +795,6 @@
             let newVal = current + change;
             if (newVal >= 1) input.value = newVal;
         }
-
         // --- Lógica de Compra Directa por WhatsApp ---
         const buyNowBtn = document.getElementById('buy-now-whatsapp');
         if (buyNowBtn) {
@@ -878,7 +813,7 @@
                 const total = price * qty;
                 
                 let message = "¡Hola Arelyshop! 👋 Quiero finalizar mi pedido:\n\n";
-                message += `➡️ ${qty}x ${name} (${sku})\n`;
+                message += `🛍 ${qty}x ${name} (${sku})\n`;
                 message += `Precio: ${price.toFixed(2)} Bs.\n`;
                 message += `🔗 ${url}\n`;
                 message += `-----------------------------------\n`;
