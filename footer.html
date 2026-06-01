@@ -1,31 +1,38 @@
 <!-- 8. Footer Principal (Basado en footer.liquid y footer-group.json) -->
 <footer class="bg-white border-t border-gray-200 pt-16 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-10 pb-12">
+    <!-- Cambiamos a lg:grid-cols-4 para los 4 bloques -->
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12">
         
-        <!-- Bloque 1: Customer Support -->
+        <!-- Bloque 1: Sobre Nosotros (Logo y Descripción) -->
         <div>
-            <h4 class="font-bold text-lg mb-4 text-black">Customer support</h4>
-            <p class="text-gray-600 text-[14px] mb-6">Available between 8AM to 8PM. Ready to answer your questions.</p>
+            <img src="images/logo-movil.svg" alt="Arelyshop Logo" class="h-10 mb-5">
+            <p class="text-gray-600 text-[14px] leading-relaxed">
+                Arelyshop.com te ofrece los mejores accesorios y gadgets de UGREEN | BASEUS | ANKER para hacer tu día más fácil.
+            </p>
+        </div>
+
+        <!-- Bloque 2: Contáctanos -->
+        <div>
+            <h4 class="font-bold text-lg mb-4 text-black">Contáctanos</h4>
             <ul class="space-y-4 text-[14px] text-gray-700">
-                <li><a href="tel:+1234567890" class="hover:text-black flex items-center gap-3"><i class="fa-solid fa-phone text-gray-400 text-base w-5 text-center"></i> +1 234 567 890</a></li>
-                <li><a href="mailto:info@mitienda.com" class="hover:text-black flex items-center gap-3"><i class="fa-solid fa-envelope text-gray-400 text-base w-5 text-center"></i> info@mitienda.com</a></li>
-                <li><a href="#" class="hover:text-black flex items-center gap-3"><i class="fa-brands fa-whatsapp text-gray-400 text-lg w-5 text-center"></i> Chatea en WhatsApp</a></li>
+                <li><a href="tel:+59167500044" class="hover:text-black flex items-center gap-3"><i class="fa-solid fa-phone text-gray-400 text-base w-5 text-center"></i> +591 675 000 44</a></li>
+                <li><a href="mailto:arelyshop@outlook.com" class="hover:text-black flex items-center gap-3"><i class="fa-solid fa-envelope text-gray-400 text-base w-5 text-center"></i> arelyshop@outlook.com</a></li>
+                <li><a href="https://wa.me/59167500044" target="_blank" class="hover:text-black flex items-center gap-3"><i class="fa-brands fa-whatsapp text-gray-400 text-lg w-5 text-center"></i> Chatea en WhatsApp</a></li>
             </ul>
         </div>
 
-        <!-- Bloque 2: Menu (Enlaces Rápidos) -->
+        <!-- Bloque 3: Enlaces Rápidos -->
         <div>
             <h4 class="font-bold text-lg mb-4 text-black">Enlaces Rápidos</h4>
             <ul class="space-y-3 text-[14px] text-gray-600">
+                <li><a href="index.html" class="hover:text-black hover:underline transition-colors">Inicio</a></li>
                 <li><a href="#" class="hover:text-black hover:underline transition-colors">Búsqueda</a></li>
+                <li><a href="colecciones.html" class="hover:text-black hover:underline transition-colors">Catálogo</a></li>
                 <li><a href="#" class="hover:text-black hover:underline transition-colors">Políticas de Devolución</a></li>
-                <li><a href="#" class="hover:text-black hover:underline transition-colors">Términos de Servicio</a></li>
-                <li><a href="#" class="hover:text-black hover:underline transition-colors">Sobre Nosotros</a></li>
-                <li><a href="#" class="hover:text-black hover:underline transition-colors">Contacto</a></li>
             </ul>
         </div>
 
-        <!-- Bloque 3: Socials & Newsletter -->
+        <!-- Bloque 4: Socials -->
         <div>
             <h4 class="font-bold text-lg mb-4 text-black">¡Síguenos en Redes!</h4>
             
