@@ -4,14 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catálogo - ARELYSHOP.COM</title>
+    <!-- Importar fuente Inter de Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <!-- Usamos Tailwind CSS para emular el diseño de manera rápida y limpia -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome para los iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script>
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: {
+                        // Asignamos Inter como la fuente principal sin serifas
+                        sans: ['Inter', 'sans-serif'],
+                    },
                     colors: {
                         primary: '#111827',
                         secondary: '#f3f4f6',
@@ -120,7 +130,7 @@
                     
                     <!-- Filtro Móvil Simple: Solo en stock -->
                     <div class="lg:hidden w-full flex items-center justify-between border border-gray-200 py-2.5 px-4 rounded bg-gray-50">
-                        <label for="mobile-stock-only" class="text-[13px] font-bold text-gray-900 cursor-pointer">Mostrar solo con stock</label>
+                        <label for="mobile-stock-only" class="text-[13px] font-medium text-gray-900 cursor-pointer">Mostrar solo con stock</label>
                         <input type="checkbox" id="mobile-stock-only" class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black cursor-pointer">
                     </div>
 
@@ -150,7 +160,7 @@
 
                 <!-- Paginación con Carga Diferida -->
                 <div id="load-more-container" class="mt-12 flex justify-center items-center hidden">
-                    <button onclick="loadMoreProducts()" class="px-8 py-3 bg-[#111827] text-white font-bold rounded-lg hover:bg-[#1f2937] transition shadow-md">
+                    <button onclick="loadMoreProducts()" class="px-8 py-3 bg-[#111827] text-white font-medium rounded-lg hover:bg-[#1f2937] transition shadow-md">
                         Cargar más productos
                     </button>
                 </div>
@@ -262,7 +272,7 @@
                     <div class="col-span-full py-20 text-center text-gray-500">
                         <i class="fa-solid fa-box-open text-4xl mb-4 text-gray-300"></i>
                         <p>No se encontraron productos con estos filtros o búsqueda.</p>
-                        <button onclick="window.location.href='colecciones.html'" class="mt-4 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-black rounded text-sm font-bold transition">Ver todo el catálogo</button>
+                        <button onclick="window.location.href='colecciones.html'" class="mt-4 px-4 py-2 bg-gray-100 hover:bg-gray-200 text-black rounded text-sm font-medium transition">Ver todo el catálogo</button>
                     </div>`;
                 document.getElementById('product-count-text').textContent = '0 productos';
                 loadMoreBtn.classList.add('hidden');
@@ -282,36 +292,36 @@
                 
                 let badgeHtml = '';
                 let priceHtml = '';
-                // Quitamos el bg-white de aquí para no afectar transparencias
                 let imageClasses = 'product-img w-full h-full object-cover transition-transform duration-700';
                 const imageLink = item.image_link || 'https://placehold.co/400x400?text=No+Image';
 
-                // Lógica de visualización
+                // Lógica de visualización (Ahora usando font-semibold y tonos más suaves de gris/negro)
                 if (isOutOfStock) {
-                    badgeHtml = `<span class="absolute bottom-2 left-2 bg-[#111827] text-white text-xs font-bold px-2.5 py-1.5 uppercase rounded z-10 shadow-sm flex items-center gap-1"><i class="fa-solid fa-ban"></i> Agotado</span>`;
+                    badgeHtml = `<span class="absolute bottom-2 left-2 bg-[#111827] text-white text-[10px] sm:text-xs font-semibold px-2 py-1 sm:px-2.5 sm:py-1.5 uppercase rounded z-10 shadow-sm flex items-center gap-1"><i class="fa-solid fa-ban"></i> Agotado</span>`;
                     imageClasses += ' grayscale opacity-50';
-                    priceHtml = `<span class="font-bold text-[15px] sm:text-lg lg:text-xl text-gray-500 leading-none">Bs. ${salePrice.toFixed(2)}</span>`;
+                    priceHtml = `<span class="font-semibold text-[15px] sm:text-lg lg:text-xl text-gray-500 leading-none">Bs. ${salePrice.toFixed(2)}</span>`;
                 } else {
                     if (price > salePrice) {
-                        badgeHtml = `<span class="absolute bottom-2 left-2 bg-gradient-to-r from-red-500 to-yellow-400 text-white text-xs font-bold px-2.5 py-1.5 uppercase rounded z-10 shadow-sm flex items-center gap-1"><i class="fa-solid fa-fire"></i> Oferta</span>`;
+                        badgeHtml = `<span class="absolute bottom-2 left-2 bg-gradient-to-r from-red-500 to-yellow-400 text-white text-[10px] sm:text-xs font-semibold px-2 py-1 sm:px-2.5 sm:py-1.5 uppercase rounded z-10 shadow-sm flex items-center gap-1"><i class="fa-solid fa-fire"></i> Oferta</span>`;
                         priceHtml = `
-                            <span class="font-bold text-[15px] sm:text-lg lg:text-xl text-red-600 leading-none">Bs. ${salePrice.toFixed(2)}</span>
+                            <span class="font-semibold text-[15px] sm:text-lg lg:text-xl text-red-600 leading-none">Bs. ${salePrice.toFixed(2)}</span>
                             <span class="text-gray-400 line-through text-[12px] sm:text-[14px] leading-none">Bs. ${price.toFixed(2)}</span>
                         `;
                     } else {
-                        priceHtml = `<span class="font-bold text-[15px] sm:text-lg lg:text-xl text-black leading-none">Bs. ${salePrice.toFixed(2)}</span>`;
+                        // Cambiamos text-black por text-gray-900 para suavizarlo
+                        priceHtml = `<span class="font-semibold text-[15px] sm:text-lg lg:text-xl text-gray-900 leading-none">Bs. ${salePrice.toFixed(2)}</span>`;
                     }
                 }
 
                 grid.innerHTML += `
                 <a href="producto.html?id=${item.id}" class="product-card group relative flex flex-col cursor-pointer bg-white rounded-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_25px_-5px_rgba(0,0,0,0.12)] border border-gray-100 transition-all duration-300 overflow-hidden">
-                    <!-- AQUI LA CORRECCIÓN: Eliminamos p-2 y bg-white, volvemos a bg-gray-100 -->
                     <div class="relative bg-gray-100 aspect-square overflow-hidden">
                         ${badgeHtml}
                         <img src="${imageLink}" loading="lazy" decoding="async" alt="${item.title}" class="${imageClasses}">
                     </div>
                     <div class="flex flex-col flex-1 p-3 pt-2">
-                        <h3 class="text-[14px] sm:text-base font-bold leading-tight text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2">${item.title}</h3>
+                        <!-- Cambiamos font-bold text-gray-900 por font-medium text-gray-800 -->
+                        <h3 class="text-[14px] sm:text-base font-medium leading-tight text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2">${item.title}</h3>
                         <p class="text-gray-500 text-[12px] sm:text-[13px] mt-0.5 mb-1 line-clamp-1">${item.category || item.brand || 'Varios'}</p>
                         <div class="mt-auto pt-0.5 flex items-center gap-1.5">
                             ${priceHtml}
@@ -345,13 +355,13 @@
 
             document.getElementById('filter-availability').innerHTML = `
                 <li class="flex items-center gap-3">
-                    <input type="checkbox" id="stock-in" value="in stock" class="filter-checkbox filter-stock w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
-                    <label for="stock-in" class="cursor-pointer hover:text-black flex-1">En stock</label>
+                    <input type="checkbox" id="stock-in" value="in stock" class="filter-checkbox filter-stock w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900">
+                    <label for="stock-in" class="cursor-pointer hover:text-gray-900 flex-1">En stock</label>
                     <span class="text-gray-400 text-[12px]">(${inStock})</span>
                 </li>
                 <li class="flex items-center gap-3">
-                    <input type="checkbox" id="stock-out" value="out of stock" class="filter-checkbox filter-stock w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
-                    <label for="stock-out" class="cursor-pointer hover:text-black flex-1">Agotado</label>
+                    <input type="checkbox" id="stock-out" value="out of stock" class="filter-checkbox filter-stock w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900">
+                    <label for="stock-out" class="cursor-pointer hover:text-gray-900 flex-1">Agotado</label>
                     <span class="text-gray-400 text-[12px]">(${outOfStock})</span>
                 </li>
             `;
@@ -373,8 +383,8 @@
                 const safeValue = data.name.replace(/"/g, '&quot;');
                 catHtml += `
                 <li class="flex items-center gap-3">
-                    <input type="checkbox" id="cat-${idx}" value="${safeValue}" class="filter-checkbox filter-cat w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
-                    <label for="cat-${idx}" class="cursor-pointer hover:text-black flex-1 line-clamp-1">${data.name}</label>
+                    <input type="checkbox" id="cat-${idx}" value="${safeValue}" class="filter-checkbox filter-cat w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900">
+                    <label for="cat-${idx}" class="cursor-pointer hover:text-gray-900 flex-1 line-clamp-1">${data.name}</label>
                     <span class="text-gray-400 text-[12px]">(${data.count})</span>
                 </li>`;
                 idx++;
@@ -398,8 +408,8 @@
                 const safeValue = data.name.replace(/"/g, '&quot;');
                 brandHtml += `
                 <li class="flex items-center gap-3">
-                    <input type="checkbox" id="brand-${idx}" value="${safeValue}" class="filter-checkbox filter-brand w-4 h-4 rounded border-gray-300 text-black focus:ring-black">
-                    <label for="brand-${idx}" class="cursor-pointer hover:text-black flex-1 line-clamp-1">${data.name}</label>
+                    <input type="checkbox" id="brand-${idx}" value="${safeValue}" class="filter-checkbox filter-brand w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900">
+                    <label for="brand-${idx}" class="cursor-pointer hover:text-gray-900 flex-1 line-clamp-1">${data.name}</label>
                     <span class="text-gray-400 text-[12px]">(${data.count})</span>
                 </li>`;
                 idx++;
