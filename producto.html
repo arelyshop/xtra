@@ -98,20 +98,29 @@
             <div class="w-full lg:w-1/2 flex flex-col">
                 
                 <!-- Título -->
-                <h1 id="prod-title" class="text-lg lg:text-xl font-semibold tracking-tight text-gray-900 mb-2 leading-tight">
+                <h1 id="prod-title" class="text-lg lg:text-xl font-bold tracking-tight text-gray-900 mb-2 leading-tight">
                     Cargando producto...
                 </h1>
                 
-                <!-- Marca y SKU -->
-                <div class="flex items-center gap-3 mb-5 text-[13px] text-gray-500">
-                    <div class="flex items-center gap-2">
+                <!-- Marca, SKU y Estrellas -->
+                <div class="flex items-center gap-2 sm:gap-3 mb-5 text-[12px] sm:text-[13px] text-gray-500 whitespace-nowrap">
+                    <div class="flex items-center gap-1.5 sm:gap-2">
                         <span class="font-medium text-gray-800">Marca:</span> 
-                        <span id="prod-brand" class="bg-[#111827] text-white px-2.5 py-0.5 rounded text-[12px] font-semibold tracking-wide">...</span>
+                        <span id="prod-brand" class="bg-[#111827] text-white px-2 py-0.5 rounded text-[11px] sm:text-[12px] font-semibold tracking-wide">...</span>
                     </div>
-                    <div class="w-1 h-1 bg-gray-300 rounded-full"></div>
-                    <div class="flex items-center gap-1">
+                    <div class="w-1 h-1 bg-gray-300 rounded-full shrink-0"></div>
+                    <div class="flex items-center gap-1 shrink-0">
                         <span class="font-medium text-gray-800">SKU:</span> 
                         <span id="prod-sku" class="uppercase">...</span>
+                    </div>
+                    <div class="w-1 h-1 bg-gray-300 rounded-full shrink-0"></div>
+                    <!-- 5 Estrellas Amarillas -->
+                    <div class="flex items-center gap-0.5 text-yellow-400 text-[11px] sm:text-[12px] shrink-0">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
                     </div>
                 </div>
                 
