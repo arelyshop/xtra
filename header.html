@@ -240,20 +240,24 @@
 <!-- 5. Menú Lateral Móvil (Drawer) -->
 <div id="mobile-menu-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-all duration-500"></div>
 <div id="mobile-menu" class="fixed top-0 left-0 w-4/5 max-w-sm h-full bg-white z-50 mobile-menu-inactive transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-2xl overflow-y-auto">
-    <div class="p-4 border-b flex justify-between items-center">
+    
+    <!-- Cabecera del Menú Móvil con fondo oscuro (#030712) -->
+    <div class="p-4 border-b border-gray-800 bg-[#030712] text-white flex justify-between items-center">
         <span class="font-bold text-lg">MENÚ</span>
-        <button id="close-mobile-btn" class="text-gray-500 hover:text-black text-2xl">
+        <button id="close-mobile-btn" class="text-gray-400 hover:text-white text-2xl transition-colors">
             <i class="fa-solid fa-xmark"></i>
         </button>
     </div>
 
-    <!-- Links Móviles -->
+    <!-- Links Móviles (Sincronizados con Desktop) -->
     <ul class="text-gray-800 text-base font-medium">
-        <li class="border-b"><a href="index.html" class="block p-4 hover:bg-gray-50">Inicio</a></li>
-        <li class="border-b"><a href="colecciones.html" class="block p-4 hover:bg-gray-50 flex justify-between">Categorías <i class="fa-solid fa-chevron-right text-sm text-gray-400"></i></a></li>
-        <li class="border-b"><a href="#" class="block p-4 hover:bg-gray-50 flex justify-between">Colecciones <i class="fa-solid fa-chevron-right text-sm text-gray-400"></i></a></li>
-        <li class="border-b"><a href="#" class="block p-4 hover:bg-gray-50">Sobre Nosotros</a></li>
-        <li class="border-b bg-red-50"><a href="#" class="block p-4 text-red-600">Ofertas (Sale)</a></li>
+        <li class="border-b border-gray-100"><a href="index.html" class="block p-4 hover:bg-gray-50 transition-colors">Inicio</a></li>
+        <li class="border-b border-gray-100"><a href="colecciones.html" class="block p-4 hover:bg-gray-50 transition-colors">Ver Catálogo</a></li>
+        <li class="border-b border-gray-100"><a href="#" class="block p-4 hover:bg-gray-50 flex justify-between items-center transition-colors">Categorías <i class="fa-solid fa-chevron-right text-sm text-gray-400"></i></a></li>
+        <li class="border-b border-gray-100"><a href="#" class="block p-4 hover:bg-gray-50 flex justify-between items-center transition-colors">Marcas <i class="fa-solid fa-chevron-right text-sm text-gray-400"></i></a></li>
+        <li class="border-b border-gray-100"><a href="#" class="block p-4 hover:bg-gray-50 transition-colors">Collections</a></li>
+        <li class="border-b border-gray-100"><a href="#" class="block p-4 hover:bg-gray-50 transition-colors">About Us</a></li>
+        <li class="border-b border-gray-100 bg-red-50"><a href="#" class="block p-4 text-red-600 font-bold hover:bg-red-100 transition-colors">Sale</a></li>
     </ul>
 
     <!-- Acciones extra móviles -->
@@ -267,11 +271,13 @@
 <!-- 6. Carrito Lateral (Side Cart) - Implementado desde theme.liquid -->
 <div id="side-drawer-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-all duration-500"></div>
 <div id="side-cart" class="fixed top-0 right-0 w-4/5 max-w-sm h-full bg-white z-50 cart-inactive transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-2xl flex flex-col">
-    <div class="p-4 border-b border-gray-200 flex justify-between items-center bg-gray-50">
+    
+    <!-- Cabecera del Carrito con fondo oscuro (#030712) -->
+    <div class="p-4 border-b border-gray-800 flex justify-between items-center bg-[#030712] text-white">
         <h2 class="font-bold text-lg flex items-center gap-2">
             <i class="fa-solid fa-cart-shopping"></i> Tu Carrito (3)
         </h2>
-        <button id="close-cart-btn" class="text-gray-500 hover:text-black text-xl">
+        <button id="close-cart-btn" class="text-gray-400 hover:text-white text-xl transition-colors">
             <i class="fa-solid fa-xmark"></i>
         </button>
     </div>
