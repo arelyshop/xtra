@@ -20,8 +20,8 @@ exports.handler = async (event, context) => {
         // Asegúrate de agregar DATABASE_URL en las variables de entorno de Netlify
         const sql = neon(process.env.DATABASE_URL);
 
-        // 2. Extraer los parámetros de la URL
-        const { id, brand, category, limit, exclude_id } = event.queryStringParameters || {};
+        // 2. Extraer los parámetros de la URL (AÑADIMOS 'search' AQUÍ)
+        const { id, brand, category, limit, exclude_id, search } = event.queryStringParameters || {};
 
         // CASO A: Buscar un producto específico por ID
         if (id) {
@@ -46,7 +46,28 @@ exports.handler = async (event, context) => {
             };
         }
 
-        // CASO B: Buscar productos relacionados (Upsell)
+        // CASO B: Buscador de texto (NUEVO BLOQUE PARA EL BUSCADOR DE LA WEB)
+        if (search) {
+            const limitNum = parseInt(limit) || 5;
+            // Usamos % para buscar coincidencias parciales con ILIKE (no distingue mayúsculas)
+            const searchPattern = `%${search}%`; 
+            
+            const result = await sql`
+                SELECT * FROM products 
+                WHERE title ILIKE ${searchPattern} 
+                   OR description ILIKE ${searchPattern}
+                   OR gtin ILIKE ${searchPattern}
+                LIMIT ${limitNum}
+            `;
+            
+            return {
+                statusCode: 200,
+                headers,
+                body: JSON.stringify(result) // Devolvemos resultados de la búsqueda
+            };
+        }
+
+        // CASO C: Buscar productos relacionados (Upsell) [Antes era el Caso B]
         if (brand || category) {
             const limitNum = parseInt(limit) || 4;
             const b = brand || '';
@@ -81,7 +102,7 @@ exports.handler = async (event, context) => {
             };
         }
 
-        // CASO C: Catálogo general. 
+        // CASO D: Catálogo general. [Antes era el Caso C]
         // ¡CORRECCIÓN AQUÍ! Ahora respeta el "limit" que envía la página web. Si no envían nada, devuelve 10.
         const generalLimit = parseInt(limit) || 10;
 
