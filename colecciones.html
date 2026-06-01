@@ -320,8 +320,8 @@
                         <img src="${imageLink}" loading="lazy" decoding="async" alt="${item.title}" class="${imageClasses}">
                     </div>
                     <div class="flex flex-col flex-1 p-3 pt-2">
-                        <!-- Cambiamos font-bold text-gray-900 por font-medium text-gray-800 -->
-                        <h3 class="text-[14px] sm:text-base font-medium leading-tight text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2">${item.title}</h3>
+                        <!-- Cambiamos font-medium por font-semibold -->
+                        <h3 class="text-[14px] sm:text-base font-semibold leading-tight text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2">${item.title}</h3>
                         <p class="text-gray-500 text-[12px] sm:text-[13px] mt-0.5 mb-1 line-clamp-1">${item.category || item.brand || 'Varios'}</p>
                         <div class="mt-auto pt-0.5 flex items-center gap-1.5">
                             ${priceHtml}
