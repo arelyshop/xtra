@@ -174,7 +174,7 @@
         </div>
         <!-- SECCIÓN: PRODUCTOS COMPLEMENTARIOS (Estilo Colecciones + Carrusel móvil) -->
         <section class="mt-24 pt-10 border-t border-gray-200">
-            <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center sm:text-left">Productos que también te pueden interesar</h2>
+            <h2 class="text-2xl font-bold text-gray-900 mb-8 text-center sm:text-left">¡Otros clientes también vieron!</h2>
             <!-- Carrusel en Móvil / Grilla en Desktop -->
             <div id="related-products-grid" class="flex md:grid md:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto md:overflow-visible pb-4 hide-scrollbar snap-x snap-mandatory">
                 <!-- Upsells inyectados desde base de datos -->
@@ -247,9 +247,9 @@
         // 2. Cargar sugerencias
         async function fetchRelatedProducts(brand, category, currentId) {
             try {
-                // Pasamos brand, category y el ID actual (validando que no sea undefined)
+                // Pasamos brand, category y el ID actual. Pedimos 20 para poder mezclarlos
                 const safeId = currentId ? currentId : '';
-                const url = `/.netlify/functions/get_tienda?brand=${encodeURIComponent(brand || '')}&category=${encodeURIComponent(category || '')}&exclude_id=${safeId}&limit=4`;
+                const url = `/.netlify/functions/get_tienda?brand=${encodeURIComponent(brand || '')}&category=${encodeURIComponent(category || '')}&exclude_id=${safeId}&limit=20`;
                 const response = await fetch(url);
                 if (!response.ok) throw new Error('Error cargando relacionados');
                 return await response.json();
@@ -363,18 +363,24 @@
             // Cargar Upsell / Sugerencias (Enviando el ID para que la Base de Datos no falle)
             const safeBrand = product.brand || '';
             const safeCategory = product.category || '';
-            const related = await fetchRelatedProducts(safeBrand, safeCategory, product.id);
+            let related = await fetchRelatedProducts(safeBrand, safeCategory, product.id);
             
+            // 1. Filtrar productos para asegurar que tengan stock y no sean el actual
+            let availableRelated = related.filter((item) => {
+                const isOutOfStock = (item.availability || '').trim().toLowerCase() === 'out of stock';
+                return item.id != product.id && !isOutOfStock;
+            });
+
+            // 2. Mezclar el array aleatoriamente para que los productos varíen en cada visita
+            availableRelated = availableRelated.sort(() => Math.random() - 0.5);
+
+            // 3. Cortar el array para mostrar un máximo de 4 opciones distintas
+            const finalRelated = availableRelated.slice(0, 4);
+
             const grid = document.getElementById('related-products-grid');
             grid.innerHTML = '';
             
-            let upsellCount = 0;
-            related.forEach((item) => {
-                const isOutOfStock = (item.availability || '').trim().toLowerCase() === 'out of stock';
-                
-                // NUEVA REGLA ESTRICTA: Ignorar el producto si no está disponible o si ya sugerimos 4
-                if (item.id == product.id || upsellCount >= 4 || isOutOfStock) return; 
-                
+            finalRelated.forEach((item) => {
                 const itemPrice = parseFloat(item.price) || 0;
                 const itemSalePrice = parseFloat(item.sale_price) || itemPrice || 0;
                 
@@ -411,7 +417,6 @@
                         </div>
                     </div>
                 </a>`;
-                upsellCount++;
             });
         }
         // Ejecutar inicializador al cargar el DOM
