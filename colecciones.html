@@ -215,6 +215,13 @@
                 if (!response.ok) throw new Error('Error al conectar con la base de datos');
                 
                 allProducts = await response.json();
+                
+                // ORDEN POR DEFECTO: Los más nuevos primero (ID descendente)
+                // Solo lo aplicamos si NO es una búsqueda, para no arruinar la prioridad del backend
+                if (!searchQuery) {
+                    allProducts.sort((a, b) => b.id - a.id);
+                }
+
                 filteredProducts = [...allProducts];
 
                 buildFilters();
@@ -437,7 +444,8 @@
             } else if (sortVal === 'desc') {
                 filteredProducts.sort((a,b) => (parseFloat(b.sale_price) || parseFloat(b.price) || 0) - (parseFloat(a.sale_price) || parseFloat(a.price) || 0));
             } else {
-                filteredProducts.sort((a,b) => a.id - b.id);
+                // Restaurar el orden original base (mantiene los más nuevos primero o la prioridad de búsqueda intacta)
+                filteredProducts.sort((a,b) => allProducts.indexOf(a) - allProducts.indexOf(b));
             }
             
             currentPage = 1;
