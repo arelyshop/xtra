@@ -121,6 +121,19 @@ function initApp() {
 
         if(!input || !results) return;
 
+        // --- NUEVO: Manejar el "Enter" o clic en el botón de buscar ---
+        const form = input.closest('form');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault(); // Evitar que la página recargue
+                const val = input.value.trim();
+                if (val.length > 0) {
+                    // Redirigir a colecciones.html con el texto de búsqueda
+                    window.location.href = `colecciones.html?search=${encodeURIComponent(val)}`;
+                }
+            });
+        }
+
         input.addEventListener('input', (e) => {
             clearTimeout(timeout);
             const val = e.target.value.trim();
