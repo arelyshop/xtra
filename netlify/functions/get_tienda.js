@@ -2,7 +2,7 @@
 const { neon } = require('@neondatabase/serverless');
 
 exports.handler = async (event, context) => {
-    // Configuración de CORS por si pruebas desde localhost o dominios externos
+    // Configuración de CORS
     const headers = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Headers': 'Content-Type',
@@ -21,6 +21,10 @@ exports.handler = async (event, context) => {
 
         // 2. Extraer los parámetros de la URL
         const { id, brand, category, limit, exclude_id, search } = event.queryStringParameters || {};
+        
+        // --- MEJORA: Centralización del límite dinámico ---
+        // Si el frontend envía un límite (ej. 5000), lo usa. Si no, mantiene los defaults de cada caso.
+        const requestedLimit = limit ? parseInt(limit) : null;
 
         // CASO A: Buscar un producto específico por ID
         if (id) {
@@ -41,38 +45,36 @@ exports.handler = async (event, context) => {
             return {
                 statusCode: 200,
                 headers,
-                body: JSON.stringify(result[0]) // Devolvemos el objeto del producto
+                body: JSON.stringify(result[0])
             };
         }
 
-        // CASO B: Buscador de texto (NUEVO BLOQUE PARA EL BUSCADOR DE LA WEB)
+        // CASO B: Buscador de texto
         if (search) {
-            const limitNum = parseInt(limit) || 5;
-            // Usamos % para buscar coincidencias parciales con ILIKE (no distingue mayúsculas)
+            const limitNum = requestedLimit || 5;
             const searchPattern = `%${search}%`; 
             
-            // Agregamos ORDER BY con un CASE para priorizar los que coinciden en el title
             const result = await sql`
                 SELECT * FROM products 
                 WHERE title ILIKE ${searchPattern} 
                    OR description ILIKE ${searchPattern}
                    OR gtin ILIKE ${searchPattern}
                 ORDER BY 
-                   (CASE WHEN title ILIKE ${searchPattern} THEN 0 ELSE 1 END),
-                   title ASC
+                    (CASE WHEN title ILIKE ${searchPattern} THEN 0 ELSE 1 END),
+                    title ASC
                 LIMIT ${limitNum}
             `;
             
             return {
                 statusCode: 200,
                 headers,
-                body: JSON.stringify(result) // Devolvemos resultados de la búsqueda
+                body: JSON.stringify(result)
             };
         }
 
-        // CASO C: Buscar productos relacionados (Upsell) [Antes era el Caso B]
+        // CASO C: Buscar productos relacionados (Upsell)
         if (brand || category) {
-            const limitNum = parseInt(limit) || 4;
+            const limitNum = requestedLimit || 4;
             const b = brand || '';
             const c = category || '';
             
@@ -105,7 +107,9 @@ exports.handler = async (event, context) => {
         }
 
         // CASO D: Catálogo general
-        const generalLimit = parseInt(limit) || 10;
+        // Aquí respetamos el límite enviado por el frontend (ej. 5000), 
+        // pero mantenemos el default de 10 por seguridad.
+        const generalLimit = requestedLimit || 10;
 
         const result = await sql`
             SELECT * FROM products 
