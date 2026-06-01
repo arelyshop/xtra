@@ -50,8 +50,18 @@
     <div class="bg-gray-50 border-t border-gray-200 py-8">
         <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-center items-center gap-6 text-[13px] text-gray-500">
             
-            <!-- Copyright (Año dinámico) -->
-            <p class="text-center">&copy; <span id="current-year"></span> Arelyshop.com. Todos los derechos reservados.</p>
+            <!-- Copyright (Año dinámico con fallback a 2026) -->
+            <p class="text-center">&copy; <span id="current-year">2026</span> Arelyshop.com. Todos los derechos reservados.</p>
+
+            <!-- Script local e inmediato para actualizar el año -->
+            <script>
+                (function() {
+                    var yearSpan = document.getElementById('current-year');
+                    if (yearSpan) {
+                        yearSpan.textContent = new Date().getFullYear();
+                    }
+                })();
+            </script>
 
         </div>
     </div>
