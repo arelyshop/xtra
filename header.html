@@ -62,7 +62,7 @@
             <!-- Iconos de Usuario y Carrito (Derecha) -->
             <div class="flex items-center justify-end gap-5 lg:w-1/3 w-1/3">
                 
-                <!-- Contacto WhatsApp (Reemplaza Login) -->
+                <!-- Contacto WhatsApp -->
                 <a href="https://wa.me/59767500044" target="_blank" class="hidden sm:flex items-center gap-2.5 group mr-2">
                     <img src="images/whatsapp-icon.svg" alt="WhatsApp" class="w-8 h-8 group-hover:scale-110 transition-transform">
                     <div class="flex flex-col text-left">
@@ -88,7 +88,6 @@
                     <i class="fa-solid fa-magnifying-glass"></i>
                 </button>
             </form>
-            <!-- Cajón de Búsqueda Fija (Autocomplete Móvil) -->
             <div id="mobile-search-results" class="absolute top-[100%] left-0 w-full bg-white shadow-2xl border border-gray-100 rounded-b-md hidden max-h-[70vh] overflow-y-auto z-10 pt-2">
                 <!-- Los resultados se inyectan dinámicamente aquí -->
             </div>
@@ -103,62 +102,46 @@
                     <a href="index.html">Inicio</a>
                 </li>
                 
-                <!-- Botón: Ver Catálogo (Cajón Blanco) -->
                 <li class="py-4">
                     <a href="colecciones.html" class="bg-white text-black px-3 py-1.5 rounded-sm hover:bg-gray-100 transition font-bold uppercase tracking-wider text-[11px] shadow-sm">
                         Ver Catálogo
                     </a>
                 </li>
                 
-                <!-- Mega Menú Avanzado (Recreando header-menu.liquid con dropdown_images y promo_banners) -->
+                <!-- Mega Menú: Categorías Dinámicas -->
                 <li class="py-4 border-b-2 border-transparent hover:border-white hover:text-white cursor-pointer transition group">
                     <a href="#">Categorías <i class="fa-solid fa-chevron-down text-[10px] ml-1 opacity-50"></i></a>
                     
-                    <!-- Contenedor del Mega Menú -->
                     <div class="absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-50">
                         <div class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-4 gap-8">
                             
-                            <!-- Columna de Enlaces 1 con Imágenes Dropdown (show_dropdown_images) -->
-                            <div>
+                            <!-- Columna que agrupa dinámicamente las categorías (Ocupa 2 espacios) -->
+                            <div class="col-span-2">
                                 <h3 class="font-bold text-black mb-4 uppercase text-[11px] tracking-wider text-gray-500">
-                                    Furniture
+                                    Nuestras Categorías
                                 </h3>
-                                <ul class="space-y-4 text-gray-600 text-[14px]">
-                                    <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=S" class="rounded w-7 h-7 object-cover border border-gray-200"> Sofas & Armchairs</a></li>
-                                    <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=C" class="rounded w-7 h-7 object-cover border border-gray-200"> Chairs</a></li>
-                                    <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=B" class="rounded w-7 h-7 object-cover border border-gray-200"> Beds</a></li>
-                                    <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=S" class="rounded w-7 h-7 object-cover border border-gray-200"> Storage</a></li>
+                                <!-- Grid dinámico que se llenará desde Neon -->
+                                <ul id="desktop-categories-list" class="grid grid-cols-2 gap-y-4 gap-x-8 text-gray-600 text-[14px]">
+                                    <li class="text-gray-400 flex items-center gap-2"><i class="fa-solid fa-spinner spin-anim"></i> Cargando...</li>
                                 </ul>
                             </div>
 
-                            <!-- Columna de Enlaces 2 -->
-                            <div>
-                                <h3 class="font-bold text-black mb-4 uppercase text-[11px] tracking-wider text-gray-500">
-                                    Lighting
-                                </h3>
-                                <ul class="space-y-4 text-gray-600 text-[14px]">
-                                    <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=C" class="rounded w-7 h-7 object-cover border border-gray-200"> Ceiling Lights</a></li>
-                                    <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=T" class="rounded w-7 h-7 object-cover border border-gray-200"> Table Lamps</a></li>
-                                    <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=O" class="rounded w-7 h-7 object-cover border border-gray-200"> Outdoor</a></li>
-                                </ul>
-                            </div>
-
-                            <!-- Promo Banners (Basado en el bloque layout: columns) -->
+                            <!-- Promo Banners visuales (Se mantienen) -->
                             <div class="col-span-2 grid grid-cols-2 gap-6">
                                 <div class="relative rounded-lg overflow-hidden flex-1 group/promo cursor-pointer h-64 shadow-md">
                                     <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Promo Muebles" class="w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700">
                                     <div class="absolute inset-0 bg-black bg-opacity-10 transition group-hover/promo:bg-opacity-20"></div>
                                     <div class="absolute inset-0 p-5 flex flex-col justify-end text-white">
-                                        <h4 class="text-lg font-bold mb-1">Nordic Collection</h4>
-                                        <span class="text-[13px] font-medium hover:underline inline-flex items-center gap-1">View all <i class="fa-solid fa-chevron-right text-[9px]"></i></span>
+                                        <h4 class="text-lg font-bold mb-1">Nueva Colección</h4>
+                                        <span class="text-[13px] font-medium hover:underline inline-flex items-center gap-1">Ver todo <i class="fa-solid fa-chevron-right text-[9px]"></i></span>
                                     </div>
                                 </div>
                                 <div class="relative rounded-lg overflow-hidden flex-1 group/promo cursor-pointer h-64 shadow-md">
                                     <img src="https://images.unsplash.com/photo-1507149833265-60c372daea22?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Promo Iluminación" class="w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700">
                                     <div class="absolute inset-0 bg-black bg-opacity-10 transition group-hover/promo:bg-opacity-20"></div>
                                     <div class="absolute inset-0 p-5 flex flex-col justify-end text-white">
-                                        <h4 class="text-lg font-bold mb-1">Lighting Sale</h4>
-                                        <span class="text-[13px] font-medium hover:underline inline-flex items-center gap-1">Shop now <i class="fa-solid fa-chevron-right text-[9px]"></i></span>
+                                        <h4 class="text-lg font-bold mb-1">Tendencias</h4>
+                                        <span class="text-[13px] font-medium hover:underline inline-flex items-center gap-1">Comprar ahora <i class="fa-solid fa-chevron-right text-[9px]"></i></span>
                                     </div>
                                 </div>
                             </div>
@@ -166,55 +149,33 @@
                     </div>
                 </li>
 
-                <!-- Mega Menú Duplicado para Marcas -->
+                <!-- Mega Menú: Marcas Dinámicas -->
                 <li class="py-4 border-b-2 border-transparent hover:border-white hover:text-white cursor-pointer transition group">
                     <a href="#">Marcas <i class="fa-solid fa-chevron-down text-[10px] ml-1 opacity-50"></i></a>
                     
-                    <!-- Contenedor del Mega Menú -->
                     <div class="absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-50">
                         <div class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-4 gap-8">
                             
-                            <!-- Columna de Enlaces 1 con Imágenes Dropdown (show_dropdown_images) -->
-                            <div>
+                            <!-- Columna que agrupa dinámicamente las marcas (Ocupa 2 espacios) -->
+                            <div class="col-span-2">
                                 <h3 class="font-bold text-black mb-4 uppercase text-[11px] tracking-wider text-gray-500">
-                                    Furniture
+                                    Mejores Marcas
                                 </h3>
-                                <ul class="space-y-4 text-gray-600 text-[14px]">
-                                    <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=S" class="rounded w-7 h-7 object-cover border border-gray-200"> Sofas & Armchairs</a></li>
-                                    <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=C" class="rounded w-7 h-7 object-cover border border-gray-200"> Chairs</a></li>
-                                    <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=B" class="rounded w-7 h-7 object-cover border border-gray-200"> Beds</a></li>
-                                    <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=S" class="rounded w-7 h-7 object-cover border border-gray-200"> Storage</a></li>
+                                <!-- Grid dinámico que se llenará desde Neon -->
+                                <ul id="desktop-brands-list" class="grid grid-cols-2 gap-y-4 gap-x-8 text-gray-600 text-[14px]">
+                                    <li class="text-gray-400 flex items-center gap-2"><i class="fa-solid fa-spinner spin-anim"></i> Cargando...</li>
                                 </ul>
                             </div>
 
-                            <!-- Columna de Enlaces 2 -->
-                            <div>
-                                <h3 class="font-bold text-black mb-4 uppercase text-[11px] tracking-wider text-gray-500">
-                                    Lighting
-                                </h3>
-                                <ul class="space-y-4 text-gray-600 text-[14px]">
-                                    <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=C" class="rounded w-7 h-7 object-cover border border-gray-200"> Ceiling Lights</a></li>
-                                    <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=T" class="rounded w-7 h-7 object-cover border border-gray-200"> Table Lamps</a></li>
-                                    <li><a href="#" class="hover:text-black hover:underline flex items-center gap-3"><img src="https://placehold.co/30x30/f3f4f6/a1a1aa?text=O" class="rounded w-7 h-7 object-cover border border-gray-200"> Outdoor</a></li>
-                                </ul>
-                            </div>
-
-                            <!-- Promo Banners (Basado en el bloque layout: columns) -->
+                            <!-- Promo Banners visuales -->
                             <div class="col-span-2 grid grid-cols-2 gap-6">
-                                <div class="relative rounded-lg overflow-hidden flex-1 group/promo cursor-pointer h-64 shadow-md">
-                                    <img src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Promo Muebles" class="w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700">
-                                    <div class="absolute inset-0 bg-black bg-opacity-10 transition group-hover/promo:bg-opacity-20"></div>
-                                    <div class="absolute inset-0 p-5 flex flex-col justify-end text-white">
-                                        <h4 class="text-lg font-bold mb-1">Nordic Collection</h4>
-                                        <span class="text-[13px] font-medium hover:underline inline-flex items-center gap-1">View all <i class="fa-solid fa-chevron-right text-[9px]"></i></span>
-                                    </div>
-                                </div>
-                                <div class="relative rounded-lg overflow-hidden flex-1 group/promo cursor-pointer h-64 shadow-md">
-                                    <img src="https://images.unsplash.com/photo-1507149833265-60c372daea22?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Promo Iluminación" class="w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700">
-                                    <div class="absolute inset-0 bg-black bg-opacity-10 transition group-hover/promo:bg-opacity-20"></div>
-                                    <div class="absolute inset-0 p-5 flex flex-col justify-end text-white">
-                                        <h4 class="text-lg font-bold mb-1">Lighting Sale</h4>
-                                        <span class="text-[13px] font-medium hover:underline inline-flex items-center gap-1">Shop now <i class="fa-solid fa-chevron-right text-[9px]"></i></span>
+                                <div class="col-span-2 relative rounded-lg overflow-hidden group/promo cursor-pointer h-64 shadow-md bg-gray-100 flex items-center justify-center">
+                                    <div class="absolute inset-0 bg-gradient-to-r from-gray-900 to-gray-600 opacity-90"></div>
+                                    <div class="relative z-10 text-center text-white p-8">
+                                        <i class="fa-solid fa-tags text-4xl mb-4"></i>
+                                        <h4 class="text-2xl font-bold mb-2">Marcas Premium</h4>
+                                        <p class="text-sm text-gray-200 mb-4">Descubre los mejores productos seleccionados por marca.</p>
+                                        <span class="text-[13px] font-bold uppercase tracking-widest border-b border-white pb-1 hover:text-gray-300 transition">Explorar Catálogo</span>
                                     </div>
                                 </div>
                             </div>
@@ -223,14 +184,13 @@
                 </li>
                 
                 <li class="py-4 border-b-2 border-transparent hover:border-white hover:text-white cursor-pointer transition">
-                    <a href="#">Collections</a>
+                    <a href="#">Colecciones</a>
                 </li>
                 <li class="py-4 border-b-2 border-transparent hover:border-white hover:text-white cursor-pointer transition">
-                    <a href="#">About Us</a>
+                    <a href="#">Nosotros</a>
                 </li>
                 
                 <li class="py-4">
-                    <!-- sale_highlight_item implementation -->
                     <a href="#" class="bg-red-600 text-white px-3 py-1.5 rounded-sm hover:bg-red-700 transition font-bold uppercase tracking-wider text-[11px] shadow-sm inline-flex items-center gap-1.5">
                         <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m20.749 12 1.104-1.908a1 1 0 0 0-.365-1.366l-1.91-1.104v-2.2a1 1 0 0 0-1-1h-2.199l-1.103-1.909a1.008 1.008 0 0 0-.607-.466.993.993 0 0 0-.759.1L12 3.251l-1.91-1.105a1 1 0 0 0-1.366.366L7.62 4.422H5.421a1 1 0 0 0-1 1v2.199l-1.91 1.104a.998.998 0 0 0-.365 1.367L3.25 12l-1.104 1.908a1.004 1.004 0 0 0 .364 1.367l1.91 1.104v2.199a1 1 0 0 0 1 1h2.2l1.104 1.91a1.01 1.01 0 0 0 .866.5c.174 0 .347-.046.501-.135l1.908-1.104 1.91 1.104a1.001 1.001 0 0 0 1.366-.365l1.103-1.91h2.199a1 1 0 0 0 1-1v-2.199l1.91-1.104a1 1 0 0 0 .365-1.367L20.749 12zM9.499 6.99a1.5 1.5 0 1 1-.001 3.001 1.5 1.5 0 0 1 .001-3.001zm.3 9.6-1.6-1.199 6-8 1.6 1.199-6 8zm4.7.4a1.5 1.5 0 1 1 .001-3.001 1.5 1.5 0 0 1-.001 3.001z"></path></svg>
                         OFERTAS
@@ -245,7 +205,6 @@
 <div id="mobile-menu-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-all duration-500"></div>
 <div id="mobile-menu" class="fixed top-0 left-0 w-4/5 max-w-sm h-full bg-white z-50 mobile-menu-inactive transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-2xl overflow-y-auto">
     
-    <!-- Cabecera del Menú Móvil con fondo oscuro (#030712) -->
     <div class="p-4 border-b border-gray-800 bg-[#030712] text-white flex justify-between items-center">
         <span class="font-bold text-lg">MENÚ</span>
         <button id="close-mobile-btn" class="text-gray-400 hover:text-white text-2xl transition-colors">
@@ -253,26 +212,44 @@
         </button>
     </div>
 
-    <!-- Links Móviles (Estilo Tabulado y Limpio) -->
-    <ul class="text-slate-700 text-[15px] font-medium py-4">
-        <li><a href="index.html" class="block py-3.5 px-8 hover:bg-gray-50 transition-colors">Inicio</a></li>
-        <li><a href="colecciones.html" class="block py-3.5 px-8 hover:bg-gray-50 transition-colors">Ver Catálogo</a></li>
-        <li><a href="#" class="block py-3.5 px-8 hover:bg-gray-50 flex justify-between items-center transition-colors">Categorías <i class="fa-solid fa-chevron-down text-xs text-slate-500"></i></a></li>
-        <li><a href="#" class="block py-3.5 px-8 hover:bg-gray-50 flex justify-between items-center transition-colors">Marcas <i class="fa-solid fa-chevron-down text-xs text-slate-500"></i></a></li>
-        <li><a href="#" class="block py-3.5 px-8 hover:bg-gray-50 transition-colors">Collections</a></li>
-        <li><a href="#" class="block py-3.5 px-8 hover:bg-gray-50 transition-colors">About Us</a></li>
-        <li><a href="#" class="block py-3.5 px-8 bg-red-50 text-red-600 font-bold uppercase tracking-wide hover:bg-red-100 transition-colors flex items-center gap-2.5">
+    <!-- Links Móviles -->
+    <ul class="text-slate-700 text-[15px] font-medium py-2">
+        <li><a href="index.html" class="block py-3.5 px-6 hover:bg-gray-50 transition-colors">Inicio</a></li>
+        <li><a href="colecciones.html" class="block py-3.5 px-6 hover:bg-gray-50 transition-colors">Ver Catálogo</a></li>
+        
+        <!-- Categorías Desplegable Móvil -->
+        <li class="border-t border-b border-gray-50">
+            <button id="mobile-cat-btn" class="w-full text-left py-3.5 px-6 hover:bg-gray-50 flex justify-between items-center transition-colors">
+                Categorías <i id="mobile-cat-icon" class="fa-solid fa-chevron-down text-[10px] text-slate-500 transition-transform duration-300"></i>
+            </button>
+            <ul id="mobile-categories-list" class="hidden bg-slate-50 border-t border-gray-100 py-2">
+                <li><span class="block py-2 px-10 text-gray-400 text-sm"><i class="fa-solid fa-spinner spin-anim mr-2"></i> Cargando...</span></li>
+            </ul>
+        </li>
+
+        <!-- Marcas Desplegable Móvil -->
+        <li class="border-b border-gray-50">
+            <button id="mobile-brand-btn" class="w-full text-left py-3.5 px-6 hover:bg-gray-50 flex justify-between items-center transition-colors">
+                Marcas <i id="mobile-brand-icon" class="fa-solid fa-chevron-down text-[10px] text-slate-500 transition-transform duration-300"></i>
+            </button>
+            <ul id="mobile-brands-list" class="hidden bg-slate-50 border-t border-gray-100 py-2">
+                <li><span class="block py-2 px-10 text-gray-400 text-sm"><i class="fa-solid fa-spinner spin-anim mr-2"></i> Cargando...</span></li>
+            </ul>
+        </li>
+
+        <li><a href="#" class="block py-3.5 px-6 hover:bg-gray-50 transition-colors">Colecciones</a></li>
+        <li><a href="#" class="block py-3.5 px-6 hover:bg-gray-50 transition-colors">Nosotros</a></li>
+        <li><a href="#" class="block py-4 px-6 bg-red-50 text-red-600 font-bold uppercase tracking-wide hover:bg-red-100 transition-colors flex items-center gap-2.5 mt-2">
             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m20.749 12 1.104-1.908a1 1 0 0 0-.365-1.366l-1.91-1.104v-2.2a1 1 0 0 0-1-1h-2.199l-1.103-1.909a1.008 1.008 0 0 0-.607-.466.993.993 0 0 0-.759.1L12 3.251l-1.91-1.105a1 1 0 0 0-1.366.366L7.62 4.422H5.421a1 1 0 0 0-1 1v2.199l-1.91 1.104a.998.998 0 0 0-.365 1.367L3.25 12l-1.104 1.908a1.004 1.004 0 0 0 .364 1.367l1.91 1.104v2.199a1 1 0 0 0 1 1h2.2l1.104 1.91a1.01 1.01 0 0 0 .866.5c.174 0 .347-.046.501-.135l1.908-1.104 1.91 1.104a1.001 1.001 0 0 0 1.366-.365l1.103-1.91h2.199a1 1 0 0 0 1-1v-2.199l1.91-1.104a1 1 0 0 0 .365-1.367L20.749 12zM9.499 6.99a1.5 1.5 0 1 1-.001 3.001 1.5 1.5 0 0 1 .001-3.001zm.3 9.6-1.6-1.199 6-8 1.6 1.199-6 8zm4.7.4a1.5 1.5 0 1 1 .001-3.001 1.5 1.5 0 0 1-.001 3.001z"></path></svg>
             OFERTAS
         </a></li>
     </ul>
 </div>
 
-<!-- 6. Carrito Lateral (Side Cart) - Implementado desde theme.liquid -->
+<!-- 6. Carrito Lateral (Side Cart) -->
 <div id="side-drawer-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-all duration-500"></div>
 <div id="side-cart" class="fixed top-0 right-0 w-4/5 max-w-sm h-full bg-white z-50 cart-inactive transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-2xl flex flex-col">
     
-    <!-- Cabecera del Carrito con fondo oscuro (#030712) -->
     <div class="p-4 border-b border-gray-800 flex justify-between items-center bg-[#030712] text-white">
         <h2 class="font-bold text-lg flex items-center gap-2">
             <i class="fa-solid fa-cart-shopping"></i> Tu Carrito (<span id="cart-title-count">0</span>)
@@ -282,12 +259,10 @@
         </button>
     </div>
     
-    <!-- Productos en el carrito (Vaciado para inyección dinámica) -->
     <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 space-y-4">
         <!-- Los productos se cargarán dinámicamente aquí -->
     </div>
 
-    <!-- Footer del Carrito -->
     <div class="p-4 border-t border-gray-200 bg-gray-50">
         <div class="flex justify-between text-base font-bold mb-4">
             <span>Subtotal</span>
