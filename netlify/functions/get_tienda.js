@@ -20,8 +20,36 @@ exports.handler = async (event, context) => {
         const sql = neon(process.env.DATABASE_URL);
 
         // 2. Extraer los parámetros de la URL
-        const { id, brand, category, limit, exclude_id, search } = event.queryStringParameters || {};
+        const { id, brand, category, limit, exclude_id, search, action } = event.queryStringParameters || {};
         
+        // --- NUEVO CASO: Obtener lista única de Categorías y Marcas para los Menús ---
+        if (action === 'get_menu_data') {
+            // Obtenemos categorías únicas ignorando nulos o vacíos
+            const categoriesResult = await sql`
+                SELECT DISTINCT category 
+                FROM products 
+                WHERE category IS NOT NULL AND category != '' 
+                ORDER BY category ASC
+            `;
+            
+            // Obtenemos marcas únicas ignorando nulos o vacíos
+            const brandsResult = await sql`
+                SELECT DISTINCT brand 
+                FROM products 
+                WHERE brand IS NOT NULL AND brand != '' 
+                ORDER BY brand ASC
+            `;
+            
+            return {
+                statusCode: 200,
+                headers,
+                body: JSON.stringify({
+                    categories: categoriesResult.map(row => row.category),
+                    brands: brandsResult.map(row => row.brand)
+                })
+            };
+        }
+
         // --- MEJORA: Centralización del límite dinámico ---
         // Si el frontend envía un límite (ej. 5000), lo usa. Si no, mantiene los defaults de cada caso.
         const requestedLimit = limit ? parseInt(limit) : null;
@@ -107,10 +135,7 @@ exports.handler = async (event, context) => {
         }
 
         // CASO D: Catálogo general
-        // Aquí respetamos el límite enviado por el frontend (ej. 5000), 
-        // pero mantenemos el default de 10 por seguridad.
         const generalLimit = requestedLimit || 10;
-
         const result = await sql`
             SELECT * FROM products 
             LIMIT ${generalLimit}
