@@ -4,6 +4,15 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
     .font-inter { font-family: 'Inter', sans-serif !important; }
+    
+    /* Clases para mantener el menú desktop abierto al hacer click */
+    .active-dropdown .mega-menu {
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+    .active-dropdown .nav-chevron {
+        transform: rotate(180deg) !important;
+    }
 </style>
 
 <!-- 1. Banner Promocional (Separado para Móvil y Escritorio) -->
@@ -98,10 +107,12 @@
                 </li>
                 
                 <!-- Mega Menú: Categorías Dinámicas -->
-                <li class="py-4 border-b-2 border-transparent hover:border-white hover:text-white cursor-pointer transition group">
-                    <a href="#">Categorías <i class="fa-solid fa-chevron-down text-[10px] ml-1 opacity-50"></i></a>
+                <li id="desktop-nav-categorias" class="py-4 border-b-2 border-transparent hover:border-white hover:text-white cursor-pointer transition group">
+                    <a href="#" class="desktop-menu-toggle flex items-center h-full" data-target="desktop-nav-categorias">
+                        Categorías <i class="fa-solid fa-chevron-down text-[10px] ml-1 opacity-50 transition-transform duration-300 group-hover:rotate-180 nav-chevron"></i>
+                    </a>
                     
-                    <div class="absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-50">
+                    <div class="mega-menu absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-50">
                         <div class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-4 gap-8">
                             
                             <!-- Columna que agrupa dinámicamente las categorías (Ocupa 2 espacios) -->
@@ -144,10 +155,12 @@
                 </li>
 
                 <!-- Mega Menú: Marcas Dinámicas -->
-                <li class="py-4 border-b-2 border-transparent hover:border-white hover:text-white cursor-pointer transition group">
-                    <a href="#">Marcas <i class="fa-solid fa-chevron-down text-[10px] ml-1 opacity-50"></i></a>
+                <li id="desktop-nav-marcas" class="py-4 border-b-2 border-transparent hover:border-white hover:text-white cursor-pointer transition group">
+                    <a href="#" class="desktop-menu-toggle flex items-center h-full" data-target="desktop-nav-marcas">
+                        Marcas <i class="fa-solid fa-chevron-down text-[10px] ml-1 opacity-50 transition-transform duration-300 group-hover:rotate-180 nav-chevron"></i>
+                    </a>
                     
-                    <div class="absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-50">
+                    <div class="mega-menu absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-50">
                         <div class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-4 gap-8">
                             
                             <!-- Columna que agrupa dinámicamente las marcas (Ocupa 2 espacios) -->
@@ -283,3 +296,36 @@
         </button>
     </div>
 </div>
+
+<!-- Lógica para los menús desplegables de escritorio -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const desktopToggles = document.querySelectorAll('.desktop-menu-toggle');
+        
+        desktopToggles.forEach(toggle => {
+            toggle.addEventListener('click', (e) => {
+                e.preventDefault(); // Evita que el link salte hacia arriba
+                const targetId = toggle.getAttribute('data-target');
+                const parentLi = document.getElementById(targetId);
+                
+                // Cierra el "otro" menú si estuviera forzado abierto, así no colisionan
+                document.querySelectorAll('.active-dropdown').forEach(item => {
+                    if (item.id !== targetId) {
+                        item.classList.remove('active-dropdown');
+                    }
+                });
+                
+                // Alterna el estado del menú clickeado
+                parentLi.classList.toggle('active-dropdown');
+            });
+        });
+
+        // Opcional y recomendado: Cerrar menú si el usuario hace click afuera de "Categorías" o "Marcas"
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#desktop-nav-categorias') && !e.target.closest('#desktop-nav-marcas')) {
+                document.getElementById('desktop-nav-categorias')?.classList.remove('active-dropdown');
+                document.getElementById('desktop-nav-marcas')?.classList.remove('active-dropdown');
+            }
+        });
+    });
+</script>
