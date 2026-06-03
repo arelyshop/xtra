@@ -6,9 +6,13 @@
     .font-inter { font-family: 'Inter', sans-serif !important; }
 </style>
 
-<!-- 1. Banner Promocional (Escritorio y Móvil) -->
+<!-- 1. Banner Promocional (Separado para Móvil y Escritorio) -->
 <div class="w-full">
-    <img src="images/banner-escritorio.webp" alt="Banner Promocional ArelyShop" class="w-full h-auto block object-cover">
+    <!-- Banner Móvil (Visible en pantallas pequeñas, oculto desde tamaño mediano) -->
+    <img src="images/banner-movil.webp" alt="Banner Promocional ArelyShop Móvil" class="w-full h-auto block md:hidden object-cover">
+    
+    <!-- Banner Escritorio (Oculto en móviles, visible desde tamaño mediano) -->
+    <img src="images/banner-escritorio.webp" alt="Banner Promocional ArelyShop Escritorio" class="w-full h-auto hidden md:block object-cover">
 </div>
 
 <!-- 3. Header Principal (Sticky) -->
