@@ -86,9 +86,9 @@
             
             <!-- BARRA LATERAL: Filtros (Sticky Desktop) -->
             <aside class="w-full lg:w-1/4 lg:sticky lg:top-6 lg:h-max lg:max-h-[calc(100vh-60px)] lg:overflow-y-auto hide-scrollbar hidden lg:block">
-                <div class="border-b border-gray-200 pb-4 mb-6 flex justify-between items-center">
+                <div class="border-b border-gray-200 pb-3 mb-6 flex justify-between items-end sm:h-[48px]">
                     <h2 class="font-bold text-lg text-black flex items-center gap-2"><i class="fa-solid fa-sliders text-sm"></i> Filtros</h2>
-                    <button onclick="resetFilters()" class="text-[13px] text-gray-500 hover:text-black underline">Limpiar</button>
+                    <button onclick="resetFilters()" class="text-[13px] text-gray-500 hover:text-black underline mb-1">Limpiar</button>
                 </div>
                 <!-- 1. Filtro: Disponibilidad -->
                 <div class="mb-6 border-b border-gray-100 pb-6">
@@ -125,20 +125,20 @@
             <div class="w-full lg:w-3/4">
                 
                 <!-- Barra de Ordenación (Sorting) -->
-                <div class="flex flex-col sm:flex-row justify-between items-center mb-8 pb-4 border-b border-gray-200 gap-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-6 pb-3 border-b border-gray-200 gap-4 sm:h-[48px]">
                     
                     <!-- Filtro Móvil Simple: Solo en stock -->
                     <div class="lg:hidden w-full flex items-center justify-between border border-gray-200 py-2.5 px-4 rounded bg-gray-50">
                         <label for="mobile-stock-only" class="text-[13px] font-medium text-gray-900 cursor-pointer">Mostrar solo con stock</label>
                         <input type="checkbox" id="mobile-stock-only" class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black cursor-pointer">
                     </div>
-                    <p id="product-count-text" class="hidden sm:block text-[14px] text-gray-500">Cargando catálogo...</p>
+                    <p id="product-count-text" class="hidden sm:block text-[14px] text-gray-500 mb-1">Cargando catálogo...</p>
                     
                     <div class="hidden sm:flex items-center gap-4 w-full sm:w-auto justify-between">
                         <!-- Select Ordenar -->
-                        <div class="flex items-center gap-2">
-                            <label class="text-[13px] text-gray-600 hidden sm:block">Ordenar por:</label>
-                            <select id="sort-select" class="text-[13px] font-medium border-0 bg-transparent focus:ring-0 cursor-pointer pr-6 py-2">
+                        <div class="flex items-end gap-2">
+                            <label class="text-[13px] text-gray-600 hidden sm:block mb-1.5">Ordenar por:</label>
+                            <select id="sort-select" class="text-[13px] font-medium border-0 bg-transparent focus:ring-0 cursor-pointer pr-6 py-1">
                                 <option value="default">Recomendados</option>
                                 <option value="asc">Precio: Menor a Mayor</option>
                                 <option value="desc">Precio: Mayor a Menor</option>
