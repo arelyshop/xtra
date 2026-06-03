@@ -301,7 +301,6 @@ function initApp() {
         
         if (cart.length === 0) {
             container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-gray-400 mt-10">
-                <i class="fa-solid fa-cart-shopping text-5xl mb-4 opacity-50"></i>
                 <p>Tu carrito está vacío</p>
                 <a href="colecciones.html" class="mt-4 bg-[#030712] text-white px-6 py-2 rounded font-bold text-sm hover:bg-gray-800">Ver Catálogo</a>
             </div>`;
