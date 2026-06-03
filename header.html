@@ -98,12 +98,10 @@
                 </li>
                 
                 <!-- Mega Menú: Categorías Dinámicas -->
-                <li id="desktop-nav-categorias" class="py-4 border-b-2 border-transparent hover:border-white hover:text-white cursor-pointer transition">
-                    <a href="#" class="desktop-menu-toggle flex items-center h-full" data-target="desktop-nav-categorias">
-                        Categorías <i class="fa-solid fa-chevron-down text-[10px] ml-1 opacity-50 transition-transform duration-300 nav-chevron"></i>
-                    </a>
+                <li class="py-4 border-b-2 border-transparent hover:border-white hover:text-white cursor-pointer transition group">
+                    <a href="#">Categorías <i class="fa-solid fa-chevron-down text-[10px] ml-1 opacity-50"></i></a>
                     
-                    <div class="mega-menu absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 opacity-0 invisible transition-all duration-300 z-50">
+                    <div class="absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-50">
                         <div class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-4 gap-8">
                             
                             <!-- Columna que agrupa dinámicamente las categorías (Ocupa 2 espacios) -->
@@ -146,12 +144,10 @@
                 </li>
 
                 <!-- Mega Menú: Marcas Dinámicas -->
-                <li id="desktop-nav-marcas" class="py-4 border-b-2 border-transparent hover:border-white hover:text-white cursor-pointer transition">
-                    <a href="#" class="desktop-menu-toggle flex items-center h-full" data-target="desktop-nav-marcas">
-                        Marcas <i class="fa-solid fa-chevron-down text-[10px] ml-1 opacity-50 transition-transform duration-300 nav-chevron"></i>
-                    </a>
+                <li class="py-4 border-b-2 border-transparent hover:border-white hover:text-white cursor-pointer transition group">
+                    <a href="#">Marcas <i class="fa-solid fa-chevron-down text-[10px] ml-1 opacity-50"></i></a>
                     
-                    <div class="mega-menu absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 opacity-0 invisible transition-all duration-300 z-50">
+                    <div class="absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-50">
                         <div class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-4 gap-8">
                             
                             <!-- Columna que agrupa dinámicamente las marcas (Ocupa 2 espacios) -->
@@ -287,83 +283,3 @@
         </button>
     </div>
 </div>
-
-<!-- Lógica para los menús desplegables de escritorio -->
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        let activeClickMenu = null; // Guardará el ID del menú fijado por click
-
-        const setupMenu = (id) => {
-            const li = document.getElementById(id);
-            if (!li) return;
-            
-            const toggle = li.querySelector('.desktop-menu-toggle');
-            const menu = li.querySelector('.mega-menu');
-            const icon = li.querySelector('.nav-chevron');
-            
-            const open = () => {
-                menu.classList.remove('opacity-0', 'invisible');
-                menu.classList.add('opacity-100', 'visible');
-                icon.classList.add('rotate-180');
-            };
-            
-            const close = () => {
-                menu.classList.remove('opacity-100', 'visible');
-                menu.classList.add('opacity-0', 'invisible');
-                icon.classList.remove('rotate-180');
-            };
-
-            // Eventos de Hover (Pasar el mouse)
-            li.addEventListener('mouseenter', () => {
-                if (activeClickMenu !== id) open();
-            });
-            
-            li.addEventListener('mouseleave', () => {
-                if (activeClickMenu !== id) close();
-            });
-
-            // Evento de Click en el enlace principal
-            toggle.addEventListener('click', (e) => {
-                e.preventDefault(); // Evita que la pantalla salte hacia arriba
-                
-                if (activeClickMenu === id) {
-                    // 1. Si ya estaba fijado y se hace click de nuevo, lo cerramos
-                    activeClickMenu = null;
-                    close();
-                } else {
-                    // 2. Si hay OTRO menú fijado, lo cerramos primero
-                    if (activeClickMenu) {
-                        const otherLi = document.getElementById(activeClickMenu);
-                        if(otherLi) {
-                            otherLi.querySelector('.mega-menu').classList.remove('opacity-100', 'visible');
-                            otherLi.querySelector('.mega-menu').classList.add('opacity-0', 'invisible');
-                            otherLi.querySelector('.nav-chevron').classList.remove('rotate-180');
-                        }
-                    }
-                    // 3. Fijamos y abrimos el menú clickeado
-                    activeClickMenu = id;
-                    open();
-                }
-            });
-        };
-
-        // Inicializar ambos menús
-        setupMenu('desktop-nav-categorias');
-        setupMenu('desktop-nav-marcas');
-
-        // Cerrar menú si el usuario hace click afuera
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('#desktop-nav-categorias') && !e.target.closest('#desktop-nav-marcas')) {
-                if (activeClickMenu) {
-                    const li = document.getElementById(activeClickMenu);
-                    if(li) {
-                        li.querySelector('.mega-menu').classList.remove('opacity-100', 'visible');
-                        li.querySelector('.mega-menu').classList.add('opacity-0', 'invisible');
-                        li.querySelector('.nav-chevron').classList.remove('rotate-180');
-                    }
-                    activeClickMenu = null; // Liberamos el estado
-                }
-            }
-        });
-    });
-</script>
