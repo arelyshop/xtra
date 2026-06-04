@@ -256,7 +256,8 @@ function initApp() {
     // --- Lógica del Carrito Real (localStorage) ---
     window.addToCart = function(product, qty = 1) {
         let cart = JSON.parse(localStorage.getItem('arely_cart')) || [];
-        const existingIndex = cart.findIndex(item => item.id === product.id);
+        // Convertimos ambos a String para evitar errores si el ID de la BD es numérico y llega como cadena
+        const existingIndex = cart.findIndex(item => String(item.id) === String(product.id));
         if (existingIndex > -1) {
             cart[existingIndex].qty += qty;
         } else {
@@ -278,13 +279,22 @@ function initApp() {
 
     window.updateCartQty = function(id, delta) {
         let cart = JSON.parse(localStorage.getItem('arely_cart')) || [];
-        const index = cart.findIndex(item => item.id === id);
+        // Convertimos a String para la comparación (soluciona el problema de los botones de cantidad)
+        const index = cart.findIndex(item => String(item.id) === String(id));
         if (index > -1) {
             cart[index].qty += delta;
             if (cart[index].qty <= 0) cart.splice(index, 1);
             localStorage.setItem('arely_cart', JSON.stringify(cart));
             renderCart();
         }
+    };
+
+    // Nueva función para eliminar un producto completo del carrito
+    window.removeFromCart = function(id) {
+        let cart = JSON.parse(localStorage.getItem('arely_cart')) || [];
+        cart = cart.filter(item => String(item.id) !== String(id));
+        localStorage.setItem('arely_cart', JSON.stringify(cart));
+        renderCart();
     };
 
     function renderCart() {
@@ -314,17 +324,22 @@ function initApp() {
 
                 html += `
                 <div class="cart-item flex gap-4 border-b border-gray-100 pb-4" data-id="${item.id}">
-                    <div class="w-20 h-20 bg-gray-100 rounded overflow-hidden flex items-center justify-center">
+                    <div class="w-20 h-20 bg-gray-100 rounded overflow-hidden flex items-center justify-center shrink-0">
                         <img src="${img}" class="w-full h-full object-cover">
                     </div>
-                    <div class="flex-1">
-                        <h3 class="text-sm font-bold line-clamp-2 leading-tight">${item.title}</h3>
-                        <p class="text-xs text-gray-500 mt-1">Ref: ${item.gtin || 'N/A'}</p>
-                        <div class="flex justify-between items-center mt-2">
-                            <div class="flex items-center border border-gray-300 rounded">
-                                <button onclick="updateCartQty('${item.id}', -1)" class="px-2.5 py-1 text-gray-600 hover:bg-gray-100 transition">-</button>
-                                <span class="px-3 text-sm font-medium border-x border-gray-200">${item.qty}</span>
-                                <button onclick="updateCartQty('${item.id}', 1)" class="px-2.5 py-1 text-gray-600 hover:bg-gray-100 transition">+</button>
+                    <div class="flex-1 flex flex-col">
+                        <div class="flex justify-between gap-2 items-start">
+                            <h3 class="text-sm font-bold line-clamp-2 leading-tight pr-2">${item.title}</h3>
+                            <button onclick="removeFromCart('${item.id}')" class="text-gray-400 hover:text-red-500 transition-colors p-1 -mt-1 -mr-1" title="Eliminar del carrito">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-500 mt-1 mb-2">Ref: ${item.gtin || 'N/A'}</p>
+                        <div class="flex justify-between items-center mt-auto">
+                            <div class="flex items-center border border-gray-300 rounded h-8">
+                                <button onclick="updateCartQty('${item.id}', -1)" class="w-7 h-full flex items-center justify-center text-gray-600 hover:bg-gray-100 transition">-</button>
+                                <span class="w-8 h-full flex items-center justify-center text-sm font-medium border-x border-gray-200">${item.qty}</span>
+                                <button onclick="updateCartQty('${item.id}', 1)" class="w-7 h-full flex items-center justify-center text-gray-600 hover:bg-gray-100 transition">+</button>
                             </div>
                             <span class="font-bold text-sm">${(price * item.qty).toFixed(2)} Bs.</span>
                         </div>
