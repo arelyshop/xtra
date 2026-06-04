@@ -267,6 +267,13 @@
                     allProducts.sort((a, b) => b.id - a.id);
                 }
 
+                // REGLA GLOBAL: Empujar siempre los productos agotados al final en la carga inicial
+                allProducts.sort((a, b) => {
+                    const aOut = (a.availability || '').trim().toLowerCase() === 'out of stock' ? 1 : 0;
+                    const bOut = (b.availability || '').trim().toLowerCase() === 'out of stock' ? 1 : 0;
+                    return aOut - bOut;
+                });
+
                 filteredProducts = [...allProducts];
 
                 buildFilters();
@@ -486,14 +493,26 @@
         function applySorting() {
             const sortVal = document.getElementById('sort-select').value;
             
-            if (sortVal === 'asc') {
-                filteredProducts.sort((a,b) => (parseFloat(a.sale_price) || parseFloat(a.price) || 0) - (parseFloat(b.sale_price) || parseFloat(b.price) || 0));
-            } else if (sortVal === 'desc') {
-                filteredProducts.sort((a,b) => (parseFloat(b.sale_price) || parseFloat(b.price) || 0) - (parseFloat(a.sale_price) || parseFloat(a.price) || 0));
-            } else {
-                // Restaurar el orden original base (mantiene los más nuevos primero o la prioridad de búsqueda intacta)
-                filteredProducts.sort((a,b) => allProducts.indexOf(a) - allProducts.indexOf(b));
-            }
+            filteredProducts.sort((a,b) => {
+                // 1. Evaluar estado de stock
+                const aOut = (a.availability || '').trim().toLowerCase() === 'out of stock' ? 1 : 0;
+                const bOut = (b.availability || '').trim().toLowerCase() === 'out of stock' ? 1 : 0;
+                
+                // Prioridad máxima: Agotados al final
+                if (aOut !== bOut) {
+                    return aOut - bOut;
+                }
+
+                // 2. Si tienen el mismo estado de stock, aplicar el filtro seleccionado
+                if (sortVal === 'asc') {
+                    return (parseFloat(a.sale_price) || parseFloat(a.price) || 0) - (parseFloat(b.sale_price) || parseFloat(b.price) || 0);
+                } else if (sortVal === 'desc') {
+                    return (parseFloat(b.sale_price) || parseFloat(b.price) || 0) - (parseFloat(a.sale_price) || parseFloat(a.price) || 0);
+                } else {
+                    // Restaurar el orden original base (mantiene los más nuevos primero o la prioridad de búsqueda intacta)
+                    return allProducts.indexOf(a) - allProducts.indexOf(b);
+                }
+            });
             
             currentPage = 1;
             renderProducts();
