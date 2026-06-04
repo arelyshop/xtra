@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cat logo - ARELYSHOP.COM</title>
+    <title>Catálogo - ARELYSHOP.COM</title>
+
     <!-- Importar fuente Inter de Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,6 +12,7 @@
     
     <!-- Usamos Tailwind CSS para emular el diseño de manera rápida y limpia -->
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <!-- FontAwesome para los iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -31,6 +33,7 @@
             }
         }
     </script>
+
     <style>
         /* Estilos base heredados */
         .mobile-menu-active { transform: translateX(0%); }
@@ -39,6 +42,7 @@
         .cart-inactive { transform: translateX(100%); }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
         @keyframes spin-search { 100% { transform: rotate(360deg); } }
         .spin-anim { animation: spin-search 0.75s linear infinite; }
         
@@ -50,6 +54,7 @@
     
     <!-- Inyección automática del Header -->
     <div id="header-container"></div>
+
     <!-- Contenido Principal: Colecciones -->
     <!-- Reducido el padding top general a py-3 lg:py-4 -->
     <main class="max-w-7xl mx-auto px-4 py-3 lg:py-4">
@@ -61,6 +66,7 @@
             <i class="fa-solid fa-chevron-right text-[9px]"></i>
             <span id="breadcrumb-current" class="text-gray-900 font-medium">Todos los productos</span>
         </nav>
+
         <!-- Cabecera de Colección (Banner con Imagen) -->
         <!-- Reducido el margin bottom del header de mb-8 lg:mb-12 a mb-6 lg:mb-8 -->
         <header class="relative mb-6 lg:mb-8 rounded-2xl overflow-hidden bg-gray-900 shadow-lg">
@@ -81,6 +87,7 @@
                 </p>
             </div>
         </header>
+
         <!-- Contenedor Principal (Layout de Colección) -->
         <div class="flex flex-col lg:flex-row gap-10">
             
@@ -90,6 +97,7 @@
                     <h2 class="font-bold text-lg text-black flex items-center gap-2"><i class="fa-solid fa-sliders text-sm"></i> Filtros</h2>
                     <button onclick="resetFilters()" class="text-[13px] text-gray-500 hover:text-black underline mb-1">Limpiar</button>
                 </div>
+
                 <!-- 1. Filtro: Disponibilidad -->
                 <div class="mb-6 border-b border-gray-100 pb-6">
                     <h3 class="font-bold text-[14px] text-gray-900 mb-4 flex justify-between items-center cursor-pointer">
@@ -100,6 +108,7 @@
                         <li class="text-xs text-gray-400">Cargando...</li>
                     </ul>
                 </div>
+
                 <!-- 2. Filtro: Categorías -->
                 <div class="mb-6 border-b border-gray-100 pb-6">
                     <h3 class="font-bold text-[14px] text-gray-900 mb-4 flex justify-between items-center cursor-pointer">
@@ -110,6 +119,7 @@
                         <li class="text-xs text-gray-400">Cargando...</li>
                     </ul>
                 </div>
+
                 <!-- 3. Filtro: Marca -->
                 <div class="mb-6">
                     <h3 class="font-bold text-[14px] text-gray-900 mb-4 flex justify-between items-center cursor-pointer">
@@ -121,6 +131,7 @@
                     </ul>
                 </div>
             </aside>
+
             <!-- ÁREA DE PRODUCTOS (Grid) -->
             <div class="w-full lg:w-3/4">
                 
@@ -132,6 +143,7 @@
                         <label for="mobile-stock-only" class="text-[13px] font-medium text-gray-900 cursor-pointer">Mostrar solo con stock</label>
                         <input type="checkbox" id="mobile-stock-only" class="w-4 h-4 rounded border-gray-300 text-black focus:ring-black cursor-pointer">
                     </div>
+
                     <p id="product-count-text" class="hidden sm:block text-[14px] text-gray-500 mb-1">Cargando catálogo...</p>
                     
                     <div class="hidden sm:flex items-center gap-4 w-full sm:w-auto justify-between">
@@ -146,6 +158,7 @@
                         </div>
                     </div>
                 </div>
+
                 <!-- Cuadrícula de Productos (3 por fila en desktop, 2 en móvil) -->
                 <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-10 sm:gap-x-6 sm:gap-y-12">
                     <!-- Loader inicial -->
@@ -154,6 +167,7 @@
                         <p>Cargando catálogo completo...</p>
                     </div>
                 </div>
+
                 <!-- Paginación con Carga Diferida -->
                 <div id="load-more-container" class="mt-12 flex justify-center items-center hidden">
                     <button onclick="loadMoreProducts()" class="px-8 py-3 bg-[#111827] text-white font-medium rounded-lg hover:bg-[#1f2937] transition shadow-md">
@@ -168,8 +182,10 @@
             </div>
         </div>
     </main>
+
     <!-- Inyección automática del Footer -->
     <div id="footer-container"></div>
+
     <!-- Lógica del Catálogo Dinámico -->
     <script>
         // Cargar Header y Footer globales
@@ -184,11 +200,13 @@
             script.src = 'js/main.js';
             document.body.appendChild(script);
         }).catch(err => console.error('Error cargando componentes:', err));
+
         // --- LÓGICA DE DATOS DESDE NEON ---
         let allProducts = [];
         let filteredProducts = [];
         let currentPage = 1;
         const itemsPerPage = 24; // Cantidad de productos a cargar por bloque
+
         async function initColecciones() {
             try {
                 // 1. LEER PARÁMETROS DE LA URL
@@ -196,8 +214,11 @@
                 const searchQuery = urlParams.get('search');
                 const categoryQuery = urlParams.get('category');
                 const brandQuery = urlParams.get('brand'); // Por si luego enlazas marcas
+                const ofertasQuery = urlParams.get('ofertas');
+
                 // 2. CONSTRUIR URL DEL BACKEND DINÁMICAMENTE
                 let apiUrl = '/.netlify/functions/get_tienda?limit=5000'; // 5000 para cargar todo el filtro a la vez y paginar localmente
+
                 if (searchQuery) {
                     apiUrl += `&search=${encodeURIComponent(searchQuery)}`;
                     // Modificar textos de la página
@@ -217,21 +238,40 @@
                     document.getElementById('page-title').textContent = `Productos ${brandQuery}`;
                     document.getElementById('page-subtitle').textContent = `Todo el catálogo de la marca ${brandQuery}.`;
                     document.getElementById('breadcrumb-current').textContent = brandQuery;
+                } else if (ofertasQuery === 'true') {
+                    // Personalizar el título y textos para las ofertas
+                    document.title = `Ofertas Especiales - ARELYSHOP`;
+                    document.getElementById('page-title').textContent = `Ofertas Especiales`;
+                    document.getElementById('page-subtitle').textContent = `Aprovecha nuestros productos con descuentos increíbles por tiempo limitado.`;
+                    document.getElementById('breadcrumb-current').textContent = `Ofertas`;
                 }
+
                 // 3. HACER LA PETICIÓN AL BACKEND
                 const response = await fetch(apiUrl);
                 if (!response.ok) throw new Error('Error al conectar con la base de datos');
                 
                 allProducts = await response.json();
                 
+                // 3.5 FILTRAR OFERTAS (si aplica)
+                if (ofertasQuery === 'true') {
+                    allProducts = allProducts.filter(item => {
+                        const price = parseFloat(item.price) || 0;
+                        const salePrice = parseFloat(item.sale_price) || price;
+                        return price > salePrice; // Solo conservamos productos que realmente tienen descuento
+                    });
+                }
+                
                 // ORDEN POR DEFECTO: Los más nuevos primero (ID descendente)
                 // Solo lo aplicamos si NO es una búsqueda, para no arruinar la prioridad del backend
                 if (!searchQuery) {
                     allProducts.sort((a, b) => b.id - a.id);
                 }
+
                 filteredProducts = [...allProducts];
+
                 buildFilters();
                 renderProducts();
+
             } catch (error) {
                 console.error("Error cargando productos:", error);
                 document.getElementById('product-grid').innerHTML = `
@@ -241,15 +281,18 @@
                     </div>`;
             }
         }
+
         // Renderiza el Grid de Productos (con soporte para agregar más)
         function renderProducts(append = false) {
             const grid = document.getElementById('product-grid');
             const loadMoreBtn = document.getElementById('load-more-container');
             const endCatalogTxt = document.getElementById('end-of-catalog');
+
             if (!append) {
                 grid.innerHTML = ''; // Limpiamos el grid si cambiamos filtros u orden
                 currentPage = 1;
             }
+
             if (filteredProducts.length === 0) {
                 grid.innerHTML = `
                     <div class="col-span-full py-20 text-center text-gray-500">
@@ -262,10 +305,12 @@
                 endCatalogTxt.classList.add('hidden');
                 return;
             }
+
             // Calculamos qué parte del array debemos mostrar
             const startIndex = (currentPage - 1) * itemsPerPage;
             const endIndex = startIndex + itemsPerPage;
             const productsToShow = filteredProducts.slice(startIndex, endIndex);
+
             productsToShow.forEach(item => {
                 const price = parseFloat(item.price) || 0;
                 const salePrice = parseFloat(item.sale_price) || price;
@@ -274,7 +319,9 @@
                 let badgeHtml = '';
                 let priceHtml = '';
                 let imageClasses = 'product-img w-full h-full object-cover transition-transform duration-700';
+                
                 const imageLink = item.image_link || 'https://placehold.co/400x400?text=No+Image';
+
                 // Lógica de visualización (Precios ajustados para móvil y etiquetas con font-bold)
                 if (isOutOfStock) {
                     badgeHtml = `<span class="absolute bottom-2 left-2 bg-[#111827] text-white text-[10px] sm:text-xs font-bold px-2 py-1 sm:px-2.5 sm:py-1.5 uppercase rounded z-10 shadow-sm flex items-center gap-1"><i class="fa-solid fa-ban"></i> Agotado</span>`;
@@ -293,6 +340,7 @@
                         priceHtml = `<span class="font-semibold text-[14px] sm:text-lg lg:text-xl text-gray-900 leading-none">Bs. ${salePrice.toFixed(2)}</span>`;
                     }
                 }
+
                 grid.innerHTML += `
                 <a href="producto.html?id=${item.id}" class="product-card group relative flex flex-col cursor-pointer bg-white rounded-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_25px_-5px_rgba(0,0,0,0.12)] border border-gray-100 transition-all duration-300 overflow-hidden">
                     <div class="relative bg-gray-100 aspect-square overflow-hidden">
@@ -309,8 +357,10 @@
                     </div>
                 </a>`;
             });
+
             const shownCount = Math.min(endIndex, filteredProducts.length);
             document.getElementById('product-count-text').textContent = `Mostrando ${shownCount} de ${filteredProducts.length} productos`;
+
             if (endIndex < filteredProducts.length) {
                 loadMoreBtn.classList.remove('hidden');
                 endCatalogTxt.classList.add('hidden');
@@ -319,15 +369,18 @@
                 endCatalogTxt.classList.remove('hidden');
             }
         }
+
         function loadMoreProducts() {
             currentPage++;
             renderProducts(true);
         }
+
         // Construye las listas de filtros en el Sidebar agrupando correctamente sin importar mayúsculas o espacios
         function buildFilters() {
             // 1. Filtro Disponibilidad
             const inStock = allProducts.filter(p => (p.availability || '').trim().toLowerCase() === 'in stock').length;
             const outOfStock = allProducts.filter(p => (p.availability || '').trim().toLowerCase() === 'out of stock').length;
+
             document.getElementById('filter-availability').innerHTML = `
                 <li class="flex items-center gap-3">
                     <input type="checkbox" id="stock-in" value="in stock" class="filter-checkbox filter-stock w-4 h-4 rounded border-gray-300 text-gray-900 focus:ring-gray-900">
@@ -340,6 +393,7 @@
                     <span class="text-gray-400 text-[12px]">(${outOfStock})</span>
                 </li>
             `;
+
             // 2. Filtro Categorías (Agrupado inteligentemente)
             const catMap = new Map();
             allProducts.forEach(p => {
@@ -364,6 +418,7 @@
                 idx++;
             });
             document.getElementById('filter-category').innerHTML = catHtml || '<li class="text-xs text-gray-400">Sin categorías</li>';
+
             // 3. Filtro Marcas (Agrupado inteligentemente)
             const brandMap = new Map();
             allProducts.forEach(p => {
@@ -388,11 +443,13 @@
                 idx++;
             });
             document.getElementById('filter-brand').innerHTML = brandHtml || '<li class="text-xs text-gray-400">Sin marcas</li>';
+
             // Asignar eventos de escucha a los checkboxes creados
             document.querySelectorAll('.filter-checkbox').forEach(cb => {
                 cb.addEventListener('change', applyFilters);
             });
         }
+
         // Aplica lógica de filtrado de manera robusta y estricta
         function applyFilters() {
             // Normalizamos los valores seleccionados a minúsculas para evitar fallos de coincidencia
@@ -401,6 +458,7 @@
             const checkedBrands = Array.from(document.querySelectorAll('.filter-brand:checked')).map(cb => cb.value.trim().toLowerCase());
             
             const mobileStockOnly = document.getElementById('mobile-stock-only').checked;
+
             filteredProducts = allProducts.filter(p => {
                 // Normalizamos los datos de la base de datos al vuelo
                 const pStock = (p.availability || '').trim().toLowerCase();
@@ -410,16 +468,20 @@
                 // 1. Condición de Disponibilidad
                 let availMatch = checkedStock.length === 0 || checkedStock.includes(pStock);
                 if (mobileStockOnly && pStock !== 'in stock') availMatch = false;
+
                 // 2. Condición de Categoría
                 const catMatch = checkedCats.length === 0 || checkedCats.includes(pCat);
                 
                 // 3. Condición de Marca
                 const brandMatch = checkedBrands.length === 0 || checkedBrands.includes(pBrand);
+
                 // El producto DEBE CUMPLIR las 3 condiciones a la vez (Comportamiento AND)
                 return availMatch && catMatch && brandMatch;
             });
+
             applySorting();
         }
+
         // Sistema de Ordenamiento
         function applySorting() {
             const sortVal = document.getElementById('sort-select').value;
@@ -436,6 +498,7 @@
             currentPage = 1;
             renderProducts();
         }
+
         // Botón limpiar todo
         function resetFilters() {
             document.querySelectorAll('.filter-checkbox').forEach(cb => cb.checked = false);
@@ -443,6 +506,7 @@
             document.getElementById('sort-select').value = 'default';
             applyFilters();
         }
+
         document.addEventListener('DOMContentLoaded', () => {
             initColecciones();
             document.getElementById('sort-select').addEventListener('change', applySorting);
