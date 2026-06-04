@@ -540,6 +540,8 @@
             changeMainImage(newIndex);
         }
 
+        let isLightboxClosing = false; // Flag para controlar transiciones y el botón atrás
+
         function openLightbox(e) {
             // Evita que un simple toque al arrastrar abra la imagen gigante
             if (isMainDragging || galleryImages.length === 0) return;
@@ -552,17 +554,38 @@
             
             document.body.style.overflow = 'hidden';
             resetZoom();
+
+            // Guardamos un estado en el historial para interceptar el botón "Atrás" del dispositivo
+            history.pushState({ modal: 'lightbox' }, '', '');
         }
 
-        function closeLightbox() {
+        function closeLightbox(fromHistory = false) {
+            if (isLightboxClosing) return;
+            isLightboxClosing = true;
+
             const lightbox = document.getElementById('lightbox');
             lightbox.classList.add('opacity-0');
             setTimeout(() => {
                 lightbox.classList.add('hidden');
                 lightbox.classList.remove('flex');
                 document.body.style.overflow = '';
+                isLightboxClosing = false; // Reiniciamos la bandera
             }, 300);
+
+            // Si se cerró tocando la 'X' o la pantalla, limpiamos el estado virtual que creamos en el historial
+            if (!fromHistory && history.state && history.state.modal === 'lightbox') {
+                history.back();
+            }
         }
+
+        // Intercepta el evento del botón "Atrás" del navegador/móvil
+        window.addEventListener('popstate', (e) => {
+            const lightbox = document.getElementById('lightbox');
+            // Si el lightbox está visible al pulsar "Atrás", lo cerramos en lugar de salir de la página
+            if (lightbox && !lightbox.classList.contains('hidden') && !isLightboxClosing) {
+                closeLightbox(true); // Pasamos 'true' porque la orden ya vino del historial
+            }
+        });
 
         function navigateLightbox(dir) {
             if(galleryImages.length === 0) return;
