@@ -18,23 +18,39 @@ function initApp() {
     const sideCart = document.getElementById('side-cart');
     const sideDrawerOverlay = document.getElementById('side-drawer-overlay');
 
+    // Variables de control de estado para el historial
+    let isMenuClosing = false;
+    let isCartClosing = false;
+
     // --- Lógica del Menú Móvil ---
-    function toggleMenu() {
-        if (!mobileMenu || !mobileOverlay) return;
+    function toggleMenu(e, fromHistory = false) {
+        if (e && e.preventDefault && e.currentTarget !== window) e.preventDefault();
+        if (!mobileMenu || !mobileOverlay || isMenuClosing) return;
+        
         const isActive = mobileMenu.classList.contains('mobile-menu-active');
         
         if (isActive) {
+            isMenuClosing = true;
             mobileMenu.classList.remove('mobile-menu-active');
             mobileMenu.classList.add('mobile-menu-inactive');
             mobileOverlay.classList.remove('opacity-100', 'pointer-events-auto');
             mobileOverlay.classList.add('opacity-0', 'pointer-events-none');
             document.body.style.overflow = 'auto';
+            
+            // Si no se cerró tocando el botón "Atrás", limpiamos el historial virtual
+            if (!fromHistory && history.state && history.state.drawer === 'menu') {
+                history.back();
+            }
+            setTimeout(() => isMenuClosing = false, 300);
         } else {
             mobileMenu.classList.remove('mobile-menu-inactive');
             mobileMenu.classList.add('mobile-menu-active');
             mobileOverlay.classList.remove('opacity-0', 'pointer-events-none');
             mobileOverlay.classList.add('opacity-100', 'pointer-events-auto');
             document.body.style.overflow = 'hidden';
+            
+            // Agregamos un estado al historial al abrir
+            history.pushState({ drawer: 'menu' }, '', '');
         }
     }
     
@@ -91,7 +107,7 @@ function initApp() {
                 </li>
             `).join('');
 
-            // Función moldeadora para los menús Móviles (Lista de viñetas limpia)
+            // Función moldeadora para los menús móviles (Lista de viñetas limpia)
             const mobTemplate = (items, param) => items.map(item => `
                 <li>
                     <a href="colecciones.html?${param}=${encodeURIComponent(item)}" class="block py-2.5 px-10 text-[14px] text-gray-600 hover:text-black hover:bg-gray-100 transition-colors">
@@ -132,29 +148,53 @@ function initApp() {
     loadDynamicMenus();
 
     // --- Lógica del Carrito Lateral ---
-    function toggleCart(e) {
-        if(e) e.preventDefault();
-        if (!sideCart || !sideDrawerOverlay) return;
+    function toggleCart(e, fromHistory = false) {
+        if(e && e.preventDefault && e.currentTarget !== window) e.preventDefault();
+        if (!sideCart || !sideDrawerOverlay || isCartClosing) return;
+        
         const isActive = sideCart.classList.contains('cart-active');
         
         if (isActive) {
+            isCartClosing = true;
             sideCart.classList.remove('cart-active');
             sideCart.classList.add('cart-inactive');
             sideDrawerOverlay.classList.remove('opacity-100', 'pointer-events-auto');
             sideDrawerOverlay.classList.add('opacity-0', 'pointer-events-none');
             document.body.style.overflow = 'auto';
+            
+            // Si no se cerró tocando el botón "Atrás", limpiamos el historial virtual
+            if (!fromHistory && history.state && history.state.drawer === 'cart') {
+                history.back();
+            }
+            setTimeout(() => isCartClosing = false, 300);
         } else {
             sideCart.classList.remove('cart-inactive');
             sideCart.classList.add('cart-active');
             sideDrawerOverlay.classList.remove('opacity-0', 'pointer-events-none');
             sideDrawerOverlay.classList.add('opacity-100', 'pointer-events-auto');
             document.body.style.overflow = 'hidden';
+            
+            // Agregamos un estado al historial al abrir
+            history.pushState({ drawer: 'cart' }, '', '');
         }
     }
     
     if (cartBtn) cartBtn.addEventListener('click', toggleCart);
     if (closeCartBtn) closeCartBtn.addEventListener('click', toggleCart);
     if (sideDrawerOverlay) sideDrawerOverlay.addEventListener('click', toggleCart);
+
+
+    // --- Interceptar Botón Atrás del Móvil ---
+    window.addEventListener('popstate', (e) => {
+        // Verifica si el menú está abierto
+        if (mobileMenu && mobileMenu.classList.contains('mobile-menu-active') && !isMenuClosing) {
+            toggleMenu(null, true);
+        }
+        // Verifica si el carrito está abierto
+        else if (sideCart && sideCart.classList.contains('cart-active') && !isCartClosing) {
+            toggleCart(null, true);
+        }
+    });
 
     // --- Lógica del Cajón de Búsqueda Fija (Autocomplete) ---
     function setupSearch(inputId, resultsId) {
@@ -178,6 +218,7 @@ function initApp() {
         input.addEventListener('input', (e) => {
             clearTimeout(timeout);
             const val = e.target.value.trim();
+
             if(val.length > 0) {
                 results.classList.remove('hidden');
                 results.innerHTML = '<div class="p-8 text-center text-gray-400"><i class="fa-solid fa-circle-notch spin-anim text-2xl"></i> Buscando...</div>';
@@ -209,7 +250,6 @@ function initApp() {
                                         </div>
                                     </li>`;
                             });
-
                             html += `</ul>`;
 
                             if (categories.length > 0) {
@@ -229,15 +269,18 @@ function initApp() {
                                     Ver todos los resultados <i class="fa-solid fa-arrow-right ml-1 text-[10px]"></i>
                                 </a>
                             </div>`;
+
                             results.innerHTML = html;
                         } else {
                             results.innerHTML = `<div class="p-8 text-center text-gray-500 text-sm">No encontramos resultados para "<b>${val}</b>"</div>`;
                         }
+
                     } catch (err) {
                         console.error(err);
                         results.innerHTML = `<div class="p-8 text-center text-red-500 text-sm">Error de conexión. Intenta de nuevo.</div>`;
                     }
                 }, 500);
+
             } else {
                 results.classList.add('hidden');
             }
@@ -256,31 +299,40 @@ function initApp() {
     // --- Lógica del Carrito Real (localStorage) ---
     window.addToCart = function(product, qty = 1) {
         let cart = JSON.parse(localStorage.getItem('arely_cart')) || [];
+
         // Convertimos ambos a String para evitar errores si el ID de la BD es numérico y llega como cadena
         const existingIndex = cart.findIndex(item => String(item.id) === String(product.id));
+
         if (existingIndex > -1) {
             cart[existingIndex].qty += qty;
         } else {
             cart.push({ ...product, qty: qty });
         }
+
         localStorage.setItem('arely_cart', JSON.stringify(cart));
         renderCart();
         
         const sideCart = document.getElementById('side-cart');
         const overlay = document.getElementById('side-drawer-overlay');
+        
         if (sideCart && sideCart.classList.contains('cart-inactive')) {
             sideCart.classList.remove('cart-inactive');
             sideCart.classList.add('cart-active');
             overlay.classList.remove('opacity-0', 'pointer-events-none');
             overlay.classList.add('opacity-100', 'pointer-events-auto');
             document.body.style.overflow = 'hidden';
+            
+            // Agregamos estado al historial cuando se abre el carrito automáticamente
+            history.pushState({ drawer: 'cart' }, '', '');
         }
     };
 
     window.updateCartQty = function(id, delta) {
         let cart = JSON.parse(localStorage.getItem('arely_cart')) || [];
+        
         // Convertimos a String para la comparación (soluciona el problema de los botones de cantidad)
         const index = cart.findIndex(item => String(item.id) === String(id));
+        
         if (index > -1) {
             cart[index].qty += delta;
             if (cart[index].qty <= 0) cart.splice(index, 1);
@@ -335,6 +387,7 @@ function initApp() {
                             </button>
                         </div>
                         <p class="text-xs text-gray-500 mt-1 mb-2">Ref: ${item.gtin || 'N/A'}</p>
+                        
                         <div class="flex justify-between items-center mt-auto">
                             <div class="flex items-center border border-gray-300 rounded h-8">
                                 <button onclick="updateCartQty('${item.id}', -1)" class="w-7 h-full flex items-center justify-center text-gray-600 hover:bg-gray-100 transition">-</button>
@@ -391,10 +444,10 @@ function initApp() {
 
             const phone = "59167500044";
             const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            
             window.open(whatsappUrl, '_blank');
         });
     }
 }
-
 // Ejecutar inmediatamente
 initApp();
