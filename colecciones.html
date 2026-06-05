@@ -161,10 +161,72 @@
 
                 <!-- Cuadrícula de Productos (3 por fila en desktop, 2 en móvil) -->
                 <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
-                    <!-- Loader inicial -->
-                    <div class="col-span-full py-20 flex flex-col items-center justify-center text-gray-500">
-                        <i class="fa-solid fa-circle-notch spin-anim text-3xl mb-4 text-gray-400"></i>
-                        <p>Cargando catálogo completo...</p>
+                    <!-- Skeleton Loader inicial (6 tarjetas) -->
+                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                        <div class="bg-gray-200 aspect-square"></div>
+                        <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
+                            <div class="h-4 bg-gray-200 rounded-md w-full"></div>
+                            <div class="h-4 bg-gray-200 rounded-md w-3/4"></div>
+                            <div class="h-3 bg-gray-200 rounded-md w-1/2 mt-1"></div>
+                            <div class="mt-auto pt-2">
+                                <div class="h-5 bg-gray-300 rounded-md w-2/5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                        <div class="bg-gray-200 aspect-square"></div>
+                        <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
+                            <div class="h-4 bg-gray-200 rounded-md w-full"></div>
+                            <div class="h-4 bg-gray-200 rounded-md w-2/3"></div>
+                            <div class="h-3 bg-gray-200 rounded-md w-1/3 mt-1"></div>
+                            <div class="mt-auto pt-2">
+                                <div class="h-5 bg-gray-300 rounded-md w-1/2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                        <div class="bg-gray-200 aspect-square"></div>
+                        <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
+                            <div class="h-4 bg-gray-200 rounded-md w-11/12"></div>
+                            <div class="h-4 bg-gray-200 rounded-md w-4/5"></div>
+                            <div class="h-3 bg-gray-200 rounded-md w-2/5 mt-1"></div>
+                            <div class="mt-auto pt-2">
+                                <div class="h-5 bg-gray-300 rounded-md w-2/5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden sm:flex bg-white rounded-xl border-2 border-gray-100 flex-col overflow-hidden shadow-sm animate-pulse">
+                        <div class="bg-gray-200 aspect-square"></div>
+                        <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
+                            <div class="h-4 bg-gray-200 rounded-md w-full"></div>
+                            <div class="h-4 bg-gray-200 rounded-md w-3/4"></div>
+                            <div class="h-3 bg-gray-200 rounded-md w-1/2 mt-1"></div>
+                            <div class="mt-auto pt-2">
+                                <div class="h-5 bg-gray-300 rounded-md w-2/5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden sm:flex bg-white rounded-xl border-2 border-gray-100 flex-col overflow-hidden shadow-sm animate-pulse">
+                        <div class="bg-gray-200 aspect-square"></div>
+                        <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
+                            <div class="h-4 bg-gray-200 rounded-md w-full"></div>
+                            <div class="h-4 bg-gray-200 rounded-md w-2/3"></div>
+                            <div class="h-3 bg-gray-200 rounded-md w-1/3 mt-1"></div>
+                            <div class="mt-auto pt-2">
+                                <div class="h-5 bg-gray-300 rounded-md w-1/2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden sm:flex bg-white rounded-xl border-2 border-gray-100 flex-col overflow-hidden shadow-sm animate-pulse">
+                        <div class="bg-gray-200 aspect-square"></div>
+                        <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
+                            <div class="h-4 bg-gray-200 rounded-md w-11/12"></div>
+                            <div class="h-4 bg-gray-200 rounded-md w-4/5"></div>
+                            <div class="h-3 bg-gray-200 rounded-md w-2/5 mt-1"></div>
+                            <div class="mt-auto pt-2">
+                                <div class="h-5 bg-gray-300 rounded-md w-2/5"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
