@@ -2,18 +2,26 @@ const { neon } = require('@neondatabase/serverless');
 const fs = require('fs');
 const path = require('path');
 
+// Lista de identificadores (User-Agents) de los bots de redes sociales más comunes
+const BOT_AGENTS = ['WhatsApp', 'facebookexternalhit', 'Twitterbot', 'LinkedInBot', 'Pinterest', 'Slackbot', 'TelegramBot'];
+
 exports.handler = async (event, context) => {
     try {
-        // 1. Obtener el ID de la URL (ej: ?id=83)
+        // 1. Obtener el ID y el User-Agent
         const { id } = event.queryStringParameters || {};
+        const userAgent = event.headers['user-agent'] || '';
 
-        // 2. Leer tu archivo producto.html original desde la raíz
-        // process.cwd() apunta a la raíz del sitio en Netlify
+        // 2. Verificar si el que visita es un BOT o un HUMANO
+        const isBot = BOT_AGENTS.some(bot => userAgent.includes(bot));
+
+        // 3. Leer tu archivo producto.html original desde la raíz
         const htmlPath = path.join(process.cwd(), 'producto.html');
         let htmlTemplate = fs.readFileSync(htmlPath, 'utf8');
 
-        // Si no hay ID en el enlace, simplemente mostramos la página normal
-        if (!id) {
+        // ¡EL TRUCO DE VELOCIDAD AQUÍ!
+        // Si NO hay ID, o si ES UN USUARIO REAL (Chrome, Safari, etc), devolvemos el HTML estático AL INSTANTE.
+        // Esto evita la doble consulta a la base de datos y carga la página a máxima velocidad.
+        if (!id || !isBot) {
             return { 
                 statusCode: 200, 
                 headers: { 'Content-Type': 'text/html; charset=utf-8' }, 
@@ -21,7 +29,11 @@ exports.handler = async (event, context) => {
             };
         }
 
-        // 3. Conectar a Neon y buscar SOLO los datos necesarios para los Meta Tags
+        // ====================================================================
+        // DE AQUÍ EN ADELANTE SOLO SE EJECUTA SI EL VISITANTE ES WHATSAPP/FB
+        // ====================================================================
+
+        // 4. Conectar a Neon y buscar SOLO los datos necesarios para los Meta Tags
         const sql = neon(process.env.DATABASE_URL);
         const result = await sql`
             SELECT title, description, image_link 
@@ -30,7 +42,7 @@ exports.handler = async (event, context) => {
             LIMIT 1
         `;
 
-        // 4. Si el producto existe, INYECTAMOS los datos en el HTML
+        // 5. Si el producto existe, INYECTAMOS los datos en el HTML
         if (result.length > 0) {
             const product = result[0];
             const mainImage = product.image_link || 'https://ventas12.netlify.app/images/arelyshop-preview.webp';
@@ -41,19 +53,19 @@ exports.handler = async (event, context) => {
                 .replace(/\n/g, ' ')
                 .substring(0, 150) + '...';
 
-            // EL TRUCO: Reemplazamos los textos genéricos por los del producto real
+            // Reemplazamos los textos (Nota: Agregué el .COM para que coincida exactamente con tu HTML actual)
             htmlTemplate = htmlTemplate
-                .replaceAll('Cargando Producto... - ARELYSHOP', product.title)
+                .replaceAll('Cargando Producto... - ARELYSHOP.COM', `${product.title} - ARELYSHOP.COM`)
                 .replaceAll('Visita ARELYSHOP VENTAS y descubre los mejores accesorios.', cleanDesc)
                 .replaceAll('https://ventas12.netlify.app/images/arelyshop-preview.webp', mainImage);
         }
 
-        // 5. Devolver el HTML ya procesado a WhatsApp o al navegador
+        // 6. Devolver el HTML ya procesado a WhatsApp
         return {
             statusCode: 200,
             headers: { 
                 'Content-Type': 'text/html; charset=utf-8',
-                'Cache-Control': 'public, max-age=0, must-revalidate' // Previene caché incorrecta
+                'Cache-Control': 'public, max-age=0, must-revalidate' 
             },
             body: htmlTemplate
         };
