@@ -98,11 +98,11 @@ function initApp() {
             // Función moldeadora para los menús de Desktop (Grid 2 columnas)
             const deskTemplate = (items, param) => items.map(item => `
                 <li>
-                    <a href="colecciones.html?${param}=${encodeURIComponent(item)}" class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-md transition-colors group">
-                        <div class="w-8 h-8 rounded border border-slate-200 bg-slate-50 flex items-center justify-center shrink-0 group-hover:border-slate-300 group-hover:bg-white transition-colors">
-                            <span class="text-slate-600 font-bold text-[13px] uppercase">${item.charAt(0).toUpperCase()}</span>
+                    <a href="colecciones.html?${param}=${encodeURIComponent(item)}" class="flex items-center gap-2.5 py-1 px-2 hover:bg-slate-50 rounded-md transition-colors group">
+                        <div class="w-7 h-7 rounded border border-slate-200 bg-slate-50 flex items-center justify-center shrink-0 group-hover:border-slate-300 group-hover:bg-white transition-colors">
+                            <span class="text-slate-600 font-bold text-[12px] uppercase">${item.charAt(0).toUpperCase()}</span>
                         </div>
-                        <span class="text-slate-700 text-[14px] font-medium truncate">${item}</span>
+                        <span class="text-slate-700 text-[13px] font-medium truncate">${item}</span>
                     </a>
                 </li>
             `).join('');
@@ -110,9 +110,9 @@ function initApp() {
             // Función moldeadora para los menús móviles (Lista con Iconos)
             const mobTemplate = (items, param) => items.map(item => `
                 <li>
-                    <a href="colecciones.html?${param}=${encodeURIComponent(item)}" class="flex items-center gap-3 py-2 px-3 hover:bg-slate-50 rounded-md transition-colors">
-                        <div class="w-8 h-8 rounded border border-slate-200 bg-slate-50 flex items-center justify-center shrink-0">
-                            <span class="text-slate-600 font-bold text-[13px] uppercase">${item.charAt(0).toUpperCase()}</span>
+                    <a href="colecciones.html?${param}=${encodeURIComponent(item)}" class="flex items-center gap-3 py-1.5 px-3 hover:bg-slate-50 rounded-md transition-colors">
+                        <div class="w-7 h-7 rounded border border-slate-200 bg-slate-50 flex items-center justify-center shrink-0">
+                            <span class="text-slate-600 font-bold text-[12px] uppercase">${item.charAt(0).toUpperCase()}</span>
                         </div>
                         <span class="text-slate-700 text-[14px] font-medium truncate">${item}</span>
                     </a>
