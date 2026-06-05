@@ -385,7 +385,7 @@ function initApp() {
                     <div class="flex-1 flex flex-col">
                         <div class="flex justify-between gap-2 items-start">
                             <h3 class="text-sm font-bold line-clamp-2 leading-tight pr-2">${item.title}</h3>
-                            <button onclick="removeFromCart('${item.id}')" class="text-gray-400 hover:text-red-500 transition-colors p-1 -mt-1 -mr-1" title="Eliminar del carrito">
+                            <button onclick="removeFromCart('${item.id}')" class="text-gray-400 hover:text-red-500 transition-colors w-10 h-10 flex items-center justify-center shrink-0 -mt-2 -mr-2 rounded-full" title="Eliminar del carrito">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
