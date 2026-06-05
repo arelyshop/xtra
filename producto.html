@@ -470,7 +470,7 @@
                 
                 // Renderizado idéntico a colecciones.html manteniendo la clase w-[70%] y snap-start del carrusel móvil
                 grid.innerHTML += `
-                <a href="producto.html?id=${item.id}" class="product-card group relative flex flex-col cursor-pointer flex-shrink-0 w-[70%] sm:w-[45%] md:w-auto snap-start bg-white rounded-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_25px_-5px_rgba(0,0,0,0.12)] border border-gray-100 transition-all duration-300 overflow-hidden">
+                <a href="producto.html?id=${item.id}" class="product-card group relative flex flex-col cursor-pointer flex-shrink-0 w-[70%] sm:w-[45%] md:w-auto snap-start bg-white rounded-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_25px_-5px_rgba(0,0,0,0.12)] border-2 border-gray-200 hover:border-gray-300 transition-all duration-300 overflow-hidden">
                     <div class="relative bg-gray-100 aspect-square overflow-hidden">
                         ${badgeHtml}
                         <img src="${imageLink}" loading="lazy" decoding="async" alt="${item.title}" class="${imageClasses}">
