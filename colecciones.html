@@ -318,7 +318,10 @@
             const endIndex = startIndex + itemsPerPage;
             const productsToShow = filteredProducts.slice(startIndex, endIndex);
 
-            productsToShow.forEach(item => {
+            // Variable para agrupar todo el HTML y no saturar el navegador dibujando 1 por 1
+            let newHtml = '';
+
+            productsToShow.forEach((item, index) => {
                 const price = parseFloat(item.price) || 0;
                 const salePrice = parseFloat(item.sale_price) || price;
                 const isOutOfStock = (item.availability || '').trim().toLowerCase() === 'out of stock';
@@ -328,6 +331,12 @@
                 let imageClasses = 'product-img w-full h-full object-cover transition-transform duration-700';
                 
                 const imageLink = item.image_link || 'https://placehold.co/400x400?text=No+Image';
+
+                // TRUCO DE VELOCIDAD: Los primeros 6 productos de la 1ra página cargan inmediatamente (eager). 
+                // El resto carga diferido (lazy) para ahorrar datos.
+                const isPriority = currentPage === 1 && index < 6;
+                const loadingAttr = isPriority ? 'eager' : 'lazy';
+                const fetchPriority = isPriority ? 'high' : 'auto';
 
                 // Lógica de visualización (Precios ajustados para móvil y etiquetas con font-bold)
                 if (isOutOfStock) {
@@ -348,22 +357,29 @@
                     }
                 }
 
-                grid.innerHTML += `
+                // También he aplicado la mejora del interlineado compacto (leading-[1.1] y márgenes reducidos)
+                newHtml += `
                 <a href="producto.html?id=${item.id}" class="product-card group relative flex flex-col cursor-pointer bg-white rounded-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_25px_-5px_rgba(0,0,0,0.12)] border-2 border-gray-200 hover:border-gray-300 transition-all duration-300 overflow-hidden">
                     <div class="relative bg-gray-100 aspect-square overflow-hidden">
                         ${badgeHtml}
-                        <img src="${imageLink}" loading="lazy" decoding="async" alt="${item.title}" class="${imageClasses}">
+                        <img src="${imageLink}" loading="${loadingAttr}" fetchpriority="${fetchPriority}" decoding="async" alt="${item.title}" class="${imageClasses}">
                     </div>
                     <div class="flex flex-col flex-1 p-3 pt-2">
-                        <!-- Cambiamos font-medium por font-semibold -->
-                        <h3 class="text-[14px] sm:text-base font-semibold leading-tight text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2">${item.title}</h3>
-                        <p class="text-gray-500 text-[12px] sm:text-[13px] mt-0.5 mb-1 line-clamp-1">${item.category || item.brand || 'Varios'}</p>
-                        <div class="mt-auto pt-0.5 flex items-center gap-1.5">
+                        <h3 class="text-[14px] sm:text-base font-semibold leading-[1.1] text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2 mb-0.5">${item.title}</h3>
+                        <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1.5 line-clamp-1">${item.category || item.brand || 'Varios'}</p>
+                        <div class="mt-auto flex items-center gap-1.5">
                             ${priceHtml}
                         </div>
                     </div>
                 </a>`;
             });
+
+            // Inyectamos todo el HTML de golpe (Ultra rápido)
+            if (append) {
+                grid.insertAdjacentHTML('beforeend', newHtml);
+            } else {
+                grid.innerHTML = newHtml;
+            }
 
             const shownCount = Math.min(endIndex, filteredProducts.length);
             document.getElementById('product-count-text').textContent = `Mostrando ${shownCount} de ${filteredProducts.length} productos`;
