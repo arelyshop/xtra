@@ -1,0 +1,16 @@
+[functions]
+  # Esto le dice a Netlify que empaquete tu HTML junto con la función
+  # para que la función pueda leerlo y modificarlo antes de enviarlo
+  included_files = ["producto.html"]
+
+[[redirects]]
+  # Interceptamos todas las visitas a producto.html
+  from = "/producto.html"
+  
+  # Las enviamos a nuestra nueva función SSR
+  to = "/.netlify/functions/producto_ssr"
+  
+  # Un status 200 significa "Rewrite". El enlace en la barra de direcciones 
+  # NO cambiará, seguirá viéndose normal como "/producto.html?id=83"
+  status = 200
+  force = true
