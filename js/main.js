@@ -98,20 +98,23 @@ function initApp() {
             // Función moldeadora para los menús de Desktop (Grid 2 columnas)
             const deskTemplate = (items, param) => items.map(item => `
                 <li>
-                    <a href="colecciones.html?${param}=${encodeURIComponent(item)}" class="hover:text-black hover:underline flex items-center gap-3">
-                        <div class="w-7 h-7 rounded bg-gray-100 border border-gray-200 flex items-center justify-center text-[11px] font-bold text-gray-500 shadow-sm">
-                            ${item.charAt(0).toUpperCase()}
+                    <a href="colecciones.html?${param}=${encodeURIComponent(item)}" class="flex items-center gap-3 p-2 hover:bg-slate-50 rounded-md transition-colors group">
+                        <div class="w-8 h-8 rounded border border-slate-200 bg-slate-50 flex items-center justify-center shrink-0 group-hover:border-slate-300 group-hover:bg-white transition-colors">
+                            <span class="text-slate-600 font-bold text-[13px] uppercase">${item.charAt(0).toUpperCase()}</span>
                         </div>
-                        <span class="truncate">${item}</span>
+                        <span class="text-slate-700 text-[14px] font-medium truncate">${item}</span>
                     </a>
                 </li>
             `).join('');
 
-            // Función moldeadora para los menús móviles (Lista de viñetas limpia)
+            // Función moldeadora para los menús móviles (Lista con Iconos)
             const mobTemplate = (items, param) => items.map(item => `
                 <li>
-                    <a href="colecciones.html?${param}=${encodeURIComponent(item)}" class="block py-2.5 px-10 text-[14px] text-gray-600 hover:text-black hover:bg-gray-100 transition-colors">
-                        ${item}
+                    <a href="colecciones.html?${param}=${encodeURIComponent(item)}" class="flex items-center gap-3 py-2 px-3 hover:bg-slate-50 rounded-md transition-colors">
+                        <div class="w-8 h-8 rounded border border-slate-200 bg-slate-50 flex items-center justify-center shrink-0">
+                            <span class="text-slate-600 font-bold text-[13px] uppercase">${item.charAt(0).toUpperCase()}</span>
+                        </div>
+                        <span class="text-slate-700 text-[14px] font-medium truncate">${item}</span>
                     </a>
                 </li>
             `).join('');
@@ -121,8 +124,8 @@ function initApp() {
                 if (deskCats) deskCats.innerHTML = deskTemplate(data.categories, 'category');
                 if (mobCats) mobCats.innerHTML = mobTemplate(data.categories, 'category');
             } else {
-                if (deskCats) deskCats.innerHTML = '<li class="text-gray-400">Sin categorías registradas</li>';
-                if (mobCats) mobCats.innerHTML = '<li><span class="block py-2 px-10 text-gray-400 text-sm">Vacío</span></li>';
+                if (deskCats) deskCats.innerHTML = '<li class="text-gray-400 p-2">Sin categorías registradas</li>';
+                if (mobCats) mobCats.innerHTML = '<li><span class="block py-2 px-3 text-gray-400 text-sm">Vacío</span></li>';
             }
 
             // Inyectar Marcas
@@ -130,8 +133,8 @@ function initApp() {
                 if (deskBrands) deskBrands.innerHTML = deskTemplate(data.brands, 'brand');
                 if (mobBrands) mobBrands.innerHTML = mobTemplate(data.brands, 'brand');
             } else {
-                if (deskBrands) deskBrands.innerHTML = '<li class="text-gray-400">Sin marcas registradas</li>';
-                if (mobBrands) mobBrands.innerHTML = '<li><span class="block py-2 px-10 text-gray-400 text-sm">Vacío</span></li>';
+                if (deskBrands) deskBrands.innerHTML = '<li class="text-gray-400 p-2">Sin marcas registradas</li>';
+                if (mobBrands) mobBrands.innerHTML = '<li><span class="block py-2 px-3 text-gray-400 text-sm">Vacío</span></li>';
             }
 
         } catch (error) {
