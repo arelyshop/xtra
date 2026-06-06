@@ -89,11 +89,34 @@ function initApp() {
             const mobCats = document.getElementById('mobile-categories-list');
             const mobBrands = document.getElementById('mobile-brands-list');
 
-            // Solicitud a Neon pidiendo SOLO categorías y marcas únicas
-            const res = await fetch('/.netlify/functions/get_tienda?action=get_menu_data');
-            if (!res.ok) throw new Error('Error al cargar menús');
-            
-            const data = await res.json();
+            let data = null;
+            const CACHE_KEY = 'arelyshop_menu_cache';
+            const CACHE_EXPIRATION = 24 * 60 * 60 * 1000; // 24 horas en milisegundos
+
+            // 1. Intentar cargar desde la caché local primero
+            const cachedString = localStorage.getItem(CACHE_KEY);
+            if (cachedString) {
+                const parsedCache = JSON.parse(cachedString);
+                // Verificar si la caché aún es válida (no ha expirado)
+                if (Date.now() - parsedCache.timestamp < CACHE_EXPIRATION) {
+                    data = parsedCache.data;
+                }
+            }
+
+            // 2. Si no hay datos en la caché o ya expiraron, solicitar a la base de datos
+            if (!data) {
+                // Solicitud a Neon pidiendo SOLO categorías y marcas únicas
+                const res = await fetch('/.netlify/functions/get_tienda?action=get_menu_data');
+                if (!res.ok) throw new Error('Error al cargar menús');
+                
+                data = await res.json();
+                
+                // Guardar los nuevos datos en localStorage con la fecha actual
+                localStorage.setItem(CACHE_KEY, JSON.stringify({
+                    timestamp: Date.now(),
+                    data: data
+                }));
+            }
 
             // Función moldeadora para los menús de Desktop (Grid 2 columnas)
             const deskTemplate = (items, param) => items.map(item => `
