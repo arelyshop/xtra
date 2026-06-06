@@ -390,7 +390,7 @@ function initApp() {
         if (cart.length === 0) {
             container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-gray-400 mt-10">
                 <p>Tu carrito está vacío</p>
-                <a href="colecciones.html" class="mt-4 bg-gray-600 text-white px-6 py-2 rounded font-bold text-sm hover:bg-gray-700 transition-colors">Ver Catálogo</a>
+                <a href="colecciones.html" class="mt-4 bg-[#f3f4f6] text-gray-800 px-6 py-2 rounded font-bold text-sm hover:bg-gray-200 transition-colors shadow-sm">Ver Catálogo</a>
             </div>`;
         } else {
             let html = '';
