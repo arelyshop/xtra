@@ -1,476 +1,498 @@
-// Esta función encapsula toda la lógica para inicializarla inmediatamente después de cargar los parciales HTML
-function initApp() {
-    // --- Lógica para el año dinámico en el footer ---
-    const yearSpan = document.getElementById('current-year');
-    if (yearSpan) {
-        yearSpan.textContent = new Date().getFullYear();
-    }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    .font-inter { font-family: 'Inter', sans-serif !important; }
+</style>
 
-    // Referencias del Menú
-    const mobileBtn = document.getElementById('mobile-menu-btn');
-    const closeBtn = document.getElementById('close-mobile-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-    const mobileOverlay = document.getElementById('mobile-menu-overlay');
-
-    // Referencias del Carrito
-    const cartBtn = document.getElementById('cart-btn');
-    const closeCartBtn = document.getElementById('close-cart-btn');
-    const sideCart = document.getElementById('side-cart');
-    const sideDrawerOverlay = document.getElementById('side-drawer-overlay');
-
-    // Variables de control de estado para el historial
-    let isMenuClosing = false;
-    let isCartClosing = false;
-
-    // --- Lógica del Menú Móvil ---
-    function toggleMenu(e, fromHistory = false) {
-        if (e && e.preventDefault && e.currentTarget !== window) e.preventDefault();
-        if (!mobileMenu || !mobileOverlay || isMenuClosing) return;
-        
-        const isActive = mobileMenu.classList.contains('mobile-menu-active');
-        
-        if (isActive) {
-            isMenuClosing = true;
-            mobileMenu.classList.remove('mobile-menu-active');
-            mobileMenu.classList.add('mobile-menu-inactive');
-            mobileOverlay.classList.remove('opacity-100', 'pointer-events-auto');
-            mobileOverlay.classList.add('opacity-0', 'pointer-events-none');
-            document.body.style.overflow = 'auto';
-            
-            // Si no se cerró tocando el botón "Atrás", limpiamos el historial virtual
-            if (!fromHistory && history.state && history.state.drawer === 'menu') {
-                history.back();
-            }
-            setTimeout(() => isMenuClosing = false, 300);
-        } else {
-            mobileMenu.classList.remove('mobile-menu-inactive');
-            mobileMenu.classList.add('mobile-menu-active');
-            mobileOverlay.classList.remove('opacity-0', 'pointer-events-none');
-            mobileOverlay.classList.add('opacity-100', 'pointer-events-auto');
-            document.body.style.overflow = 'hidden';
-            
-            // Agregamos un estado al historial al abrir
-            history.pushState({ drawer: 'menu' }, '', '');
-        }
-    }
+<!-- 1. Banner Promocional (Separado para Móvil y Escritorio) -->
+<div class="w-full">
+    <!-- Banner Móvil (Visible en pantallas pequeñas, oculto desde tamaño mediano) -->
+    <img src="images/banner-movil.webp" alt="Banner Promocional ArelyShop Móvil" class="w-full h-auto block md:hidden object-cover">
     
-    if (mobileBtn) mobileBtn.addEventListener('click', toggleMenu);
-    if (closeBtn) closeBtn.addEventListener('click', toggleMenu);
-    if (mobileOverlay) mobileOverlay.addEventListener('click', toggleMenu);
+    <!-- Banner Escritorio (Oculto en móviles, visible desde tamaño mediano) -->
+    <img src="images/banner-escritorio.webp" alt="Banner Promocional ArelyShop Escritorio" class="w-full h-auto hidden md:block object-cover">
+<!-- 3. Header Principal (Sticky) -->
+<header class="bg-[#111827] border-b border-gray-800 sticky top-0 z-40 shadow-sm font-inter">
+    <div class="max-w-7xl mx-auto px-3 py-2.5 lg:px-4 lg:py-5">
+        <div class="flex justify-between items-center gap-3 lg:gap-8">
+            
+            <!-- Menú Hamburguesa (Móvil) & Búsqueda (Izquierda) -->
+            <div class="flex items-center gap-4 lg:hidden w-1/5">
+                <button id="mobile-menu-btn" class="text-white hover:opacity-80 focus:outline-none transition-opacity flex flex-col items-center justify-center p-2 -my-2 -ml-2 rounded-lg">
+                    <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 17H21M3 12H21M3 7H21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="text-[8px] font-bold leading-none mt-[-3px] tracking-tight">MENÚ</span>
+                </button>
+            </div>
 
-    // --- Lógica de Acordeones para Submenús Móviles (NUEVO) ---
-    const mobileCatBtn = document.getElementById('mobile-cat-btn');
-    const mobileCatList = document.getElementById('mobile-categories-list');
-    const mobileCatIcon = document.getElementById('mobile-cat-icon');
+            <!-- Logo (Basado en layout_2 y layout_mobile: logo_center) -->
+            <div class="flex justify-center lg:justify-start lg:w-1/3 w-3/5">
+                <a href="index.html" class="block">
+                    <img src="images/logo-escritorio.svg" alt="ArelyShop Logo" class="h-8 lg:h-[38px] w-auto max-w-full object-contain">
+                </a>
+            </div>
 
-    if (mobileCatBtn && mobileCatList) {
-        mobileCatBtn.addEventListener('click', () => {
-            mobileCatList.classList.toggle('hidden');
-            mobileCatIcon?.classList.toggle('-rotate-180');
-        });
-    }
+            <!-- Barra de Búsqueda Central (Desktop) -->
+            <div class="hidden lg:flex lg:w-1/3 justify-center relative">
+                <form class="w-full max-w-lg flex relative z-20">
+                    <input type="text" id="desktop-search" placeholder="Search..." autocomplete="off" class="w-full border border-gray-300 rounded-l-md py-2.5 px-4 focus:outline-none focus:border-gray-400 text-[14px] transition-colors bg-white">
+                    <button type="submit" class="bg-gray-50 text-gray-800 border border-l-0 border-gray-300 px-6 rounded-r-md hover:bg-gray-200 transition-colors">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </button>
+                </form>
+                <!-- Cajón de Búsqueda Fija (Autocomplete Desktop) -->
+                <div id="desktop-search-results" class="absolute top-[100%] left-0 w-full mt-2 bg-white shadow-xl border border-gray-100 rounded-md hidden z-10 max-h-[70vh] overflow-y-auto pt-2">
+                    <!-- Los resultados se inyectan dinámicamente aquí -->
+                </div>
+            </div>
 
-    const mobileBrandBtn = document.getElementById('mobile-brand-btn');
-    const mobileBrandList = document.getElementById('mobile-brands-list');
-    const mobileBrandIcon = document.getElementById('mobile-brand-icon');
-
-    if (mobileBrandBtn && mobileBrandList) {
-        mobileBrandBtn.addEventListener('click', () => {
-            mobileBrandList.classList.toggle('hidden');
-            mobileBrandIcon?.classList.toggle('-rotate-180');
-        });
-    }
-
-    // --- Lógica de Petición de Menús Dinámicos (NUEVO) ---
-    async function loadDynamicMenus() {
-        try {
-            const deskCats = document.getElementById('desktop-categories-list');
-            const deskBrands = document.getElementById('desktop-brands-list');
-            const mobCats = document.getElementById('mobile-categories-list');
-            const mobBrands = document.getElementById('mobile-brands-list');
-
-            let data = null;
-            const CACHE_KEY = 'arelyshop_menu_cache';
-
-            // 1. Detectar si el usuario recargó la página explícitamente (F5 o botón de recargar)
-            const isReload = (window.performance && window.performance.getEntriesByType("navigation").length > 0 && window.performance.getEntriesByType("navigation")[0].type === "reload") || (window.performance && window.performance.navigation && window.performance.navigation.type === 1);
-
-            // Si recargó la página, borramos la caché para forzar una consulta nueva
-            if (isReload) {
-                sessionStorage.removeItem(CACHE_KEY);
-            } else {
-                // Si solo navegó haciendo clic, intentamos usar la caché de la sesión actual
-                const cachedString = sessionStorage.getItem(CACHE_KEY);
-                if (cachedString) {
-                    data = JSON.parse(cachedString);
-                }
-            }
-
-            // 2. Si no hay datos (porque refrescó o es su primer clic), solicita a la base de datos
-            if (!data) {
-                // Solicitud a Neon pidiendo SOLO categorías y marcas únicas
-                const res = await fetch('/.netlify/functions/get_tienda?action=get_menu_data');
-                if (!res.ok) throw new Error('Error al cargar menús');
+            <!-- Iconos de Usuario y Carrito (Derecha) -->
+            <div class="flex items-center justify-end gap-5 lg:w-1/3 w-1/5">
                 
-                data = await res.json();
-                
-                // Guardamos los datos en sessionStorage (no usamos fecha porque caduca al cerrar pestaña/refrescar)
-                sessionStorage.setItem(CACHE_KEY, JSON.stringify(data));
-            }
-
-            // Función moldeadora para los menús de Desktop (Grid 2 columnas)
-            const deskTemplate = (items, param) => items.map(item => `
-                <li>
-                    <a href="colecciones.html?${param}=${encodeURIComponent(item)}" class="flex items-center gap-2.5 py-1 px-2 hover:bg-slate-50 rounded-md transition-colors group">
-                        <div class="w-7 h-7 rounded border border-slate-200 bg-slate-50 flex items-center justify-center shrink-0 group-hover:border-slate-300 group-hover:bg-white transition-colors">
-                            <span class="text-slate-600 font-bold text-[12px] uppercase">${item.charAt(0).toUpperCase()}</span>
-                        </div>
-                        <span class="text-slate-700 text-[13px] font-medium truncate">${item}</span>
-                    </a>
-                </li>
-            `).join('');
-
-            // Función moldeadora para los menús móviles (Lista con Iconos)
-            const mobTemplate = (items, param) => items.map(item => `
-                <li>
-                    <a href="colecciones.html?${param}=${encodeURIComponent(item)}" class="flex items-center gap-3 py-1.5 px-3 hover:bg-slate-50 rounded-md transition-colors">
-                        <div class="w-7 h-7 rounded border border-slate-200 bg-slate-50 flex items-center justify-center shrink-0">
-                            <span class="text-slate-600 font-bold text-[12px] uppercase">${item.charAt(0).toUpperCase()}</span>
-                        </div>
-                        <span class="text-slate-700 text-[14px] font-medium truncate">${item}</span>
-                    </a>
-                </li>
-            `).join('');
-
-            // Inyectar Categorías
-            if (data.categories && data.categories.length > 0) {
-                if (deskCats) deskCats.innerHTML = deskTemplate(data.categories, 'category');
-                if (mobCats) mobCats.innerHTML = mobTemplate(data.categories, 'category');
-            } else {
-                if (deskCats) deskCats.innerHTML = '<li class="text-gray-400 p-2">Sin categorías registradas</li>';
-                if (mobCats) mobCats.innerHTML = '<li><span class="block py-2 px-3 text-gray-400 text-sm">Vacío</span></li>';
-            }
-
-            // Inyectar Marcas
-            if (data.brands && data.brands.length > 0) {
-                if (deskBrands) deskBrands.innerHTML = deskTemplate(data.brands, 'brand');
-                if (mobBrands) mobBrands.innerHTML = mobTemplate(data.brands, 'brand');
-            } else {
-                if (deskBrands) deskBrands.innerHTML = '<li class="text-gray-400 p-2">Sin marcas registradas</li>';
-                if (mobBrands) mobBrands.innerHTML = '<li><span class="block py-2 px-3 text-gray-400 text-sm">Vacío</span></li>';
-            }
-
-        } catch (error) {
-            console.error("No se pudo inyectar el menú dinámico:", error);
-            const errorMsg = '<li class="text-red-400 text-sm"><i class="fa-solid fa-triangle-exclamation"></i> Error de conexión</li>';
-            ['desktop-categories-list', 'desktop-brands-list'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.innerHTML = errorMsg;
-            });
-        }
-    }
-    
-    // Disparar carga de menús
-    loadDynamicMenus();
-
-    // --- Lógica del Carrito Lateral ---
-    function toggleCart(e, fromHistory = false) {
-        if(e && e.preventDefault && e.currentTarget !== window) e.preventDefault();
-        if (!sideCart || !sideDrawerOverlay || isCartClosing) return;
-        
-        const isActive = sideCart.classList.contains('cart-active');
-        
-        if (isActive) {
-            isCartClosing = true;
-            sideCart.classList.remove('cart-active');
-            sideCart.classList.add('cart-inactive');
-            sideDrawerOverlay.classList.remove('opacity-100', 'pointer-events-auto');
-            sideDrawerOverlay.classList.add('opacity-0', 'pointer-events-none');
-            document.body.style.overflow = 'auto';
-            
-            // Si no se cerró tocando el botón "Atrás", limpiamos el historial virtual
-            if (!fromHistory && history.state && history.state.drawer === 'cart') {
-                history.back();
-            }
-            setTimeout(() => isCartClosing = false, 300);
-        } else {
-            sideCart.classList.remove('cart-inactive');
-            sideCart.classList.add('cart-active');
-            sideDrawerOverlay.classList.remove('opacity-0', 'pointer-events-none');
-            sideDrawerOverlay.classList.add('opacity-100', 'pointer-events-auto');
-            document.body.style.overflow = 'hidden';
-            
-            // Agregamos un estado al historial al abrir
-            history.pushState({ drawer: 'cart' }, '', '');
-        }
-    }
-    
-    if (cartBtn) cartBtn.addEventListener('click', toggleCart);
-    if (closeCartBtn) closeCartBtn.addEventListener('click', toggleCart);
-    if (sideDrawerOverlay) sideDrawerOverlay.addEventListener('click', toggleCart);
-
-
-    // --- Interceptar Botón Atrás del Móvil ---
-    window.addEventListener('popstate', (e) => {
-        // Verifica si el menú está abierto
-        if (mobileMenu && mobileMenu.classList.contains('mobile-menu-active') && !isMenuClosing) {
-            toggleMenu(null, true);
-        }
-        // Verifica si el carrito está abierto
-        else if (sideCart && sideCart.classList.contains('cart-active') && !isCartClosing) {
-            toggleCart(null, true);
-        }
-    });
-
-    // --- Lógica del Cajón de Búsqueda Fija (Autocomplete) ---
-    function setupSearch(inputId, resultsId) {
-        const input = document.getElementById(inputId);
-        const results = document.getElementById(resultsId);
-        let timeout = null;
-
-        if(!input || !results) return;
-
-        const form = input.closest('form');
-        if (form) {
-            form.addEventListener('submit', (e) => {
-                e.preventDefault(); 
-                const val = input.value.trim();
-                if (val.length > 0) {
-                    window.location.href = `colecciones.html?search=${encodeURIComponent(val)}`;
-                }
-            });
-        }
-
-        input.addEventListener('input', (e) => {
-            clearTimeout(timeout);
-            const val = e.target.value.trim();
-
-            if(val.length > 0) {
-                results.classList.remove('hidden');
-                results.innerHTML = '<div class="p-8 text-center text-gray-400"><i class="fa-solid fa-circle-notch spin-anim text-2xl"></i> Buscando...</div>';
-                
-                timeout = setTimeout(async () => {
-                    try {
-                        const res = await fetch(`/.netlify/functions/get_tienda?search=${encodeURIComponent(val)}&limit=5`);
-                        if (!res.ok) throw new Error('Error al buscar');
-                        const products = await res.json();
-
-                        if (products.length > 0) {
-                            const categories = [...new Set(products.map(p => p.category).filter(Boolean))].slice(0, 3);
-                            
-                            let html = `<div class="p-4 text-left">
-                                <h4 class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3">Productos Sugeridos</h4>
-                                <ul class="space-y-2">`;
-                            
-                            products.forEach(product => {
-                                const price = parseFloat(product.price || 0).toFixed(2);
-                                const image = product.image_link || 'https://placehold.co/100x100?text=No+Image';
-                                html += `
-                                    <li class="flex gap-4 items-center hover:bg-gray-50 p-2 rounded cursor-pointer transition border-b border-gray-50 pb-3" onclick="window.location.href='producto.html?id=${product.id}'">
-                                        <div class="w-12 h-12 bg-gray-100 flex items-center justify-center rounded overflow-hidden">
-                                            <img src="${image}" alt="${product.title}" class="w-full h-full object-cover">
-                                        </div>
-                                        <div class="flex-1">
-                                            <p class="text-sm font-bold text-gray-800 leading-tight line-clamp-1">${product.title}</p>
-                                            <p class="text-[13px] text-gray-500 mt-0.5">${price} Bs.</p>
-                                        </div>
-                                    </li>`;
-                            });
-                            html += `</ul>`;
-
-                            if (categories.length > 0) {
-                                html += `
-                                    <hr class="my-3 border-gray-100">
-                                    <h4 class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">Sugerencias por Categoría</h4>
-                                    <ul class="text-[13px] text-gray-600 space-y-2 mb-3 px-2">`;
-                                
-                                categories.forEach(cat => {
-                                    html += `<li><a href="colecciones.html?category=${encodeURIComponent(cat)}" class="hover:text-black hover:underline"><span class="font-bold text-black">${val}</span> en ${cat}</a></li>`;
-                                });
-                                html += `</ul>`;
-                            }
-                            
-                            html += `
-                                <a href="colecciones.html?search=${encodeURIComponent(val)}" class="mt-4 bg-gray-50 text-sm font-bold text-gray-800 hover:bg-gray-100 text-center block w-full py-2.5 rounded transition border border-gray-200">
-                                    Ver todos los resultados <i class="fa-solid fa-arrow-right ml-1 text-[10px]"></i>
-                                </a>
-                            </div>`;
-
-                            results.innerHTML = html;
-                        } else {
-                            results.innerHTML = `<div class="p-8 text-center text-gray-500 text-sm">No encontramos resultados para "<b>${val}</b>"</div>`;
-                        }
-
-                    } catch (err) {
-                        console.error(err);
-                        results.innerHTML = `<div class="p-8 text-center text-red-500 text-sm">Error de conexión. Intenta de nuevo.</div>`;
-                    }
-                }, 500);
-
-            } else {
-                results.classList.add('hidden');
-            }
-        });
-
-        document.addEventListener('click', (e) => {
-            if(!input.contains(e.target) && !results.contains(e.target)) {
-                results.classList.add('hidden');
-            }
-        });
-    }
-    
-    setupSearch('desktop-search', 'desktop-search-results');
-    setupSearch('mobile-search', 'mobile-search-results');
-
-    // --- Lógica del Carrito Real (localStorage) ---
-    window.addToCart = function(product, qty = 1) {
-        let cart = JSON.parse(localStorage.getItem('arely_cart')) || [];
-
-        // Convertimos ambos a String para evitar errores si el ID de la BD es numérico y llega como cadena
-        const existingIndex = cart.findIndex(item => String(item.id) === String(product.id));
-
-        if (existingIndex > -1) {
-            cart[existingIndex].qty += qty;
-        } else {
-            cart.push({ ...product, qty: qty });
-        }
-
-        localStorage.setItem('arely_cart', JSON.stringify(cart));
-        renderCart();
-        
-        const sideCart = document.getElementById('side-cart');
-        const overlay = document.getElementById('side-drawer-overlay');
-        
-        if (sideCart && sideCart.classList.contains('cart-inactive')) {
-            sideCart.classList.remove('cart-inactive');
-            sideCart.classList.add('cart-active');
-            overlay.classList.remove('opacity-0', 'pointer-events-none');
-            overlay.classList.add('opacity-100', 'pointer-events-auto');
-            document.body.style.overflow = 'hidden';
-            
-            // Agregamos estado al historial cuando se abre el carrito automáticamente
-            history.pushState({ drawer: 'cart' }, '', '');
-        }
-    };
-
-    window.updateCartQty = function(id, delta) {
-        let cart = JSON.parse(localStorage.getItem('arely_cart')) || [];
-        
-        // Convertimos a String para la comparación (soluciona el problema de los botones de cantidad)
-        const index = cart.findIndex(item => String(item.id) === String(id));
-        
-        if (index > -1) {
-            cart[index].qty += delta;
-            if (cart[index].qty <= 0) cart.splice(index, 1);
-            localStorage.setItem('arely_cart', JSON.stringify(cart));
-            renderCart();
-        }
-    };
-
-    // Nueva función para eliminar un producto completo del carrito
-    window.removeFromCart = function(id) {
-        let cart = JSON.parse(localStorage.getItem('arely_cart')) || [];
-        cart = cart.filter(item => String(item.id) !== String(id));
-        localStorage.setItem('arely_cart', JSON.stringify(cart));
-        renderCart();
-    };
-
-    function renderCart() {
-        const cart = JSON.parse(localStorage.getItem('arely_cart')) || [];
-        const container = document.getElementById('cart-items-container');
-        const bubble = document.getElementById('cart-count-bubble');
-        const titleCount = document.getElementById('cart-title-count');
-        const subtotalDisplay = document.getElementById('cart-subtotal-display');
-
-        if (!container) return;
-
-        let totalQty = 0;
-        let subtotal = 0;
-        
-        if (cart.length === 0) {
-            container.innerHTML = `<div class="flex flex-col items-center justify-center h-full text-gray-400 mt-10">
-                <p>Tu carrito está vacío</p>
-                <a href="colecciones.html" class="mt-4 bg-[#f3f4f6] text-gray-800 px-6 py-2 rounded font-bold text-sm hover:bg-gray-200 transition-colors shadow-sm">Ver Catálogo</a>
-            </div>`;
-        } else {
-            let html = '';
-            cart.forEach(item => {
-                totalQty += item.qty;
-                const price = parseFloat(item.price || 0);
-                subtotal += (price * item.qty);
-                const img = item.image_link || 'https://placehold.co/100x100?text=No+Image';
-
-                html += `
-                <div class="cart-item flex gap-4 border-b border-gray-100 pb-4" data-id="${item.id}">
-                    <div class="w-20 h-20 bg-gray-100 rounded overflow-hidden flex items-center justify-center shrink-0">
-                        <img src="${img}" class="w-full h-full object-cover">
+                <!-- Contacto WhatsApp -->
+                <a href="https://wa.me/59767500044" target="_blank" class="hidden sm:flex items-center gap-2.5 group mr-2">
+                    <img src="images/whatsapp-icon.svg" alt="WhatsApp" class="w-8 h-8 group-hover:scale-110 transition-transform">
+                    <div class="flex flex-col text-left">
+                        <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider leading-none mb-0.5">Contáctanos</span>
+                        <span class="text-[13px] font-bold text-white leading-none group-hover:text-[#128c7e] transition-colors">por WhatsApp!</span>
                     </div>
-                    <div class="flex-1 flex flex-col">
-                        <div class="flex justify-between gap-2 items-start">
-                            <h3 class="text-sm font-bold line-clamp-2 leading-tight pr-2">${item.title}</h3>
-                            <button onclick="removeFromCart('${item.id}')" class="text-gray-400 hover:text-red-500 transition-colors w-10 h-10 flex items-center justify-center shrink-0 -mt-2 -mr-2 rounded-full" title="Eliminar del carrito">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </button>
-                        </div>
-                        <p class="text-xs text-gray-500 mt-1 mb-2">Ref: ${item.gtin || 'N/A'}</p>
-                        
-                        <div class="flex justify-between items-center mt-auto">
-                            <div class="flex items-center border border-gray-300 rounded h-8">
-                                <button onclick="updateCartQty('${item.id}', -1)" class="w-7 h-full flex items-center justify-center text-gray-600 hover:bg-gray-100 transition">-</button>
-                                <span class="w-8 h-full flex items-center justify-center text-sm font-medium border-x border-gray-200">${item.qty}</span>
-                                <button onclick="updateCartQty('${item.id}', 1)" class="w-7 h-full flex items-center justify-center text-gray-600 hover:bg-gray-100 transition">+</button>
+                </a>
+                
+                <a href="#" id="cart-btn" class="text-white hover:opacity-80 relative group flex items-center gap-2 cursor-pointer transition-opacity p-2 -my-2 -mr-2 lg:p-0 lg:m-0 rounded-lg">
+                    <div class="relative">
+                        <svg class="w-7 h-7 lg:w-[38px] lg:h-[38px]" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17 17C15.8954 17 15 17.8954 15 19C15 20.1046 15.8954 21 17 21C18.1046 21 19 20.1046 19 19C19 17.8954 18.1046 17 17 17ZM17 17H9.29395C8.83288 17 8.60193 17 8.41211 16.918C8.24466 16.8456 8.09938 16.7291 7.99354 16.5805C7.8749 16.414 7.82719 16.1913 7.73274 15.7505L5.27148 4.26465C5.17484 3.81363 5.12587 3.58838 5.00586 3.41992C4.90002 3.27135 4.75477 3.15441 4.58732 3.08205C4.39746 3 4.16779 3 3.70653 3H3M6 6H18.8732C19.595 6 19.9555 6 20.1978 6.15036C20.41 6.28206 20.5653 6.48862 20.633 6.729C20.7104 7.00343 20.611 7.34996 20.411 8.04346L19.0264 12.8435C18.9068 13.2581 18.8469 13.465 18.7256 13.6189C18.6185 13.7547 18.4772 13.861 18.317 13.9263C18.1361 14 17.9211 14 17.4921 14H7.73047M8 21C6.89543 21 6 20.1046 6 19C6 17.8954 6.89543 17 8 17C9.10457 17 10 17.8954 10 19C10 20.1046 9.10457 21 8 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span id="cart-count-bubble" class="absolute -top-1 -right-1 lg:top-0 lg:-right-1 bg-[#25d366] text-white text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full hidden">0</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Búsqueda Móvil (Siempre Desplegada) -->
+        <div class="mt-2 lg:hidden w-full relative z-40">
+            <form class="w-full flex relative z-20">
+                <input type="text" id="mobile-search" placeholder="Buscar productos..." autocomplete="off" class="w-full border border-gray-300 rounded-l-md py-2.5 px-4 focus:outline-none focus:border-gray-400 text-[14px] bg-white">
+                <button type="submit" class="bg-gray-50 text-gray-800 border border-l-0 border-gray-300 px-5 rounded-r-md hover:bg-gray-200 transition-colors">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                </button>
+            </form>
+            <div id="mobile-search-results" class="absolute top-[100%] left-0 w-full mt-2 bg-white shadow-2xl border border-gray-100 rounded-md hidden max-h-[70vh] overflow-y-auto z-10 pt-2">
+                <!-- Los resultados se inyectan dinámicamente aquí -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Barra de Navegación Menú (Desktop) -->
+    <nav class="hidden lg:block border-t border-gray-800 relative bg-[#1f2937]">
+        <div class="max-w-7xl mx-auto px-4">
+            <ul class="flex space-x-6 items-center text-[14px] font-medium text-gray-300">
+                <li class="py-4 border-b-2 border-transparent hover:border-white hover:text-white cursor-pointer transition">
+                    <a href="index.html">Inicio</a>
+                </li>
+                
+                <li class="py-4">
+                    <a href="colecciones.html" class="bg-white text-black px-3 py-1.5 rounded-sm hover:bg-gray-100 transition font-bold uppercase tracking-wider text-[11px] shadow-sm">
+                        Ver Catálogo
+                    </a>
+                </li>
+                
+                <!-- Mega Menú: Categorías Dinámicas -->
+                <li class="py-4 border-b-2 border-transparent hover:border-white hover:text-white cursor-pointer transition group">
+                    <a href="#">Categorías <i class="fa-solid fa-chevron-down text-[10px] ml-1 opacity-50 transition-transform duration-300 group-hover:-rotate-180"></i></a>
+                    
+                    <div class="absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-50">
+                        <div class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-4 gap-8">
+                            
+                            <!-- Columna que agrupa dinámicamente las categorías (Ocupa 2 espacios) -->
+                            <div class="col-span-2">
+                                <h3 class="font-bold text-black mb-4 uppercase text-[11px] tracking-wider text-gray-500">
+                                    Nuestras Categorías
+                                </h3>
+                                <!-- Grid dinámico que se llenará desde Neon (Con Skeleton Loaders Iniciales) -->
+                                <ul id="desktop-categories-list" class="grid grid-cols-2 gap-y-2 gap-x-6 text-gray-600 text-[14px]">
+                                    <!-- Fila 1 -->
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-3/4"></div>
+                                    </li>
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-1/2"></div>
+                                    </li>
+                                    <!-- Fila 2 -->
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-2/3"></div>
+                                    </li>
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-4/5"></div>
+                                    </li>
+                                    <!-- Fila 3 -->
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-1/2"></div>
+                                    </li>
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-2/3"></div>
+                                    </li>
+                                    <!-- Fila 4 -->
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-3/4"></div>
+                                    </li>
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-5/6"></div>
+                                    </li>
+                                    <!-- Fila 5 -->
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-2/3"></div>
+                                    </li>
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-3/4"></div>
+                                    </li>
+                                    <!-- Fila 6 -->
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-1/2"></div>
+                                    </li>
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-4/5"></div>
+                                    </li>
+                                    <!-- Fila 7 -->
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-3/4"></div>
+                                    </li>
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-2/3"></div>
+                                    </li>
+                                </ul>
                             </div>
-                            <span class="font-bold text-sm">${(price * item.qty).toFixed(2)} Bs.</span>
+
+                            <!-- Promo Banners visuales -->
+                            <div class="col-span-2 grid grid-cols-2 gap-6 h-full">
+                                <!-- Banner 1: Cargadores -->
+                                <a href="colecciones.html?category=Cargadores" class="relative rounded-lg overflow-hidden group/promo block h-full w-full min-h-[200px] shadow-sm shadow-[#111827]/20">
+                                    <img src="images/cargadores-promo.webp" alt="Promo Cargadores" class="absolute inset-0 w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700 z-0">
+                                    <!-- Sombra degradada para destacar el texto -->
+                                    <div class="absolute inset-0 bg-gradient-to-t from-[#111827]/95 via-[#111827]/40 to-transparent opacity-80 group-hover/promo:opacity-100 transition-opacity duration-500 z-10"></div>
+                                    <div class="absolute inset-0 p-6 flex flex-col justify-end text-white z-20">
+                                        <h4 class="text-xl font-bold mb-1 drop-shadow-md">Cargadores</h4>
+                                        <span class="text-[13px] font-medium hover:underline inline-flex items-center gap-1 drop-shadow-md">Ver todo <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                                    </div>
+                                </a>
+                                
+                                <!-- Banner 2: Cables -->
+                                <a href="colecciones.html?category=Cables%20%26%20Conectores" class="relative rounded-lg overflow-hidden group/promo block h-full w-full min-h-[200px] shadow-sm shadow-[#111827]/20">
+                                    <img src="images/cables-promo.webp" alt="Promo Cables" class="absolute inset-0 w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700 z-0">
+                                    <!-- Sombra degradada para destacar el texto -->
+                                    <div class="absolute inset-0 bg-gradient-to-t from-[#111827]/95 via-[#111827]/40 to-transparent opacity-80 group-hover/promo:opacity-100 transition-opacity duration-500 z-10"></div>
+                                    <div class="absolute inset-0 p-6 flex flex-col justify-end text-white z-20">
+                                        <h4 class="text-xl font-bold mb-1 drop-shadow-md">Cables</h4>
+                                        <span class="text-[13px] font-medium hover:underline inline-flex items-center gap-1 drop-shadow-md">Ver todo <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                                    </div>
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>`;
-            });
-            container.innerHTML = html;
-        }
+                </li>
 
-        if (titleCount) titleCount.textContent = totalQty;
-        if (subtotalDisplay) subtotalDisplay.textContent = `${subtotal.toFixed(2)} Bs.`;
+                <!-- Mega Menú: Marcas Dinámicas -->
+                <li class="py-4 border-b-2 border-transparent hover:border-white hover:text-white cursor-pointer transition group">
+                    <a href="#">Marcas <i class="fa-solid fa-chevron-down text-[10px] ml-1 opacity-50 transition-transform duration-300 group-hover:-rotate-180"></i></a>
+                    
+                    <div class="absolute top-full left-0 w-full bg-white shadow-xl border-t border-gray-100 opacity-0 group-hover:opacity-100 invisible group-hover:visible transition-all duration-300 z-50">
+                        <div class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-4 gap-8">
+                            
+                            <!-- Columna que agrupa dinámicamente las marcas (Ocupa 2 espacios) -->
+                            <div class="col-span-2">
+                                <h3 class="font-bold text-black mb-4 uppercase text-[11px] tracking-wider text-gray-500">
+                                    Mejores Marcas
+                                </h3>
+                                <!-- Grid dinámico que se llenará desde Neon (Con Skeleton Loaders Iniciales) -->
+                                <ul id="desktop-brands-list" class="grid grid-cols-2 gap-y-2 gap-x-6 text-gray-600 text-[14px]">
+                                    <!-- Fila 1 -->
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-2/3"></div>
+                                    </li>
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-1/2"></div>
+                                    </li>
+                                    <!-- Fila 2 -->
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-3/4"></div>
+                                    </li>
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-2/5"></div>
+                                    </li>
+                                    <!-- Fila 3 -->
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-4/5"></div>
+                                    </li>
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-2/3"></div>
+                                    </li>
+                                    <!-- Fila 4 -->
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-1/2"></div>
+                                    </li>
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-3/4"></div>
+                                    </li>
+                                    <!-- Fila 5 -->
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-2/3"></div>
+                                    </li>
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-1/2"></div>
+                                    </li>
+                                    <!-- Fila 6 -->
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-3/4"></div>
+                                    </li>
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-4/5"></div>
+                                    </li>
+                                    <!-- Fila 7 -->
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-2/3"></div>
+                                    </li>
+                                    <li class="skeleton-loader animate-pulse flex items-center gap-2.5 py-1 px-2 rounded-md">
+                                        <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-1/2"></div>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <!-- Promo Banners visuales -->
+                            <div class="col-span-2 grid grid-cols-2 gap-6 h-full">
+                                <!-- Banner 1: UGREEN -->
+                                <a href="colecciones.html?brand=UGREEN" class="relative rounded-lg overflow-hidden group/promo block h-full w-full min-h-[200px] shadow-sm shadow-[#111827]/20">
+                                    <img src="images/ugreen-promo.webp" alt="Promo UGREEN" class="absolute inset-0 w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700 z-0">
+                                    <!-- Sombra degradada para destacar el texto -->
+                                    <div class="absolute inset-0 bg-gradient-to-t from-[#111827]/95 via-[#111827]/40 to-transparent opacity-80 group-hover/promo:opacity-100 transition-opacity duration-500 z-10"></div>
+                                    <div class="absolute inset-0 p-6 flex flex-col justify-end text-white z-20">
+                                        <h4 class="text-xl font-bold mb-1 drop-shadow-md">UGREEN</h4>
+                                        <span class="text-[13px] font-medium hover:underline inline-flex items-center gap-1 drop-shadow-md">Ver todo <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                                    </div>
+                                </a>
+                                
+                                <!-- Banner 2: HAVIT -->
+                                <a href="colecciones.html?brand=HAVIT" class="relative rounded-lg overflow-hidden group/promo block h-full w-full min-h-[200px] shadow-sm shadow-[#111827]/20">
+                                    <img src="images/havit-promo.webp" alt="Promo HAVIT" class="absolute inset-0 w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700 z-0">
+                                    <!-- Sombra degradada para destacar el texto -->
+                                    <div class="absolute inset-0 bg-gradient-to-t from-[#111827]/95 via-[#111827]/40 to-transparent opacity-80 group-hover/promo:opacity-100 transition-opacity duration-500 z-10"></div>
+                                    <div class="absolute inset-0 p-6 flex flex-col justify-end text-white z-20">
+                                        <h4 class="text-xl font-bold mb-1 drop-shadow-md">HAVIT</h4>
+                                        <span class="text-[13px] font-medium hover:underline inline-flex items-center gap-1 drop-shadow-md">Ver todo <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                
+                <li class="py-4">
+                    <a href="colecciones.html?category=COMBOS" class="bg-[#87e64b] text-black px-3 py-1.5 rounded-sm hover:opacity-80 transition font-bold uppercase tracking-wider text-[11px] shadow-sm inline-flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m20.749 12 1.104-1.908a1 1 0 0 0-.365-1.366l-1.91-1.104v-2.2a1 1 0 0 0-1-1h-2.199l-1.103-1.909a1.008 1.008 0 0 0-.607-.466.993.993 0 0 0-.759.1L12 3.251l-1.91-1.105a1 1 0 0 0-1.366.366L7.62 4.422H5.421a1 1 0 0 0-1 1v2.199l-1.91 1.104a.998.998 0 0 0-.365 1.367L3.25 12l-1.104 1.908a1.004 1.004 0 0 0 .364 1.367l1.91 1.104v2.199a1 1 0 0 0 1 1h2.2l1.104 1.91a1.01 1.01 0 0 0 .866.5c.174 0 .347-.046.501-.135l1.908-1.104 1.91 1.104a1.001 1.001 0 0 0 1.366-.365l1.103-1.91h2.199a1 1 0 0 0 1-1v-2.199l1.91-1.104a1 1 0 0 0 .365-1.367L20.749 12zM9.499 6.99a1.5 1.5 0 1 1-.001 3.001 1.5 1.5 0 0 1 .001-3.001zm.3 9.6-1.6-1.199 6-8 1.6 1.199-6 8zm4.7.4a1.5 1.5 0 1 1 .001-3.001 1.5 1.5 0 0 1-.001 3.001z"></path></svg>
+                        COMBOS
+                    </a>
+                </li>
+                
+                <li class="py-4">
+                    <a href="colecciones.html?ofertas=true" class="bg-red-600 text-white px-3 py-1.5 rounded-sm hover:bg-red-700 transition font-bold uppercase tracking-wider text-[11px] shadow-sm inline-flex items-center gap-1.5">
+                        <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m20.749 12 1.104-1.908a1 1 0 0 0-.365-1.366l-1.91-1.104v-2.2a1 1 0 0 0-1-1h-2.199l-1.103-1.909a1.008 1.008 0 0 0-.607-.466.993.993 0 0 0-.759.1L12 3.251l-1.91-1.105a1 1 0 0 0-1.366.366L7.62 4.422H5.421a1 1 0 0 0-1 1v2.199l-1.91 1.104a.998.998 0 0 0-.365 1.367L3.25 12l-1.104 1.908a1.004 1.004 0 0 0 .364 1.367l1.91 1.104v2.199a1 1 0 0 0 1 1h2.2l1.104 1.91a1.01 1.01 0 0 0 .866.5c.174 0 .347-.046.501-.135l1.908-1.104 1.91 1.104a1.001 1.001 0 0 0 1.366-.365l1.103-1.91h2.199a1 1 0 0 0 1-1v-2.199l1.91-1.104a1 1 0 0 0 .365-1.367L20.749 12zM9.499 6.99a1.5 1.5 0 1 1-.001 3.001 1.5 1.5 0 0 1 .001-3.001zm.3 9.6-1.6-1.199 6-8 1.6 1.199-6 8zm4.7.4a1.5 1.5 0 1 1 .001-3.001 1.5 1.5 0 0 1-.001 3.001z"></path></svg>
+                        OFERTAS
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+
+<!-- 5. Menú Lateral Móvil (Drawer) -->
+<div id="mobile-menu-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-all duration-500"></div>
+<div id="mobile-menu" class="fixed top-0 left-0 w-4/5 max-w-sm h-full bg-white z-50 mobile-menu-inactive transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-2xl overflow-y-auto font-inter">
+    
+    <div class="p-4 border-b border-gray-800 bg-[#111827] text-white flex justify-between items-center">
+        <span class="font-bold text-lg">MENÚ</span>
+        <button id="close-mobile-btn" class="text-gray-400 hover:text-white text-2xl transition-colors w-11 h-11 flex items-center justify-center -mr-3 -my-3 rounded-full">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+
+    <!-- Links Móviles -->
+    <ul class="text-slate-700 text-[15px] font-medium py-1">
+        <li><a href="index.html" class="block py-3 px-6 hover:bg-gray-50 transition-colors">Inicio</a></li>
+        <li><a href="colecciones.html" class="block py-3 px-6 hover:bg-gray-50 transition-colors">Ver Catálogo</a></li>
         
-        if (bubble) {
-            // Siempre mostramos la cantidad, incluso si es 0, y aseguramos que no esté oculto
-            bubble.textContent = totalQty;
-            bubble.classList.remove('hidden');
-        }
-    }
+        <!-- Categorías Desplegable Móvil -->
+        <li class="border-t border-b border-gray-50">
+            <button id="mobile-cat-btn" class="w-full text-left py-3 px-6 hover:bg-gray-50 flex justify-between items-center transition-colors">
+                Categorías <i id="mobile-cat-icon" class="fa-solid fa-chevron-down text-[10px] text-slate-500 transition-transform duration-300"></i>
+            </button>
+            <ul id="mobile-categories-list" class="hidden bg-white border-t border-gray-100 py-2 px-4 flex flex-col gap-2">
+                <!-- 14 Skeleton Items -->
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-3/4"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-1/2"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-2/3"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-4/5"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-1/2"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-2/3"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-3/4"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-5/6"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-2/3"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-3/4"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-1/2"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-4/5"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-3/4"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-2/3"></div>
+                </li>
+            </ul>
+        </li>
 
-    renderCart();
+        <!-- Marcas Desplegable Móvil -->
+        <li class="border-b border-gray-50">
+            <button id="mobile-brand-btn" class="w-full text-left py-3 px-6 hover:bg-gray-50 flex justify-between items-center transition-colors">
+                Marcas <i id="mobile-brand-icon" class="fa-solid fa-chevron-down text-[10px] text-slate-500 transition-transform duration-300"></i>
+            </button>
+            <ul id="mobile-brands-list" class="hidden bg-white border-t border-gray-100 py-2 px-4 flex flex-col gap-2">
+                <!-- 14 Skeleton Items -->
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-2/3"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-1/2"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-3/4"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-2/5"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-4/5"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-2/3"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-1/2"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-3/4"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-2/3"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-1/2"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-3/4"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-4/5"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-2/3"></div>
+                </li>
+                <li class="skeleton-loader animate-pulse flex items-center gap-3 py-1.5 px-3 rounded-md">
+                    <div class="w-7 h-7 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-1/2"></div>
+                </li>
+            </ul>
+        </li>
 
-    // --- Lógica de Finalizar Compra por WhatsApp ---
-    const checkoutBtn = document.getElementById('checkout-btn');
-    if (checkoutBtn) {
-        checkoutBtn.addEventListener('click', () => {
-            const cart = JSON.parse(localStorage.getItem('arely_cart')) || [];
-            if(cart.length === 0) return;
+        <li><a href="colecciones.html?category=COMBOS" class="block py-3 px-6 bg-[#f0fce6] text-black font-bold uppercase tracking-wide hover:bg-[#e4facf] transition-colors flex items-center gap-2.5 mt-1">
+            <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m20.749 12 1.104-1.908a1 1 0 0 0-.365-1.366l-1.91-1.104v-2.2a1 1 0 0 0-1-1h-2.199l-1.103-1.909a1.008 1.008 0 0 0-.607-.466.993.993 0 0 0-.759.1L12 3.251l-1.91-1.105a1 1 0 0 0-1.366.366L7.62 4.422H5.421a1 1 0 0 0-1 1v2.199l-1.91 1.104a.998.998 0 0 0-.365 1.367L3.25 12l-1.104 1.908a1.004 1.004 0 0 0 .364 1.367l1.91 1.104v2.199a1 1 0 0 0 1 1h2.2l1.104 1.91a1.01 1.01 0 0 0 .866.5c.174 0 .347-.046.501-.135l1.908-1.104 1.91 1.104a1.001 1.001 0 0 0 1.366-.365l1.103-1.91h2.199a1 1 0 0 0 1-1v-2.199l1.91-1.104a1 1 0 0 0 .365-1.367L20.749 12zM9.499 6.99a1.5 1.5 0 1 1-.001 3.001 1.5 1.5 0 0 1 .001-3.001zm.3 9.6-1.6-1.199 6-8 1.6 1.199-6 8zm4.7.4a1.5 1.5 0 1 1 .001-3.001 1.5 1.5 0 0 1-.001 3.001z"></path></svg>
+            <span>COMBOS</span>
+            <i class="fa-solid fa-arrow-right-long ml-auto opacity-70"></i>
+        </a></li>
+        
+        <li><a href="colecciones.html?ofertas=true" class="block py-3 px-6 bg-red-50 text-red-600 font-bold uppercase tracking-wide hover:bg-red-100 transition-colors flex items-center gap-2.5 mt-1">
+            <svg class="w-5 h-5 shrink-0" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m20.749 12 1.104-1.908a1 1 0 0 0-.365-1.366l-1.91-1.104v-2.2a1 1 0 0 0-1-1h-2.199l-1.103-1.909a1.008 1.008 0 0 0-.607-.466.993.993 0 0 0-.759.1L12 3.251l-1.91-1.105a1 1 0 0 0-1.366.366L7.62 4.422H5.421a1 1 0 0 0-1 1v2.199l-1.91 1.104a.998.998 0 0 0-.365 1.367L3.25 12l-1.104 1.908a1.004 1.004 0 0 0 .364 1.367l1.91 1.104v2.199a1 1 0 0 0 1 1h2.2l1.104 1.91a1.01 1.01 0 0 0 .866.5c.174 0 .347-.046.501-.135l1.908-1.104 1.91 1.104a1.001 1.001 0 0 0 1.366-.365l1.103-1.91h2.199a1 1 0 0 0 1-1v-2.199l1.91-1.104a1 1 0 0 0 .365-1.367L20.749 12zM9.499 6.99a1.5 1.5 0 1 1-.001 3.001 1.5 1.5 0 0 1 .001-3.001zm.3 9.6-1.6-1.199 6-8 1.6 1.199-6 8zm4.7.4a1.5 1.5 0 1 1 .001-3.001 1.5 1.5 0 0 1-.001 3.001z"></path></svg>
+            <span>OFERTAS</span>
+            <i class="fa-solid fa-arrow-right-long ml-auto opacity-70"></i>
+        </a></li>
+    </ul>
 
-            let message = "¡Hola Arelyshop! 👋 Quiero finalizar mi pedido:\n\n";
-            let total = 0;
-
-            cart.forEach(item => {
-                const price = parseFloat(item.price || 0);
-                const itemTotal = price * item.qty;
-                total += itemTotal;
-                const url = `${window.location.origin}/producto.html?id=${item.id}`;
-
-                message += `➡️ ${item.qty}x ${item.title} (Ref: ${item.gtin || 'N/A'})\n`;
-                message += `Precio unitario: ${price.toFixed(2)} Bs.\n`;
-                message += `🔗 ${url}\n\n`;
-            });
-
-            message += `-----------------------------------\n`;
-            message += `Total del Pedido: *${total.toFixed(2)} Bs.*\n\n`;
-            message += `Espero las instrucciones para el pago y envío. ¡Gracias!`;
-
-            const phone = "59167500044";
-            const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+    <!-- Nuevo sector: Atención al cliente (Móvil) -->
+    <div class="px-6 py-8 border-t border-gray-100 bg-white mt-auto">
+        <h5 class="text-base font-bold text-gray-900 mb-2">
+            Atención al cliente
+        </h5>
+        <p class="text-[13px] text-gray-600 mb-5 leading-relaxed">
+            Disponible de lunes a viernes de 9:00 AM a 7:00 PM. Listos para resolver tus dudas.
+        </p>
+        
+        <div class="flex flex-col gap-3">
+            <a href="tel:59167500044" class="w-full border border-gray-300 rounded-md py-3 px-2 text-[13px] font-bold text-gray-800 hover:bg-gray-50 transition-colors flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
+                <i class="fa-solid fa-phone text-gray-800 shrink-0"></i> 591 67500044
+            </a>
             
-            window.open(whatsappUrl, '_blank');
-        });
-    }
-}
-// Ejecutar inmediatamente
-initApp();
+            <a href="mailto:arelyshop@outlook.com" class="w-full border border-gray-300 rounded-md py-3 px-2 text-[13px] font-bold text-gray-800 hover:bg-gray-50 transition-colors flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
+                <i class="fa-solid fa-envelope text-gray-800 shrink-0"></i> arelyshop@outlook.com
+            </a>
+            
+            <a href="https://maps.app.goo.gl/LpBw6cQts42Lh4nSA" target="_blank" rel="noopener noreferrer" class="w-full border border-gray-300 rounded-md py-3 px-2 text-[13px] font-bold text-gray-800 hover:bg-gray-50 transition-colors flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap tracking-tight">
+                <i class="fa-solid fa-location-dot text-gray-800 shrink-0"></i> 4to Anillo Av. Paraguá, Santa Cruz
+            </a>
+
+            <a href="https://wa.me/59167500044" class="w-full border border-gray-300 rounded-md py-3 px-2 text-[13px] text-gray-800 hover:bg-gray-50 transition-colors flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
+                <i class="fa-brands fa-whatsapp text-[#25D366] text-[17px] shrink-0"></i> <span class="font-bold">Preguntas al WhatsApp</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- 6. Carrito Lateral (Side Cart) -->
+<div id="side-drawer-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-all duration-500"></div>
+<div id="side-cart" class="fixed top-0 right-0 w-4/5 max-w-sm h-full bg-white z-50 cart-inactive transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-2xl flex flex-col font-inter">
+    
+    <div class="p-4 border-b border-gray-800 flex justify-between items-center bg-[#111827] text-white">
+        <h2 class="font-bold text-lg flex items-center gap-2">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 17C15.8954 17 15 17.8954 15 19C15 20.1046 15.8954 21 17 21C18.1046 21 19 20.1046 19 19C19 17.8954 18.1046 17 17 17ZM17 17H9.29395C8.83288 17 8.60193 17 8.41211 16.918C8.24466 16.8456 8.09938 16.7291 7.99354 16.5805C7.8749 16.414 7.82719 16.1913 7.73274 15.7505L5.27148 4.26465C5.17484 3.81363 5.12587 3.58838 5.00586 3.41992C4.90002 3.27135 4.75477 3.15441 4.58732 3.08205C4.39746 3 4.16779 3 3.70653 3H3M6 6H18.8732C19.595 6 19.9555 6 20.1978 6.15036C20.41 6.28206 20.5653 6.48862 20.633 6.729C20.7104 7.00343 20.611 7.34996 20.411 8.04346L19.0264 12.8435C18.9068 13.2581 18.8469 13.465 18.7256 13.6189C18.6185 13.7547 18.4772 13.861 18.317 13.9263C18.1361 14 17.9211 14 17.4921 14H7.73047M8 21C6.89543 21 6 20.1046 6 19C6 17.8954 6.89543 17 8 17C9.10457 17 10 17.8954 10 19C10 20.1046 9.10457 21 8 21Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Tu Carrito (<span id="cart-title-count">0</span>)
+        </h2>
+        <button id="close-cart-btn" class="text-gray-400 hover:text-white text-xl transition-colors w-11 h-11 flex items-center justify-center -mr-3 -my-3 rounded-full">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+    
+    <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 space-y-4">
+        <!-- Los productos se cargarán dinámicamente aquí -->
+    </div>
+
+    <div class="p-4 border-t border-gray-200 bg-gray-50">
+        <div class="flex justify-between text-base font-bold mb-4">
+            <span>Subtotal</span>
+            <span id="cart-subtotal-display">0.00 Bs.</span>
+        </div>
+        <p class="text-xs text-gray-500 text-center mb-4">Finaliza tu compra y espera las instrucciones.</p>
+        <button id="checkout-btn" class="w-full bg-[#25d366] text-white py-3 rounded-md font-bold hover:opacity-90 transition flex items-center justify-center gap-2 shadow-sm">
+            <i class="fa-brands fa-whatsapp text-xl"></i> Finalizar Compra
+        </button>
+    </div>
+</div>
