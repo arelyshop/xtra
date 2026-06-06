@@ -432,12 +432,9 @@ function initApp() {
         if (subtotalDisplay) subtotalDisplay.textContent = `${subtotal.toFixed(2)} Bs.`;
         
         if (bubble) {
-            if (totalQty > 0) {
-                bubble.textContent = totalQty;
-                bubble.classList.remove('hidden');
-            } else {
-                bubble.classList.add('hidden');
-            }
+            // Siempre mostramos la cantidad, incluso si es 0, y aseguramos que no esté oculto
+            bubble.textContent = totalQty;
+            bubble.classList.remove('hidden');
         }
     }
 
