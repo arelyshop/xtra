@@ -91,19 +91,22 @@ function initApp() {
 
             let data = null;
             const CACHE_KEY = 'arelyshop_menu_cache';
-            const CACHE_EXPIRATION = 24 * 60 * 60 * 1000; // 24 horas en milisegundos
 
-            // 1. Intentar cargar desde la caché local primero
-            const cachedString = localStorage.getItem(CACHE_KEY);
-            if (cachedString) {
-                const parsedCache = JSON.parse(cachedString);
-                // Verificar si la caché aún es válida (no ha expirado)
-                if (Date.now() - parsedCache.timestamp < CACHE_EXPIRATION) {
-                    data = parsedCache.data;
+            // 1. Detectar si el usuario recargó la página explícitamente (F5 o botón de recargar)
+            const isReload = (window.performance && window.performance.getEntriesByType("navigation").length > 0 && window.performance.getEntriesByType("navigation")[0].type === "reload") || (window.performance && window.performance.navigation && window.performance.navigation.type === 1);
+
+            // Si recargó la página, borramos la caché para forzar una consulta nueva
+            if (isReload) {
+                sessionStorage.removeItem(CACHE_KEY);
+            } else {
+                // Si solo navegó haciendo clic, intentamos usar la caché de la sesión actual
+                const cachedString = sessionStorage.getItem(CACHE_KEY);
+                if (cachedString) {
+                    data = JSON.parse(cachedString);
                 }
             }
 
-            // 2. Si no hay datos en la caché o ya expiraron, solicitar a la base de datos
+            // 2. Si no hay datos (porque refrescó o es su primer clic), solicita a la base de datos
             if (!data) {
                 // Solicitud a Neon pidiendo SOLO categorías y marcas únicas
                 const res = await fetch('/.netlify/functions/get_tienda?action=get_menu_data');
@@ -111,11 +114,8 @@ function initApp() {
                 
                 data = await res.json();
                 
-                // Guardar los nuevos datos en localStorage con la fecha actual
-                localStorage.setItem(CACHE_KEY, JSON.stringify({
-                    timestamp: Date.now(),
-                    data: data
-                }));
+                // Guardamos los datos en sessionStorage (no usamos fecha porque caduca al cerrar pestaña/refrescar)
+                sessionStorage.setItem(CACHE_KEY, JSON.stringify(data));
             }
 
             // Función moldeadora para los menús de Desktop (Grid 2 columnas)
