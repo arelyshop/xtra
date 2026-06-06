@@ -1,4 +1,4 @@
-// Esta función encapsula toda la lógica global. Se ejecuta una sola vez al cargar la web.
+// Esta función encapsula toda la lógica para inicializarla inmediatamente después de cargar los parciales HTML
 function initApp() {
     // --- Lógica para el año dinámico en el footer ---
     const yearSpan = document.getElementById('current-year');
@@ -37,6 +37,7 @@ function initApp() {
             mobileOverlay.classList.add('opacity-0', 'pointer-events-none');
             document.body.style.overflow = 'auto';
             
+            // Si no se cerró tocando el botón "Atrás", limpiamos el historial virtual
             if (!fromHistory && history.state && history.state.drawer === 'menu') {
                 history.back();
             }
@@ -48,6 +49,7 @@ function initApp() {
             mobileOverlay.classList.add('opacity-100', 'pointer-events-auto');
             document.body.style.overflow = 'hidden';
             
+            // Agregamos un estado al historial al abrir
             history.pushState({ drawer: 'menu' }, '', '');
         }
     }
@@ -56,7 +58,7 @@ function initApp() {
     if (closeBtn) closeBtn.addEventListener('click', toggleMenu);
     if (mobileOverlay) mobileOverlay.addEventListener('click', toggleMenu);
 
-    // --- Lógica de Acordeones para Submenús Móviles ---
+    // --- Lógica de Acordeones para Submenús Móviles (NUEVO) ---
     const mobileCatBtn = document.getElementById('mobile-cat-btn');
     const mobileCatList = document.getElementById('mobile-categories-list');
     const mobileCatIcon = document.getElementById('mobile-cat-icon');
@@ -79,7 +81,7 @@ function initApp() {
         });
     }
 
-    // --- Lógica de Petición de Menús Dinámicos (Con SessionStorage) ---
+    // --- Lógica de Petición de Menús Dinámicos (NUEVO) ---
     async function loadDynamicMenus() {
         try {
             const deskCats = document.getElementById('desktop-categories-list');
@@ -90,24 +92,33 @@ function initApp() {
             let data = null;
             const CACHE_KEY = 'arelyshop_menu_cache';
 
+            // 1. Detectar si el usuario recargó la página explícitamente (F5 o botón de recargar)
             const isReload = (window.performance && window.performance.getEntriesByType("navigation").length > 0 && window.performance.getEntriesByType("navigation")[0].type === "reload") || (window.performance && window.performance.navigation && window.performance.navigation.type === 1);
 
+            // Si recargó la página, borramos la caché para forzar una consulta nueva
             if (isReload) {
                 sessionStorage.removeItem(CACHE_KEY);
             } else {
+                // Si solo navegó haciendo clic, intentamos usar la caché de la sesión actual
                 const cachedString = sessionStorage.getItem(CACHE_KEY);
                 if (cachedString) {
                     data = JSON.parse(cachedString);
                 }
             }
 
+            // 2. Si no hay datos (porque refrescó o es su primer clic), solicita a la base de datos
             if (!data) {
+                // Solicitud a Neon pidiendo SOLO categorías y marcas únicas
                 const res = await fetch('/.netlify/functions/get_tienda?action=get_menu_data');
                 if (!res.ok) throw new Error('Error al cargar menús');
+                
                 data = await res.json();
+                
+                // Guardamos los datos en sessionStorage (no usamos fecha porque caduca al cerrar pestaña/refrescar)
                 sessionStorage.setItem(CACHE_KEY, JSON.stringify(data));
             }
 
+            // Función moldeadora para los menús de Desktop (Grid 2 columnas)
             const deskTemplate = (items, param) => items.map(item => `
                 <li>
                     <a href="colecciones.html?${param}=${encodeURIComponent(item)}" class="flex items-center gap-2.5 py-1 px-2 hover:bg-slate-50 rounded-md transition-colors group">
@@ -119,6 +130,7 @@ function initApp() {
                 </li>
             `).join('');
 
+            // Función moldeadora para los menús móviles (Lista con Iconos)
             const mobTemplate = (items, param) => items.map(item => `
                 <li>
                     <a href="colecciones.html?${param}=${encodeURIComponent(item)}" class="flex items-center gap-3 py-1.5 px-3 hover:bg-slate-50 rounded-md transition-colors">
@@ -130,19 +142,35 @@ function initApp() {
                 </li>
             `).join('');
 
+            // Inyectar Categorías
             if (data.categories && data.categories.length > 0) {
                 if (deskCats) deskCats.innerHTML = deskTemplate(data.categories, 'category');
                 if (mobCats) mobCats.innerHTML = mobTemplate(data.categories, 'category');
+            } else {
+                if (deskCats) deskCats.innerHTML = '<li class="text-gray-400 p-2">Sin categorías registradas</li>';
+                if (mobCats) mobCats.innerHTML = '<li><span class="block py-2 px-3 text-gray-400 text-sm">Vacío</span></li>';
             }
+
+            // Inyectar Marcas
             if (data.brands && data.brands.length > 0) {
                 if (deskBrands) deskBrands.innerHTML = deskTemplate(data.brands, 'brand');
                 if (mobBrands) mobBrands.innerHTML = mobTemplate(data.brands, 'brand');
+            } else {
+                if (deskBrands) deskBrands.innerHTML = '<li class="text-gray-400 p-2">Sin marcas registradas</li>';
+                if (mobBrands) mobBrands.innerHTML = '<li><span class="block py-2 px-3 text-gray-400 text-sm">Vacío</span></li>';
             }
+
         } catch (error) {
             console.error("No se pudo inyectar el menú dinámico:", error);
+            const errorMsg = '<li class="text-red-400 text-sm"><i class="fa-solid fa-triangle-exclamation"></i> Error de conexión</li>';
+            ['desktop-categories-list', 'desktop-brands-list'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.innerHTML = errorMsg;
+            });
         }
     }
     
+    // Disparar carga de menús
     loadDynamicMenus();
 
     // --- Lógica del Carrito Lateral ---
@@ -160,6 +188,7 @@ function initApp() {
             sideDrawerOverlay.classList.add('opacity-0', 'pointer-events-none');
             document.body.style.overflow = 'auto';
             
+            // Si no se cerró tocando el botón "Atrás", limpiamos el historial virtual
             if (!fromHistory && history.state && history.state.drawer === 'cart') {
                 history.back();
             }
@@ -171,6 +200,7 @@ function initApp() {
             sideDrawerOverlay.classList.add('opacity-100', 'pointer-events-auto');
             document.body.style.overflow = 'hidden';
             
+            // Agregamos un estado al historial al abrir
             history.pushState({ drawer: 'cart' }, '', '');
         }
     }
@@ -180,7 +210,19 @@ function initApp() {
     if (sideDrawerOverlay) sideDrawerOverlay.addEventListener('click', toggleCart);
 
 
-    // --- Lógica del Cajón de Búsqueda Fija (Actualizado con Navegación Fluida) ---
+    // --- Interceptar Botón Atrás del Móvil ---
+    window.addEventListener('popstate', (e) => {
+        // Verifica si el menú está abierto
+        if (mobileMenu && mobileMenu.classList.contains('mobile-menu-active') && !isMenuClosing) {
+            toggleMenu(null, true);
+        }
+        // Verifica si el carrito está abierto
+        else if (sideCart && sideCart.classList.contains('cart-active') && !isCartClosing) {
+            toggleCart(null, true);
+        }
+    });
+
+    // --- Lógica del Cajón de Búsqueda Fija (Autocomplete) ---
     function setupSearch(inputId, resultsId) {
         const input = document.getElementById(inputId);
         const results = document.getElementById(resultsId);
@@ -194,10 +236,7 @@ function initApp() {
                 e.preventDefault(); 
                 const val = input.value.trim();
                 if (val.length > 0) {
-                    // Ahora usa Navegación Fluida en lugar de recargar la página
-                    window.navigateTo(`colecciones.html?search=${encodeURIComponent(val)}`);
-                    results.classList.add('hidden');
-                    if (mobileMenu && mobileMenu.classList.contains('mobile-menu-active')) toggleMenu(e); // Cierra menú móvil si estaba abierto
+                    window.location.href = `colecciones.html?search=${encodeURIComponent(val)}`;
                 }
             });
         }
@@ -226,9 +265,8 @@ function initApp() {
                             products.forEach(product => {
                                 const price = parseFloat(product.price || 0).toFixed(2);
                                 const image = product.image_link || 'https://placehold.co/100x100?text=No+Image';
-                                // Click suave en sugerencias
                                 html += `
-                                    <li class="flex gap-4 items-center hover:bg-gray-50 p-2 rounded cursor-pointer transition border-b border-gray-50 pb-3" onclick="window.navigateTo('producto.html?id=${product.id}'); document.getElementById('${resultsId}').classList.add('hidden'); return false;">
+                                    <li class="flex gap-4 items-center hover:bg-gray-50 p-2 rounded cursor-pointer transition border-b border-gray-50 pb-3" onclick="window.location.href='producto.html?id=${product.id}'">
                                         <div class="w-12 h-12 bg-gray-100 flex items-center justify-center rounded overflow-hidden">
                                             <img src="${image}" alt="${product.title}" class="w-full h-full object-cover">
                                         </div>
@@ -253,7 +291,7 @@ function initApp() {
                             }
                             
                             html += `
-                                <a href="colecciones.html?search=${encodeURIComponent(val)}" class="mt-4 bg-gray-50 text-sm font-bold text-gray-800 hover:bg-gray-100 text-center block w-full py-2.5 rounded transition border border-gray-200" onclick="document.getElementById('${resultsId}').classList.add('hidden');">
+                                <a href="colecciones.html?search=${encodeURIComponent(val)}" class="mt-4 bg-gray-50 text-sm font-bold text-gray-800 hover:bg-gray-100 text-center block w-full py-2.5 rounded transition border border-gray-200">
                                     Ver todos los resultados <i class="fa-solid fa-arrow-right ml-1 text-[10px]"></i>
                                 </a>
                             </div>`;
@@ -287,6 +325,8 @@ function initApp() {
     // --- Lógica del Carrito Real (localStorage) ---
     window.addToCart = function(product, qty = 1) {
         let cart = JSON.parse(localStorage.getItem('arely_cart')) || [];
+
+        // Convertimos ambos a String para evitar errores si el ID de la BD es numérico y llega como cadena
         const existingIndex = cart.findIndex(item => String(item.id) === String(product.id));
 
         if (existingIndex > -1) {
@@ -307,12 +347,16 @@ function initApp() {
             overlay.classList.remove('opacity-0', 'pointer-events-none');
             overlay.classList.add('opacity-100', 'pointer-events-auto');
             document.body.style.overflow = 'hidden';
+            
+            // Agregamos estado al historial cuando se abre el carrito automáticamente
             history.pushState({ drawer: 'cart' }, '', '');
         }
     };
 
     window.updateCartQty = function(id, delta) {
         let cart = JSON.parse(localStorage.getItem('arely_cart')) || [];
+        
+        // Convertimos a String para la comparación (soluciona el problema de los botones de cantidad)
         const index = cart.findIndex(item => String(item.id) === String(id));
         
         if (index > -1) {
@@ -323,6 +367,7 @@ function initApp() {
         }
     };
 
+    // Nueva función para eliminar un producto completo del carrito
     window.removeFromCart = function(id) {
         let cart = JSON.parse(localStorage.getItem('arely_cart')) || [];
         cart = cart.filter(item => String(item.id) !== String(id));
@@ -387,6 +432,7 @@ function initApp() {
         if (subtotalDisplay) subtotalDisplay.textContent = `${subtotal.toFixed(2)} Bs.`;
         
         if (bubble) {
+            // Siempre mostramos la cantidad, incluso si es 0, y aseguramos que no esté oculto
             bubble.textContent = totalQty;
             bubble.classList.remove('hidden');
         }
@@ -394,6 +440,7 @@ function initApp() {
 
     renderCart();
 
+    // --- Lógica de Finalizar Compra por WhatsApp ---
     const checkoutBtn = document.getElementById('checkout-btn');
     if (checkoutBtn) {
         checkoutBtn.addEventListener('click', () => {
@@ -405,8 +452,10 @@ function initApp() {
 
             cart.forEach(item => {
                 const price = parseFloat(item.price || 0);
-                total += (price * item.qty);
+                const itemTotal = price * item.qty;
+                total += itemTotal;
                 const url = `${window.location.origin}/producto.html?id=${item.id}`;
+
                 message += `➡️ ${item.qty}x ${item.title} (Ref: ${item.gtin || 'N/A'})\n`;
                 message += `Precio unitario: ${price.toFixed(2)} Bs.\n`;
                 message += `🔗 ${url}\n\n`;
@@ -416,104 +465,12 @@ function initApp() {
             message += `Total del Pedido: *${total.toFixed(2)} Bs.*\n\n`;
             message += `Espero las instrucciones para el pago y envío. ¡Gracias!`;
 
-            window.open(`https://wa.me/59167500044?text=${encodeURIComponent(message)}`, '_blank');
+            const phone = "59167500044";
+            const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message)}`;
+            
+            window.open(whatsappUrl, '_blank');
         });
     }
-
-    // =====================================================================
-    // NAVEGACIÓN FLUIDA (SPA BEHAVIOR) - Evita que el header parpadee
-    // =====================================================================
-
-    window.navigateTo = async function(url, push = true) {
-        try {
-            const currentMain = document.querySelector('main');
-            if (!currentMain) {
-                window.location.href = url; // Fallback si la página no tiene etiqueta <main>
-                return;
-            }
-
-            // Efecto de atenuado mientras carga la nueva página
-            currentMain.style.opacity = '0.4';
-            currentMain.style.transition = 'opacity 0.2s ease';
-
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Error en la red');
-            
-            const html = await response.text();
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-
-            const newMain = doc.querySelector('main');
-            if (newMain) {
-                // Actualizar URL y Título sin recargar
-                if (push) history.pushState({}, doc.title, url);
-                document.title = doc.title;
-                
-                // Reemplazar solo el contenido central (El header se queda intacto)
-                currentMain.replaceWith(newMain);
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-
-                // CRÍTICO: Buscar y ejecutar los scripts específicos de la nueva página inyectada
-                const scripts = newMain.querySelectorAll('script');
-                scripts.forEach(oldScript => {
-                    const newScript = document.createElement('script');
-                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
-                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
-                    oldScript.parentNode.replaceChild(newScript, oldScript);
-                });
-            } else {
-                window.location.href = url; // Fallback
-            }
-        } catch(e) {
-            console.error("Error cargando vista:", e);
-            window.location.href = url; // Fallback en caso de error
-        }
-    };
-
-    // Interceptar todos los clics en enlaces (<a>) de la página
-    document.body.addEventListener('click', async (e) => {
-        const link = e.target.closest('a');
-        if (!link || !link.href) return;
-        
-        // Excluir enlaces externos, abrir en nueva pestaña, correos o teléfonos
-        if (link.target === '_blank' || link.origin !== window.location.origin) return;
-        const href = link.getAttribute('href');
-        if (href.startsWith('whatsapp:') || href.startsWith('mailto:') || href.startsWith('tel:') || href.startsWith('#')) return;
-
-        e.preventDefault(); // Detener la recarga nativa de la página
-        
-        // Si el usuario hizo clic en un enlace que está dentro del menú móvil o el carrito, cerrarlos
-        if (link.closest('#mobile-menu') && mobileMenu && mobileMenu.classList.contains('mobile-menu-active')) {
-            toggleMenu(e);
-        }
-        if (link.closest('#side-cart') && sideCart && sideCart.classList.contains('cart-active')) {
-            toggleCart(e);
-        }
-
-        const url = link.href;
-        // Navegar solo si la URL es diferente
-        if (url !== window.location.href) {
-            await window.navigateTo(url);
-        }
-    });
-
-    // Interceptar el botón "Atrás" del móvil/navegador
-    window.addEventListener('popstate', async (e) => {
-        // 1. Cerrar menú si está abierto
-        if (mobileMenu && mobileMenu.classList.contains('mobile-menu-active') && !isMenuClosing) {
-            toggleMenu(null, true);
-            return;
-        }
-        // 2. Cerrar carrito si está abierto
-        if (sideCart && sideCart.classList.contains('cart-active') && !isCartClosing) {
-            toggleCart(null, true);
-            return;
-        }
-
-        // 3. Si no hay nada abierto, ir a la página anterior de forma fluida
-        await window.navigateTo(window.location.href, false);
-    });
 }
-
 // Ejecutar inmediatamente
 initApp();
