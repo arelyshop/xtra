@@ -146,13 +146,13 @@ function initApp() {
                 </li>
             `).join('');
 
-            // Función moldeadora para inyectar opciones en los custom dropdowns del buscador
+            // Función moldeadora para inyectar opciones en los custom dropdowns (AHORA COMO ENLACES DIRECTOS)
             const customOptionsTemplate = (items) => {
-                let html = `<button type="button" class="w-full text-left px-4 py-2.5 text-[13px] font-bold text-gray-800 hover:bg-gray-50 transition-colors border-b border-gray-100 mb-1 custom-cat-option" data-val="">Todas las categorías</button>`;
+                let html = `<a href="colecciones.html" class="block w-full text-left px-4 py-2.5 text-[13px] font-bold text-gray-800 hover:bg-gray-50 transition-colors border-b border-gray-100 mb-1">Todas las categorías</a>`;
                 html += items.map(item => `
-                    <button type="button" class="w-full text-left px-4 py-2 text-[13px] text-gray-600 hover:bg-gray-50 hover:text-black transition-colors custom-cat-option flex items-center gap-2" data-val="${item}">
+                    <a href="colecciones.html?category=${encodeURIComponent(item)}" class="flex w-full text-left px-4 py-2 text-[13px] text-gray-600 hover:bg-gray-50 hover:text-black transition-colors items-center gap-2">
                         <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div> <span class="truncate">${item}</span>
-                    </button>
+                    </a>
                 `).join('');
                 return html;
             };
@@ -241,15 +241,13 @@ function initApp() {
     });
 
     // --- Lógica de Desplegables de Categorías Custom (Buscador) ---
-    function setupCustomCategoryDropdown(wrapperId, toggleId, textId, iconId, dropdownId, inputId) {
+    function setupCustomCategoryDropdown(wrapperId, toggleId, iconId, dropdownId) {
         const wrapper = document.getElementById(wrapperId);
         const toggle = document.getElementById(toggleId);
-        const text = document.getElementById(textId);
         const icon = document.getElementById(iconId);
         const dropdown = document.getElementById(dropdownId);
-        const input = document.getElementById(inputId); // Este es ahora un input oculto (hidden)
 
-        if (!wrapper || !toggle || !dropdown || !input) return;
+        if (!wrapper || !toggle || !dropdown) return;
 
         // Abrir/Cerrar al clickear el botón principal
         toggle.addEventListener('click', (e) => {
@@ -259,38 +257,21 @@ function initApp() {
             icon?.classList.toggle('rotate-180');
         });
 
-        // Seleccionar opción (usamos delegación de eventos en el dropdown padre)
-        dropdown.addEventListener('click', (e) => {
-            const btn = e.target.closest('.custom-cat-option');
-            if (btn) {
-                const val = btn.getAttribute('data-val');
-                const label = val === "" ? "Categorías" : val;
-                
-                // Actualizar el valor oculto y el texto visible
-                input.value = val;
-                text.textContent = label;
-                
-                // Cerrar el dropdown
-                dropdown.classList.add('hidden');
-                icon?.classList.remove('rotate-180');
-            }
-        });
-
-        // Cerrar al hacer clic en cualquier otra parte de la pantalla
+        // Cerrar al hacer clic en cualquier otra parte de la pantalla (o al clickear un enlace dentro)
         document.addEventListener('click', (e) => {
-            if (!wrapper.contains(e.target)) {
+            if (!wrapper.contains(e.target) || e.target.closest('a')) {
                 dropdown.classList.add('hidden');
                 icon?.classList.remove('rotate-180');
             }
         });
     }
 
-    // Inicializar lógica de apertura/cierre de los select custom
-    setupCustomCategoryDropdown('desktop-cat-wrapper', 'desktop-cat-toggle', 'desktop-cat-text', 'desktop-cat-icon', 'desktop-cat-dropdown', 'desktop-search-category');
-    setupCustomCategoryDropdown('mobile-cat-wrapper', 'mobile-cat-toggle', 'mobile-cat-text', 'mobile-cat-icon', 'mobile-cat-dropdown', 'mobile-search-category');
+    // Inicializar lógica de apertura/cierre de los select custom (ya no pasamos inputs ocultos)
+    setupCustomCategoryDropdown('desktop-cat-wrapper', 'desktop-cat-toggle', 'desktop-cat-icon', 'desktop-cat-dropdown');
+    setupCustomCategoryDropdown('mobile-cat-wrapper', 'mobile-cat-toggle', 'mobile-cat-icon', 'mobile-cat-dropdown');
 
     // --- Lógica del Cajón de Búsqueda Fija (Autocomplete) ---
-    function setupSearch(inputId, resultsId, categoryId) {
+    function setupSearch(inputId, resultsId) {
         const input = document.getElementById(inputId);
         const results = document.getElementById(resultsId);
         let timeout = null;
@@ -303,17 +284,9 @@ function initApp() {
                 e.preventDefault(); 
                 const val = input.value.trim();
                 
-                // Obtener el valor seleccionado de la categoría
-                const catInput = document.getElementById(categoryId);
-                const catVal = catInput ? catInput.value : '';
-
-                // Si hay texto escrito o una categoría seleccionada, procesamos la búsqueda
-                if (val.length > 0 || catVal.length > 0) {
-                    const params = new URLSearchParams();
-                    if (val.length > 0) params.append('search', val);
-                    if (catVal.length > 0) params.append('category', catVal);
-                    
-                    window.location.href = `colecciones.html?${params.toString()}`;
+                // Procesamos solo la búsqueda por texto
+                if (val.length > 0) {
+                    window.location.href = `colecciones.html?search=${encodeURIComponent(val)}`;
                 }
             });
         }
@@ -396,9 +369,9 @@ function initApp() {
         });
     }
     
-    // Inicializar búsqueda pasando el ID del input oculto correspondiente
-    setupSearch('desktop-search', 'desktop-search-results', 'desktop-search-category');
-    setupSearch('mobile-search', 'mobile-search-results', 'mobile-search-category');
+    // Inicializar búsqueda
+    setupSearch('desktop-search', 'desktop-search-results');
+    setupSearch('mobile-search', 'mobile-search-results');
 
     // --- Lógica del Carrito Real (localStorage) ---
     window.addToCart = function(product, qty = 1) {
