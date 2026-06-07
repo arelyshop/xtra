@@ -38,13 +38,18 @@
             <!-- Barra de Búsqueda Central (Desktop) -->
             <div class="hidden lg:flex lg:w-1/3 justify-center relative">
                 <form class="w-full max-w-xl flex items-center relative z-20 bg-white border border-gray-300 rounded-md p-1 focus-within:border-[#87e64b] transition-colors shadow-sm">
-                    <!-- Selector de Categorías Dinámico (Desktop) -->
-                    <div class="relative flex items-center bg-[#f1f3f4] rounded shrink-0 h-[36px] hover:bg-gray-200 transition-colors">
-                        <select id="desktop-search-category" class="appearance-none bg-transparent py-0 pl-3 pr-8 text-[13px] font-medium text-gray-700 focus:outline-none cursor-pointer w-full h-full z-10" title="Seleccionar categoría">
-                            <option value="">Categorías</option>
-                            <!-- Opciones cargadas dinámicamente desde BD -->
-                        </select>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-gray-500 absolute right-2.5 pointer-events-none z-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                    <!-- Selector de Categorías Dinámico (Desktop) - Custom -->
+                    <div class="relative shrink-0" id="desktop-cat-wrapper">
+                        <button type="button" id="desktop-cat-toggle" class="relative flex items-center bg-[#f1f3f4] rounded h-[36px] hover:bg-gray-200 transition-colors pl-3 pr-8 text-[13px] font-medium text-gray-700 focus:outline-none w-[120px] cursor-pointer z-10 text-left border border-transparent">
+                            <span id="desktop-cat-text" class="truncate w-full block">Categorías</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" id="desktop-cat-icon" class="w-3.5 h-3.5 text-gray-500 absolute right-2.5 pointer-events-none transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                        </button>
+                        <input type="hidden" id="desktop-search-category" value="">
+                        
+                        <!-- Desplegable Custom -->
+                        <div id="desktop-cat-dropdown" class="absolute top-[100%] left-0 mt-2 bg-white shadow-xl border border-gray-100 rounded-md hidden z-50 max-h-[50vh] overflow-y-auto min-w-[220px] py-2">
+                            <!-- Opciones inyectadas desde JS -->
+                        </div>
                     </div>
 
                     <input type="text" id="desktop-search" placeholder="Search" autocomplete="off" class="w-full flex-1 bg-transparent py-2 px-3 focus:outline-none text-[14px] text-gray-800">
@@ -100,13 +105,18 @@
         <!-- Búsqueda Móvil (Siempre Desplegada) -->
         <div class="mt-2 lg:hidden w-full relative z-40">
             <form class="w-full flex items-center relative z-20 bg-white border border-gray-300 rounded-md p-1 focus-within:border-[#87e64b] transition-colors shadow-sm">
-                <!-- Selector de Categorías Dinámico (Móvil) -->
-                <div class="relative flex items-center bg-[#f1f3f4] rounded shrink-0 h-[36px] max-w-[100px] hover:bg-gray-200 transition-colors">
-                    <select id="mobile-search-category" class="appearance-none bg-transparent py-0 pl-2 pr-6 text-[13px] font-medium text-gray-700 focus:outline-none cursor-pointer w-full h-full z-10 truncate" title="Seleccionar categoría">
-                        <option value="">Categorías</option>
-                        <!-- Opciones cargadas dinámicamente desde BD -->
-                    </select>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-gray-500 absolute right-2 pointer-events-none z-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                <!-- Selector de Categorías Dinámico (Móvil) - Custom -->
+                <div class="relative shrink-0 max-w-[100px]" id="mobile-cat-wrapper">
+                    <button type="button" id="mobile-cat-toggle" class="relative flex items-center bg-[#f1f3f4] rounded h-[36px] hover:bg-gray-200 transition-colors pl-2 pr-6 text-[13px] font-medium text-gray-700 focus:outline-none w-full cursor-pointer z-10 text-left border border-transparent">
+                        <span id="mobile-cat-text" class="truncate w-full block">Categorías</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" id="mobile-cat-icon" class="w-3.5 h-3.5 text-gray-500 absolute right-2 pointer-events-none transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                    </button>
+                    <input type="hidden" id="mobile-search-category" value="">
+                    
+                    <!-- Desplegable Custom -->
+                    <div id="mobile-cat-dropdown" class="absolute top-[100%] left-0 mt-2 bg-white shadow-2xl border border-gray-100 rounded-md hidden z-50 max-h-[50vh] overflow-y-auto min-w-[200px] py-2">
+                        <!-- Opciones inyectadas desde JS -->
+                    </div>
                 </div>
 
                 <input type="text" id="mobile-search" placeholder="Search" autocomplete="off" class="w-full flex-1 bg-transparent py-2 px-3 focus:outline-none text-[14px] text-gray-800">
