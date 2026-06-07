@@ -89,6 +89,10 @@ function initApp() {
             const mobCats = document.getElementById('mobile-categories-list');
             const mobBrands = document.getElementById('mobile-brands-list');
 
+            // Nuevas referencias para los select de categorías en las barras de búsqueda
+            const deskSearchCat = document.getElementById('desktop-search-category');
+            const mobSearchCat = document.getElementById('mobile-search-category');
+
             let data = null;
             const CACHE_KEY = 'arelyshop_menu_cache';
 
@@ -142,25 +146,17 @@ function initApp() {
                 </li>
             `).join('');
 
+            // Función moldeadora para inyectar opciones en los <select> del buscador
+            const selectOptionsTemplate = (items) => items.map(item => `<option value="${item}">${item}</option>`).join('');
+
             // Inyectar Categorías
             if (data.categories && data.categories.length > 0) {
                 if (deskCats) deskCats.innerHTML = deskTemplate(data.categories, 'category');
                 if (mobCats) mobCats.innerHTML = mobTemplate(data.categories, 'category');
-
-                // Llenar los campos de Selección (Selects Customizados) de los buscadores
-                const deskSearchCatOptions = document.getElementById('desktop-custom-select-options');
-                const mobSearchCatOptions = document.getElementById('mobile-custom-select-options');
                 
-                // Mismo estilo y tipografía que el cajón de búsqueda
-                const customOptionsHTML = `
-                    <h4 class="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2 px-4">Filtrar por</h4>
-                    <div class="px-4 py-2 hover:bg-gray-50 cursor-pointer text-[13px] text-gray-700 transition border-b border-gray-50 font-bold" data-value="">Todas las Categorías</div>
-                    ${data.categories.map(cat => `<div class="px-4 py-2.5 hover:bg-gray-50 cursor-pointer text-[13px] text-gray-700 transition border-b border-gray-50 last:border-0" data-value="${cat}">${cat}</div>`).join('')}
-                `;
-
-                if (deskSearchCatOptions) deskSearchCatOptions.innerHTML = customOptionsHTML;
-                if (mobSearchCatOptions) mobSearchCatOptions.innerHTML = customOptionsHTML;
-
+                // Inyectar categorías en los desplegables de búsqueda (Desktop y Móvil)
+                if (deskSearchCat) deskSearchCat.innerHTML = '<option value="">Categorías</option>' + selectOptionsTemplate(data.categories);
+                if (mobSearchCat) mobSearchCat.innerHTML = '<option value="">Categorías</option>' + selectOptionsTemplate(data.categories);
             } else {
                 if (deskCats) deskCats.innerHTML = '<li class="text-gray-400 p-2">Sin categorías registradas</li>';
                 if (mobCats) mobCats.innerHTML = '<li><span class="block py-2 px-3 text-gray-400 text-sm">Vacío</span></li>';
@@ -238,7 +234,7 @@ function initApp() {
     });
 
     // --- Lógica del Cajón de Búsqueda Fija (Autocomplete) ---
-    function setupSearch(inputId, resultsId) {
+    function setupSearch(inputId, resultsId, categoryId) {
         const input = document.getElementById(inputId);
         const results = document.getElementById(resultsId);
         let timeout = null;
@@ -251,20 +247,17 @@ function initApp() {
                 e.preventDefault(); 
                 const val = input.value.trim();
                 
-                // Extraer el valor del select oculto correspondiente (si se seleccionó una categoría)
-                const selectId = inputId === 'desktop-search' ? 'desktop-search-category' : 'mobile-search-category';
-                const catInput = document.getElementById(selectId);
-                const catVal = catInput ? catInput.value : '';
+                // Obtener el valor seleccionado de la categoría
+                const catSelect = document.getElementById(categoryId);
+                const catVal = catSelect ? catSelect.value : '';
 
+                // Si hay texto escrito o una categoría seleccionada, procesamos la búsqueda
                 if (val.length > 0 || catVal.length > 0) {
-                    let url = 'colecciones.html?';
-                    if (catVal) url += `category=${encodeURIComponent(catVal)}&`;
-                    if (val) url += `search=${encodeURIComponent(val)}`;
+                    const params = new URLSearchParams();
+                    if (val.length > 0) params.append('search', val);
+                    if (catVal.length > 0) params.append('category', catVal);
                     
-                    // Limpiar el ampersand del final si queda suelto
-                    if(url.endsWith('&')) url = url.slice(0, -1);
-                    
-                    window.location.href = url;
+                    window.location.href = `colecciones.html?${params.toString()}`;
                 }
             });
         }
@@ -347,52 +340,9 @@ function initApp() {
         });
     }
     
-    setupSearch('desktop-search', 'desktop-search-results');
-    setupSearch('mobile-search', 'mobile-search-results');
-
-    // --- Lógica de Custom Select para Categorías en Buscador ---
-    function setupCustomSelect(containerId, textId, inputId, optionsId) {
-        const container = document.getElementById(containerId);
-        const text = document.getElementById(textId);
-        const input = document.getElementById(inputId);
-        const options = document.getElementById(optionsId);
-
-        if(!container || !options || !input || !text) return;
-
-        container.addEventListener('click', (e) => {
-            e.stopPropagation(); // Evitar que el clic se propague y lo cierre instantáneamente
-            
-            // Cerrar otros dropdowns custom si los hubiera abiertos
-            const allOptions = document.querySelectorAll('[id$="-custom-select-options"]');
-            allOptions.forEach(opt => {
-                if (opt !== options) opt.classList.add('hidden');
-            });
-            
-            options.classList.toggle('hidden');
-        });
-
-        // Event delegation para los clics en las opciones dinámicas
-        options.addEventListener('click', (e) => {
-            const item = e.target.closest('div[data-value]');
-            if (item) {
-                const val = item.getAttribute('data-value');
-                const name = item.textContent;
-                
-                text.textContent = val === "" ? "Categorías" : name;
-                input.value = val; // Guardamos el valor en el input oculto
-            }
-        });
-
-        // Cerrar el desplegable al hacer clic fuera del contenedor
-        document.addEventListener('click', (e) => {
-            if (!container.contains(e.target)) {
-                options.classList.add('hidden');
-            }
-        });
-    }
-
-    setupCustomSelect('desktop-custom-select', 'desktop-custom-select-text', 'desktop-search-category', 'desktop-custom-select-options');
-    setupCustomSelect('mobile-custom-select', 'mobile-custom-select-text', 'mobile-search-category', 'mobile-custom-select-options');
+    // Inicializar búsqueda pasando el ID del select correspondiente
+    setupSearch('desktop-search', 'desktop-search-results', 'desktop-search-category');
+    setupSearch('mobile-search', 'mobile-search-results', 'mobile-search-category');
 
     // --- Lógica del Carrito Real (localStorage) ---
     window.addToCart = function(product, qty = 1) {
