@@ -90,7 +90,6 @@ function initApp() {
             const mobBrands = document.getElementById('mobile-brands-list');
 
             // Nuevas referencias para los contenedores de los dropdown custom
-            const deskCatDropdown = document.getElementById('desktop-cat-dropdown');
             const mobCatDropdown = document.getElementById('mobile-cat-dropdown');
 
             let data = null;
@@ -165,8 +164,7 @@ function initApp() {
                 if (deskCats) deskCats.innerHTML = deskTemplate(data.categories, 'category');
                 if (mobCats) mobCats.innerHTML = mobTemplate(data.categories, 'category');
                 
-                // Inyectar categorías en los desplegables de búsqueda custom (Desktop y Móvil)
-                if (deskCatDropdown) deskCatDropdown.innerHTML = customOptionsTemplate(data.categories);
+                // Inyectar categorías en los desplegables de búsqueda custom (Solo Móvil)
                 if (mobCatDropdown) mobCatDropdown.innerHTML = customOptionsTemplate(data.categories);
             } else {
                 if (deskCats) deskCats.innerHTML = '<li class="text-gray-400 p-2">Sin categorías registradas</li>';
@@ -269,8 +267,7 @@ function initApp() {
         });
     }
 
-    // Inicializar lógica de apertura/cierre de los select custom (ya no pasamos inputs ocultos)
-    setupCustomCategoryDropdown('desktop-cat-wrapper', 'desktop-cat-toggle', 'desktop-cat-icon', 'desktop-cat-dropdown');
+    // Inicializar lógica de apertura/cierre de los select custom (Solo Móvil)
     setupCustomCategoryDropdown('mobile-cat-wrapper', 'mobile-cat-toggle', 'mobile-cat-icon', 'mobile-cat-dropdown');
 
     // --- Lógica del Cajón de Búsqueda Fija (Autocomplete) ---
