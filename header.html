@@ -68,7 +68,7 @@
                 <!-- Icono de Ubicación (Desktop) -->
                 <a href="https://maps.app.goo.gl/LpBw6cQts42Lh4nSA" target="_blank" rel="noopener noreferrer" class="hidden lg:flex items-center text-white hover:opacity-80 transition-opacity" title="Ver en Google Maps">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" class="w-8 h-8 shrink-0" fill="currentColor" aria-hidden="true" focusable="false">
-                        <path d="M0 10.016l4-10.016h24l4 10.016q0 1.664-1.184 2.816t-2.816 1.184-2.816-1.184-1.184-2.816q0 1.664-1.184 2.816t-2.816 1.184-2.816-1.184-1.184-2.816q0 1.664-1.184 2.816t-2.816 1.184-2.816-1.184-1.184-2.816q0 1.664-1.184 2.816t-2.816 1.184-2.816-1.184-1.184-2.816zM2.016 30.016h28v1.984h-28v-1.984zM4 28v-12q2.272 0 4-1.536v9.536h16v-9.536q1.728 1.536 4 1.536v12h-24z"></path>
+                        <path d="M0 10.016l4-10.016h24l4 10.016q0 1.664-1.184 2.816t-2.816 1.184-2.816-1.184-1.184-2.816q0 1.664-1.184 2.816t-2.816 1.184-2.816-1.184-1.184-2.816q0 1.664-1.184 2.816t-2.816 1.184-2.816-1.184-1.184-2.816zM2.016 30.016h28v1.984h-28v-1.984zM4 28v-12q2.272 0 4-1.536v9.536h16v-9.536q1.728 1.536 4 1.536v12h-24z"></path>
                     </svg>
                 </a>
 
@@ -540,52 +540,3 @@
         </button>
     </div>
 </div>
-
-<!-- Sincronizador Automático de Categorías para el Buscador -->
-<script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const desktopCatList = document.getElementById('desktop-categories-list');
-        if(!desktopCatList) return;
-
-        // Utilizamos MutationObserver para detectar el momento exacto en que tu base de datos llena el menú
-        const observer = new MutationObserver((mutations, obs) => {
-            // Buscamos los elementos reales que NO son skeletons
-            const realItems = desktopCatList.querySelectorAll('li:not(.skeleton-loader) a');
-            
-            if(realItems.length > 0) {
-                const desktopSelect = document.getElementById('desktop-search-category');
-                const mobileSelect = document.getElementById('mobile-search-category');
-                
-                let optionsHTML = '<option value="">Categorías</option>';
-                
-                realItems.forEach(item => {
-                    // Extraer el nombre visible de la categoría
-                    const catName = item.textContent.trim();
-                    
-                    // Extraer el valor real de la categoría (usualmente desde el href ?category=...)
-                    let catValue = catName;
-                    try {
-                        if (item.href) {
-                            const urlParams = new URLSearchParams(item.search);
-                            if (urlParams.has('category')) {
-                                catValue = urlParams.get('category');
-                            }
-                        }
-                    } catch(e) {}
-                    
-                    optionsHTML += `<option value="${catValue}">${catName}</option>`;
-                });
-
-                // Insertar las opciones en los botones desplegables del buscador
-                if(desktopSelect) desktopSelect.innerHTML = optionsHTML;
-                if(mobileSelect) mobileSelect.innerHTML = optionsHTML;
-                
-                // Desconectar el observador una vez que ya cargó la información
-                obs.disconnect();
-            }
-        });
-
-        // Configurar el observador para mirar los cambios dentro de la lista de categorías
-        observer.observe(desktopCatList, { childList: true, subtree: true });
-    });
-</script>
