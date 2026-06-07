@@ -58,7 +58,7 @@ function initApp() {
     if (closeBtn) closeBtn.addEventListener('click', toggleMenu);
     if (mobileOverlay) mobileOverlay.addEventListener('click', toggleMenu);
 
-    // --- Lógica de Acordeones para Submenús Móviles ---
+    // --- Lógica de Acordeones para Submenús Móviles (NUEVO) ---
     const mobileCatBtn = document.getElementById('mobile-cat-btn');
     const mobileCatList = document.getElementById('mobile-categories-list');
     const mobileCatIcon = document.getElementById('mobile-cat-icon');
@@ -81,17 +81,13 @@ function initApp() {
         });
     }
 
-    // --- Lógica de Petición de Menús Dinámicos ---
+    // --- Lógica de Petición de Menús Dinámicos (NUEVO) ---
     async function loadDynamicMenus() {
         try {
             const deskCats = document.getElementById('desktop-categories-list');
             const deskBrands = document.getElementById('desktop-brands-list');
             const mobCats = document.getElementById('mobile-categories-list');
             const mobBrands = document.getElementById('mobile-brands-list');
-
-            // Referencias a los selectores del Buscador (Móvil y Escritorio)
-            const deskSearchCat = document.getElementById('desktop-search-category');
-            const mobSearchCat = document.getElementById('mobile-search-category');
 
             let data = null;
             const CACHE_KEY = 'arelyshop_menu_cache';
@@ -146,16 +142,10 @@ function initApp() {
                 </li>
             `).join('');
 
-            // Inyectar Categorías en los Menús y Selectores de Búsqueda
+            // Inyectar Categorías
             if (data.categories && data.categories.length > 0) {
                 if (deskCats) deskCats.innerHTML = deskTemplate(data.categories, 'category');
                 if (mobCats) mobCats.innerHTML = mobTemplate(data.categories, 'category');
-
-                // Llenar los campos de Selección (Selects) de los buscadores
-                const optionsHTML = '<option value="">Categorías</option>' + data.categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
-                if (deskSearchCat) deskSearchCat.innerHTML = optionsHTML;
-                if (mobSearchCat) mobSearchCat.innerHTML = optionsHTML;
-
             } else {
                 if (deskCats) deskCats.innerHTML = '<li class="text-gray-400 p-2">Sin categorías registradas</li>';
                 if (mobCats) mobCats.innerHTML = '<li><span class="block py-2 px-3 text-gray-400 text-sm">Vacío</span></li>';
@@ -245,21 +235,8 @@ function initApp() {
             form.addEventListener('submit', (e) => {
                 e.preventDefault(); 
                 const val = input.value.trim();
-                
-                // Extraer el valor del select correspondiente (si se seleccionó una categoría)
-                const selectId = inputId === 'desktop-search' ? 'desktop-search-category' : 'mobile-search-category';
-                const catSelect = document.getElementById(selectId);
-                const catVal = catSelect ? catSelect.value : '';
-
-                if (val.length > 0 || catVal.length > 0) {
-                    let url = 'colecciones.html?';
-                    if (catVal) url += `category=${encodeURIComponent(catVal)}&`;
-                    if (val) url += `search=${encodeURIComponent(val)}`;
-                    
-                    // Limpiar el ampersand del final si queda suelto
-                    if(url.endsWith('&')) url = url.slice(0, -1);
-                    
-                    window.location.href = url;
+                if (val.length > 0) {
+                    window.location.href = `colecciones.html?search=${encodeURIComponent(val)}`;
                 }
             });
         }
