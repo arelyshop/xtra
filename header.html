@@ -540,3 +540,52 @@
         </button>
     </div>
 </div>
+
+<!-- Sincronizador Automático de Categorías para el Buscador -->
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const desktopCatList = document.getElementById('desktop-categories-list');
+        if(!desktopCatList) return;
+
+        // Utilizamos MutationObserver para detectar el momento exacto en que tu base de datos llena el menú
+        const observer = new MutationObserver((mutations, obs) => {
+            // Buscamos los elementos reales que NO son skeletons
+            const realItems = desktopCatList.querySelectorAll('li:not(.skeleton-loader) a');
+            
+            if(realItems.length > 0) {
+                const desktopSelect = document.getElementById('desktop-search-category');
+                const mobileSelect = document.getElementById('mobile-search-category');
+                
+                let optionsHTML = '<option value="">Categorías</option>';
+                
+                realItems.forEach(item => {
+                    // Extraer el nombre visible de la categoría
+                    const catName = item.textContent.trim();
+                    
+                    // Extraer el valor real de la categoría (usualmente desde el href ?category=...)
+                    let catValue = catName;
+                    try {
+                        if (item.href) {
+                            const urlParams = new URLSearchParams(item.search);
+                            if (urlParams.has('category')) {
+                                catValue = urlParams.get('category');
+                            }
+                        }
+                    } catch(e) {}
+                    
+                    optionsHTML += `<option value="${catValue}">${catName}</option>`;
+                });
+
+                // Insertar las opciones en los botones desplegables del buscador
+                if(desktopSelect) desktopSelect.innerHTML = optionsHTML;
+                if(mobileSelect) mobileSelect.innerHTML = optionsHTML;
+                
+                // Desconectar el observador una vez que ya cargó la información
+                obs.disconnect();
+            }
+        });
+
+        // Configurar el observador para mirar los cambios dentro de la lista de categorías
+        observer.observe(desktopCatList, { childList: true, subtree: true });
+    });
+</script>
