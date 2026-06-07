@@ -146,12 +146,15 @@ function initApp() {
                 </li>
             `).join('');
 
-            // Función moldeadora para inyectar opciones en los custom dropdowns (AHORA COMO ENLACES DIRECTOS)
+            // Función moldeadora para inyectar opciones en los custom dropdowns (AHORA COMO ENLACES DIRECTOS CON CUADRO DE LETRA)
             const customOptionsTemplate = (items) => {
                 let html = `<a href="colecciones.html" class="block w-full text-left px-4 py-2.5 text-[13px] font-bold text-gray-800 hover:bg-gray-50 transition-colors border-b border-gray-100 mb-1">Todas las categorías</a>`;
                 html += items.map(item => `
-                    <a href="colecciones.html?category=${encodeURIComponent(item)}" class="flex w-full text-left px-4 py-2 text-[13px] text-gray-600 hover:bg-gray-50 hover:text-black transition-colors items-center gap-2">
-                        <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div> <span class="truncate">${item}</span>
+                    <a href="colecciones.html?category=${encodeURIComponent(item)}" class="flex w-full text-left px-4 py-2 text-[13px] text-gray-600 hover:bg-gray-50 hover:text-black transition-colors items-center gap-3 group">
+                        <div class="w-7 h-7 rounded border border-slate-200 bg-slate-50 flex items-center justify-center shrink-0 group-hover:border-slate-300 group-hover:bg-white transition-colors">
+                            <span class="text-slate-600 font-bold text-[12px] uppercase">${item.charAt(0).toUpperCase()}</span>
+                        </div>
+                        <span class="truncate font-medium">${item}</span>
                     </a>
                 `).join('');
                 return html;
