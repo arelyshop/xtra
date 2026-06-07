@@ -89,9 +89,9 @@ function initApp() {
             const mobCats = document.getElementById('mobile-categories-list');
             const mobBrands = document.getElementById('mobile-brands-list');
 
-            // Nuevas referencias para los select de categorías en las barras de búsqueda
-            const deskSearchCat = document.getElementById('desktop-search-category');
-            const mobSearchCat = document.getElementById('mobile-search-category');
+            // Nuevas referencias para los contenedores de los dropdown custom
+            const deskCatDropdown = document.getElementById('desktop-cat-dropdown');
+            const mobCatDropdown = document.getElementById('mobile-cat-dropdown');
 
             let data = null;
             const CACHE_KEY = 'arelyshop_menu_cache';
@@ -146,17 +146,25 @@ function initApp() {
                 </li>
             `).join('');
 
-            // Función moldeadora para inyectar opciones en los <select> del buscador
-            const selectOptionsTemplate = (items) => items.map(item => `<option value="${item}">${item}</option>`).join('');
+            // Función moldeadora para inyectar opciones en los custom dropdowns del buscador
+            const customOptionsTemplate = (items) => {
+                let html = `<button type="button" class="w-full text-left px-4 py-2.5 text-[13px] font-bold text-gray-800 hover:bg-gray-50 transition-colors border-b border-gray-100 mb-1 custom-cat-option" data-val="">Todas las categorías</button>`;
+                html += items.map(item => `
+                    <button type="button" class="w-full text-left px-4 py-2 text-[13px] text-gray-600 hover:bg-gray-50 hover:text-black transition-colors custom-cat-option flex items-center gap-2" data-val="${item}">
+                        <div class="w-1.5 h-1.5 rounded-full bg-gray-300"></div> <span class="truncate">${item}</span>
+                    </button>
+                `).join('');
+                return html;
+            };
 
             // Inyectar Categorías
             if (data.categories && data.categories.length > 0) {
                 if (deskCats) deskCats.innerHTML = deskTemplate(data.categories, 'category');
                 if (mobCats) mobCats.innerHTML = mobTemplate(data.categories, 'category');
                 
-                // Inyectar categorías en los desplegables de búsqueda (Desktop y Móvil)
-                if (deskSearchCat) deskSearchCat.innerHTML = '<option value="">Categorías</option>' + selectOptionsTemplate(data.categories);
-                if (mobSearchCat) mobSearchCat.innerHTML = '<option value="">Categorías</option>' + selectOptionsTemplate(data.categories);
+                // Inyectar categorías en los desplegables de búsqueda custom (Desktop y Móvil)
+                if (deskCatDropdown) deskCatDropdown.innerHTML = customOptionsTemplate(data.categories);
+                if (mobCatDropdown) mobCatDropdown.innerHTML = customOptionsTemplate(data.categories);
             } else {
                 if (deskCats) deskCats.innerHTML = '<li class="text-gray-400 p-2">Sin categorías registradas</li>';
                 if (mobCats) mobCats.innerHTML = '<li><span class="block py-2 px-3 text-gray-400 text-sm">Vacío</span></li>';
@@ -220,7 +228,6 @@ function initApp() {
     if (closeCartBtn) closeCartBtn.addEventListener('click', toggleCart);
     if (sideDrawerOverlay) sideDrawerOverlay.addEventListener('click', toggleCart);
 
-
     // --- Interceptar Botón Atrás del Móvil ---
     window.addEventListener('popstate', (e) => {
         // Verifica si el menú está abierto
@@ -232,6 +239,55 @@ function initApp() {
             toggleCart(null, true);
         }
     });
+
+    // --- Lógica de Desplegables de Categorías Custom (Buscador) ---
+    function setupCustomCategoryDropdown(wrapperId, toggleId, textId, iconId, dropdownId, inputId) {
+        const wrapper = document.getElementById(wrapperId);
+        const toggle = document.getElementById(toggleId);
+        const text = document.getElementById(textId);
+        const icon = document.getElementById(iconId);
+        const dropdown = document.getElementById(dropdownId);
+        const input = document.getElementById(inputId); // Este es ahora un input oculto (hidden)
+
+        if (!wrapper || !toggle || !dropdown || !input) return;
+
+        // Abrir/Cerrar al clickear el botón principal
+        toggle.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            dropdown.classList.toggle('hidden');
+            icon?.classList.toggle('rotate-180');
+        });
+
+        // Seleccionar opción (usamos delegación de eventos en el dropdown padre)
+        dropdown.addEventListener('click', (e) => {
+            const btn = e.target.closest('.custom-cat-option');
+            if (btn) {
+                const val = btn.getAttribute('data-val');
+                const label = val === "" ? "Categorías" : val;
+                
+                // Actualizar el valor oculto y el texto visible
+                input.value = val;
+                text.textContent = label;
+                
+                // Cerrar el dropdown
+                dropdown.classList.add('hidden');
+                icon?.classList.remove('rotate-180');
+            }
+        });
+
+        // Cerrar al hacer clic en cualquier otra parte de la pantalla
+        document.addEventListener('click', (e) => {
+            if (!wrapper.contains(e.target)) {
+                dropdown.classList.add('hidden');
+                icon?.classList.remove('rotate-180');
+            }
+        });
+    }
+
+    // Inicializar lógica de apertura/cierre de los select custom
+    setupCustomCategoryDropdown('desktop-cat-wrapper', 'desktop-cat-toggle', 'desktop-cat-text', 'desktop-cat-icon', 'desktop-cat-dropdown', 'desktop-search-category');
+    setupCustomCategoryDropdown('mobile-cat-wrapper', 'mobile-cat-toggle', 'mobile-cat-text', 'mobile-cat-icon', 'mobile-cat-dropdown', 'mobile-search-category');
 
     // --- Lógica del Cajón de Búsqueda Fija (Autocomplete) ---
     function setupSearch(inputId, resultsId, categoryId) {
@@ -248,8 +304,8 @@ function initApp() {
                 const val = input.value.trim();
                 
                 // Obtener el valor seleccionado de la categoría
-                const catSelect = document.getElementById(categoryId);
-                const catVal = catSelect ? catSelect.value : '';
+                const catInput = document.getElementById(categoryId);
+                const catVal = catInput ? catInput.value : '';
 
                 // Si hay texto escrito o una categoría seleccionada, procesamos la búsqueda
                 if (val.length > 0 || catVal.length > 0) {
@@ -340,7 +396,7 @@ function initApp() {
         });
     }
     
-    // Inicializar búsqueda pasando el ID del select correspondiente
+    // Inicializar búsqueda pasando el ID del input oculto correspondiente
     setupSearch('desktop-search', 'desktop-search-results', 'desktop-search-category');
     setupSearch('mobile-search', 'mobile-search-results', 'mobile-search-category');
 
@@ -494,5 +550,6 @@ function initApp() {
         });
     }
 }
+
 // Ejecutar inmediatamente
 initApp();
