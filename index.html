@@ -41,13 +41,13 @@
 </head>
 <body class="bg-white text-gray-800 font-sans antialiased">
 
-    <!-- Aquí se inyectará automáticamente el header.html y los modales -->
-    <div id="header-container"></div>
+    <!-- EL TRUCO ESTÁ AQUÍ: class="contents" permite que el sticky del header.html funcione globalmente -->
+    <div id="header-container" class="contents"></div>
 
     <!-- Contenido Principal de la página -->
     <main class="h-[150vh] bg-gray-50 p-8">
         <div class="max-w-7xl mx-auto border-4 border-dashed border-gray-300 rounded-xl h-96 flex items-center justify-center text-gray-400">
-            <p>Contenido principal del sitio web...</p>
+            <p>Contenido principal del sitio web... (Haz scroll para probar el header)</p>
         </div>
     </main>
 
