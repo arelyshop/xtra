@@ -6,16 +6,18 @@
 </style>
 
 <!-- 1. Banner Promocional (Separado para Móvil y Escritorio) -->
-<div class="w-full flex flex-col leading-none bg-[#111827] relative z-40 -mb-[1px]">
-    <!-- Banner Móvil (Visible en pantallas pequeñas, oculto desde tamaño mediano) -->
-    <img src="images/banner-movil.webp" alt="Banner Promocional ArelyShop Móvil" class="w-full h-auto block md:hidden object-cover">
-    
-    <!-- Banner Escritorio (Oculto en móviles, visible desde tamaño mediano) -->
-    <img src="images/banner-escritorio.webp" alt="Banner Promocional ArelyShop Escritorio" class="w-full h-auto hidden md:block object-cover">
+<div class="w-full bg-[#111827] flex justify-center">
+    <div class="block w-full overflow-hidden leading-none">
+        <!-- Banner Móvil (Visible en pantallas pequeñas, oculto desde tamaño mediano) -->
+        <img src="images/banner-movil.webp" alt="Banner Promocional ArelyShop Móvil" class="block w-full h-auto md:hidden object-cover">
+        
+        <!-- Banner Escritorio (Oculto en móviles, visible desde tamaño mediano) -->
+        <img src="images/banner-escritorio.webp" alt="Banner Promocional ArelyShop Escritorio" class="block w-full h-auto hidden md:block object-cover">
+    </div>
 </div>
 
 <!-- 3. Header Principal (Sticky) -->
-<header class="bg-[#111827]/95 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50 transition-all duration-300 shadow-sm font-inter">
+<header class="bg-[#111827]/95 backdrop-blur-md sticky top-0 z-50 border-b border-gray-800 transition-all duration-300 shadow-sm font-inter">
     <div class="max-w-7xl mx-auto px-3 py-2.5 lg:px-4 lg:py-5">
         <div class="flex justify-between items-center gap-3 lg:gap-8">
             
