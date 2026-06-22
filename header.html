@@ -65,7 +65,8 @@
 
                 <!-- Horarios de Atención / Contacto (Desktop) -->
                 <a href="https://wa.me/59167500044" target="_blank" rel="noopener noreferrer" class="hidden lg:flex items-center gap-2 mr-2 text-white hover:opacity-80 transition-opacity">
-                    <i class="fa-solid fa-clock text-[28px] shrink-0 text-[#25d366]"></i>
+                    <!-- Actualizado el color del reloj a #32CD32 -->
+                    <i class="fa-solid fa-clock text-[28px] shrink-0 text-[#32CD32]"></i>
                     <div class="flex flex-col text-left leading-tight">
                         <span>Lunes a Viernes</span>
                         <span class="font-medium">9:00 AM a 7:00 PM</span>
@@ -150,6 +151,8 @@
     <!-- 4. Barra de Navegación Menú (Desktop) -->
     <nav class="hidden lg:block bg-[#111827] transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 flex justify-between items-center">
+            
+            <!-- Links principales (ahora con COMBOS y OFERTAS alineados a la izquierda) -->
             <ul class="flex space-x-6 items-center text-[14px] font-medium text-gray-300">
                 <li class="py-4 border-b-2 border-transparent hover:border-white hover:text-white cursor-pointer transition">
                     <a href="index.html">Inicio</a>
@@ -348,17 +351,14 @@
                         </div>
                     </div>
                 </li>
-            </ul>
 
-            <!-- Botones alineados a la derecha -->
-            <ul class="flex space-x-6 items-center text-[14px] font-medium text-gray-300">
+                <!-- Botones COMBOS y OFERTAS trasladados a la izquierda -->
                 <li class="py-4">
                     <a href="colecciones.html?category=COMBOS" class="bg-[#32CD32] text-white px-3 py-1.5 rounded-sm hover:opacity-80 transition font-bold uppercase tracking-wider text-[11px] shadow-sm inline-flex items-center gap-1.5">
                         <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m20.749 12 1.104-1.908a1 1 0 0 0-.365-1.366l-1.91-1.104v-2.2a1 1 0 0 0-1-1h-2.199l-1.103-1.909a1.008 1.008 0 0 0-.607-.466.993.993 0 0 0-.759.1L12 3.251l-1.91-1.105a1 1 0 0 0-1.366.366L7.62 4.422H5.421a1 1 0 0 0-1 1v2.199l-1.91 1.104a.998.998 0 0 0-.365 1.367L3.25 12l-1.104 1.908a1.004 1.004 0 0 0 .364 1.367l1.91 1.104v2.199a1 1 0 0 0 1 1h2.2l1.104 1.91a1.01 1.01 0 0 0 .866.5c.174 0 .347-.046.501-.135l1.908-1.104 1.91 1.104a1.001 1.001 0 0 0 1.366-.365l1.103-1.91h2.199a1 1 0 0 0 1-1v-2.199l1.91-1.104a1 1 0 0 0 .365-1.367L20.749 12zM9.499 6.99a1.5 1.5 0 1 1-.001 3.001 1.5 1.5 0 0 1 .001-3.001zm.3 9.6-1.6-1.199 6-8 1.6 1.199-6 8zm4.7.4a1.5 1.5 0 1 1 .001-3.001 1.5 1.5 0 0 1-.001 3.001z"></path></svg>
                         COMBOS
                     </a>
                 </li>
-                
                 <li class="py-4">
                     <a href="colecciones.html?ofertas=true" class="bg-red-600 text-white px-3 py-1.5 rounded-sm hover:bg-red-700 transition font-bold uppercase tracking-wider text-[11px] shadow-sm inline-flex items-center gap-1.5">
                         <svg class="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m20.749 12 1.104-1.908a1 1 0 0 0-.365-1.366l-1.91-1.104v-2.2a1 1 0 0 0-1-1h-2.199l-1.103-1.909a1.008 1.008 0 0 0-.607-.466.993.993 0 0 0-.759.1L12 3.251l-1.91-1.105a1 1 0 0 0-1.366.366L7.62 4.422H5.421a1 1 0 0 0-1 1v2.199l-1.91 1.104a.998.998 0 0 0-.365 1.367L3.25 12l-1.104 1.908a1.004 1.004 0 0 0 .364 1.367l1.91 1.104v2.199a1 1 0 0 0 1 1h2.2l1.104 1.91a1.01 1.01 0 0 0 .866.5c.174 0 .347-.046.501-.135l1.908-1.104 1.91 1.104a1.001 1.001 0 0 0 1.366-.365l1.103-1.91h2.199a1 1 0 0 0 1-1v-2.199l1.91-1.104a1 1 0 0 0 .365-1.367L20.749 12zM9.499 6.99a1.5 1.5 0 1 1-.001 3.001 1.5 1.5 0 0 1 .001-3.001zm.3 9.6-1.6-1.199 6-8 1.6 1.199-6 8zm4.7.4a1.5 1.5 0 1 1 .001-3.001 1.5 1.5 0 0 1-.001 3.001z"></path></svg>
@@ -366,6 +366,14 @@
                     </a>
                 </li>
             </ul>
+
+            <!-- Sector de Ayuda alineado a la derecha -->
+            <div class="flex items-center justify-end">
+                <a href="https://wa.me/59167500044" target="_blank" rel="noopener noreferrer" class="flex items-center gap-2 text-white hover:text-gray-300 transition-colors text-[13px] font-medium whitespace-nowrap">
+                    ¿Necesitas ayuda? Estamos aquí para ti
+                    <i class="fa-brands fa-bots text-[#32CD32] text-[18px]"></i>
+                </a>
+            </div>
         </div>
     </nav>
 </header>
