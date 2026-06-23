@@ -73,6 +73,9 @@
         /* Efecto spinner para carga de búsqueda */
         @keyframes spin-search { 100% { transform: rotate(360deg); } }
         .spin-anim { animation: spin-search 0.75s linear infinite; }
+        
+        /* Estilos específicos de Colección (Replicado exacto de colecciones.html) */
+        .product-card:hover .product-img { transform: scale(1.05); }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col font-sans antialiased">
@@ -350,9 +353,11 @@
                 const loadingAttr = index < 5 ? 'eager' : 'lazy';
                 const fetchPriority = index < 5 ? 'high' : 'auto';
                 
+                // Lógica de visualización (Precios ajustados para móvil y etiquetas con font-bold)
                 if (isOutOfStock) {
                     badgeHtml = `<span class="absolute bottom-2 left-2 bg-[#111827] text-white text-[10px] sm:text-xs font-bold px-2 py-1 sm:px-2.5 sm:py-1.5 uppercase rounded z-10 shadow-sm flex items-center gap-1"><i class="fa-solid fa-ban"></i> Agotado</span>`;
                     imageClasses += ' grayscale opacity-50';
+                    // Precio ajustado a 14px en móvil
                     priceHtml = `<span class="font-semibold text-[14px] sm:text-lg lg:text-xl text-gray-500 leading-none">Bs. ${salePrice.toFixed(2)}</span>`;
                 } else {
                     if (price > salePrice) {
@@ -362,6 +367,7 @@
                             <span class="text-gray-400 line-through text-[11px] sm:text-[14px] leading-none">Bs. ${price.toFixed(2)}</span>
                         `;
                     } else {
+                        // Precio ajustado a 14px en móvil
                         priceHtml = `<span class="font-semibold text-[14px] sm:text-lg lg:text-xl text-gray-900 leading-none">Bs. ${salePrice.toFixed(2)}</span>`;
                     }
                 }
@@ -369,6 +375,7 @@
                 // Clase dinámica: Ocultar los últimos 2 productos (índices 8 y 9) solo en pantallas md en adelante
                 const hiddenClass = index >= 8 ? ' md:hidden' : '';
                 
+                // Generación de tarjeta idéntica a colecciones.html (Hover, bordes, tipografía)
                 newHtml += `
                 <a href="producto.html?id=${item.id}" class="product-card group relative flex flex-col cursor-pointer bg-white rounded-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_25px_-5px_rgba(0,0,0,0.12)] border-2 border-gray-200 hover:border-gray-300 transition-all duration-300 overflow-hidden${hiddenClass}">
                     <div class="relative bg-gray-100 aspect-square overflow-hidden">
