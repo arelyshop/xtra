@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cargando Producto... - ARELYSHOP.COM</title>
-
     <!-- Importar fuente Inter de Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,7 +14,6 @@
     
     <!-- FontAwesome para los iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <script>
         tailwind.config = {
             theme: {
@@ -52,7 +50,7 @@
 </head>
 <body class="bg-white text-gray-800 font-sans antialiased">
     <!-- Inyección automática del Header -->
-    <div id="header-container"></div>
+    <div id="header-container" class="contents"></div>
     
     <!-- Contenido Principal: Página de Producto -->
     <main class="max-w-7xl mx-auto px-4 py-3 lg:py-4">
@@ -169,7 +167,7 @@
                         
                         <!-- Botón Compra Dinámica (Comprar Ahora -> WhatsApp) -->
                         <button id="buy-now-whatsapp" data-name="" data-sku="" data-price="" class="w-full bg-[#25d366] hover:bg-[#22bf5b] text-white h-12 rounded-lg font-bold transition-all shadow-lg mb-5 lg:mb-8 flex items-center justify-center gap-2">
-                            <i class="fa-brands fa-whatsapp text-xl"></i> ¡Pídelo por WhatsApp!
+                            <i class="fa-brands fa-whatsapp text-xl"></i> Pídelo por WhatsApp!
                         </button>
                     </div>
                     
@@ -182,7 +180,7 @@
                 <!-- Bloque de Confianza (Trustbadges) -->
                 <div class="flex items-center justify-center gap-6 py-4 border-t border-b border-gray-100 mb-8 text-gray-500 text-[13px]">
                     <div class="flex flex-col items-center gap-1"><i class="fa-solid fa-shield-halved text-xl"></i> Pago Seguro</div>
-                    <div class="flex flex-col items-center gap-1"><i class="fa-solid fa-truck-fast text-xl"></i> Envío rápido</div>
+                    <div class="flex flex-col items-center gap-1"><i class="fa-solid fa-truck-fast text-xl"></i> Envío Rápido</div>
                     <div class="flex flex-col items-center gap-1"><i class="fa-solid fa-rotate-left text-xl"></i> 30 Días Devolución</div>
                 </div>
                 
@@ -545,6 +543,7 @@
         document.addEventListener('DOMContentLoaded', initProductPage);
 
         // --- FUNCIONES DE INTERFAZ (Galería, Zoom y Botones) ---
+
         function changeMainImage(index) {
             currentImageIndex = index;
             
@@ -600,7 +599,6 @@
         function openLightbox(e) {
             // Evita que un simple toque al arrastrar abra la imagen gigante
             if (isMainDragging || galleryImages.length === 0) return;
-
             const lightbox = document.getElementById('lightbox');
             
             lightbox.classList.remove('hidden');
@@ -620,6 +618,7 @@
 
             const lightbox = document.getElementById('lightbox');
             lightbox.classList.add('opacity-0');
+
             setTimeout(() => {
                 lightbox.classList.add('hidden');
                 lightbox.classList.remove('flex');
@@ -709,6 +708,7 @@
                 
                 const track = document.getElementById('carousel-track');
                 if (track) track.style.transform = `translateX(${baseOffset + percentOffset}%)`;
+
             }, {passive: false});
 
             mainImageContainer.addEventListener('touchend', (e) => {
@@ -736,7 +736,6 @@
             });
         }
 
-
         // ==========================================
         // LÓGICA DE LIGHTBOX (ZOOM + SWIPE EN TIEMPO REAL)
         // ==========================================
@@ -751,13 +750,13 @@
         function toggleZoom(e) {
             e.stopPropagation(); 
             if (mouseDragMoved) return; // Evita quitar el zoom si se estaba arrastrando la imagen
+
             clearTimeout(zoomOriginTimeout);
             
             const img = document.getElementById('lb-img-' + currentImageIndex);
             const hint = document.getElementById('zoom-hint');
             
             if(!img) return;
-
             isZoomed = !isZoomed;
             
             if (isZoomed) {
@@ -784,6 +783,7 @@
                 
                 img.style.transformOrigin = `${x}% ${y}%`;
                 img.style.transform = `translate(0px, 0px) scale(${currentScale})`;
+
             } else {
                 resetZoom();
             }
@@ -846,6 +846,7 @@
                         isLbSwiping = true; 
                         lbSwipeStartX = e.touches[0].clientX;
                         lbDragOffset = 0;
+
                         const lbTrack = document.getElementById('lightbox-track');
                         if(lbTrack) lbTrack.style.transition = 'none';
                     }
@@ -876,6 +877,7 @@
                     translateX = e.touches[0].clientX - startX;
                     translateY = e.touches[0].clientY - startY;
                     img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
+
                 } else if (isLbSwiping && e.touches.length === 1) {
                     // ARRASTRE DEL CARRUSEL LIGHTBOX EN TIEMPO REAL
                     const currentX = e.touches[0].clientX;
@@ -902,6 +904,7 @@
                 // Finaliza el deslizamiento del carrusel
                 if (isLbSwiping && currentScale === 1) {
                     isLbSwiping = false;
+
                     const lbTrack = document.getElementById('lightbox-track');
                     if(lbTrack) lbTrack.style.transition = ''; 
                     
@@ -1007,7 +1010,7 @@
                 const total = price * qty;
                 
                 let message = "¡Hola Arelyshop! 👋 Quiero finalizar mi pedido:\n\n";
-                message += `➡️ ${qty}x ${name} (Ref: ${sku})\n`;
+                message += `🛒 ${qty}x ${name} (Ref: ${sku})\n`;
                 message += `Precio unitario: ${price.toFixed(2)} Bs.\n`;
                 message += `🔗 ${url}\n\n`;
                 message += `-----------------------------------\n`;
