@@ -449,7 +449,7 @@
                     // Inyección Carrusel Principal (Envuelto en un div con overflow-hidden para evitar cruces visuales en el zoom)
                     track.innerHTML += `
                         <div class="w-full h-full flex-shrink-0 overflow-hidden">
-                            <img src="${imgUrl}" fetchpriority="${fetchPriority}" loading="${loadingAttr}" decoding="async" alt="${product.title} - vista ${index + 1}" class="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105">
+                            <img src="${imgUrl}" fetchpriority="${fetchPriority}" loading="${loadingAttr}" decoding="async" alt="${product.title} - vista ${index + 1}" class="w-full h-full object-contain transition-transform duration-500">
                         </div>
                     `;
                     
@@ -470,9 +470,9 @@
                 galleryImages.forEach((imgUrl, index) => {
                     const btn = document.createElement('button');
                     btn.onclick = () => changeMainImage(index);
-                    btn.className = `thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded-md shadow-sm hover:shadow-md border-2 overflow-hidden aspect-square transition snap-start ${index === 0 ? 'thumb-active border-transparent opacity-100' : 'border-transparent opacity-60 hover:opacity-100'}`;
+                    btn.className = `group thumbnail-btn flex-shrink-0 w-[calc(25%-0.6rem)] lg:w-full relative bg-gray-100 rounded-md shadow-sm hover:shadow-md border-2 overflow-hidden aspect-square transition snap-start ${index === 0 ? 'thumb-active border-transparent opacity-100' : 'border-transparent opacity-60 hover:opacity-100'}`;
                     // Aplicamos lazy loading a las miniaturas y encaje completo con object-contain
-                    btn.innerHTML = `<img src="${imgUrl}" loading="lazy" decoding="async" class="w-full h-full object-contain" alt="Vista ${index + 1}">`;
+                    btn.innerHTML = `<img src="${imgUrl}" loading="lazy" decoding="async" class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110" alt="Vista ${index + 1}">`;
                     thumbContainer.appendChild(btn);
                 });
             }
