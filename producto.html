@@ -67,41 +67,43 @@
         
         <!-- Layout del Producto -->
         <!-- Mejora visual móvil: espaciado entre fotos y título reducido de gap-10 a gap-5 -->
-        <div class="flex flex-col lg:flex-row gap-5 lg:gap-16 lg:items-start">
+        <div class="flex flex-col lg:flex-row gap-5 lg:gap-16">
             
             <!-- 1. GALERÍA DE IMÁGENES -->
-            <div class="w-full lg:w-1/2 lg:sticky lg:top-[170px] lg:z-10">
-                <!-- Imagen Principal -->
-                <div id="main-image-container" class="relative bg-gray-100 rounded-lg shadow-md overflow-hidden aspect-square mb-4 group cursor-zoom-in" onclick="openLightbox(event)">
-                    <!-- Pista del carrusel (Contiene todas las imágenes alineadas horizontalmente) -->
-                    <div id="carousel-track" class="flex w-full h-full transition-transform duration-500 ease-out" style="transform: translateX(0%);">
-                        <!-- Las imágenes se insertan aquí dinámicamente vía JS -->
+            <div class="w-full lg:w-1/2">
+                <div class="lg:sticky lg:top-[160px] lg:z-10">
+                    <!-- Imagen Principal -->
+                    <div id="main-image-container" class="relative bg-gray-100 rounded-lg shadow-md overflow-hidden aspect-square mb-4 group cursor-zoom-in" onclick="openLightbox(event)">
+                        <!-- Pista del carrusel (Contiene todas las imágenes alineadas horizontalmente) -->
+                        <div id="carousel-track" class="flex w-full h-full transition-transform duration-500 ease-out" style="transform: translateX(0%);">
+                            <!-- Las imágenes se insertan aquí dinámicamente vía JS -->
+                        </div>
+                        
+                        <!-- Flecha Izquierda -->
+                        <button onclick="navigateMainImage(event, -1)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 shadow-md rounded-full w-9 h-9 flex items-center justify-center z-20 transition">
+                            <i class="fa-solid fa-chevron-left text-[13px]"></i>
+                        </button>
+                        <!-- Flecha Derecha -->
+                        <button onclick="navigateMainImage(event, 1)" class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 shadow-md rounded-full w-9 h-9 flex items-center justify-center z-20 transition">
+                            <i class="fa-solid fa-chevron-right text-[13px]"></i>
+                        </button>
+                        <!-- Icono flotante indicador de zoom -->
+                        <div class="absolute bottom-4 right-4 bg-white/90 text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                            <i class="fa-solid fa-expand"></i>
+                        </div>
                     </div>
                     
-                    <!-- Flecha Izquierda -->
-                    <button onclick="navigateMainImage(event, -1)" class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 shadow-md rounded-full w-9 h-9 flex items-center justify-center z-20 transition">
-                        <i class="fa-solid fa-chevron-left text-[13px]"></i>
-                    </button>
-                    <!-- Flecha Derecha -->
-                    <button onclick="navigateMainImage(event, 1)" class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 shadow-md rounded-full w-9 h-9 flex items-center justify-center z-20 transition">
-                        <i class="fa-solid fa-chevron-right text-[13px]"></i>
-                    </button>
-                    <!-- Icono flotante indicador de zoom -->
-                    <div class="absolute bottom-4 right-4 bg-white/90 text-black w-10 h-10 rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                        <i class="fa-solid fa-expand"></i>
-                    </div>
-                </div>
-                
-                <!-- Miniaturas (Thumbnails) inyectadas desde Neon -->
-                <div class="relative">
-                    <div id="thumbnails-container" class="flex lg:grid lg:grid-cols-4 gap-3 overflow-x-auto lg:overflow-visible hide-scrollbar scroll-smooth snap-x lg:snap-none">
-                        <!-- Las miniaturas se insertan aquí vía JS -->
+                    <!-- Miniaturas (Thumbnails) inyectadas desde Neon -->
+                    <div class="relative">
+                        <div id="thumbnails-container" class="flex lg:grid lg:grid-cols-4 gap-3 overflow-x-auto lg:overflow-visible hide-scrollbar scroll-smooth snap-x lg:snap-none">
+                            <!-- Las miniaturas se insertan aquí vía JS -->
+                        </div>
                     </div>
                 </div>
             </div>
             
             <!-- 2. INFORMACIÓN DEL PRODUCTO -->
-            <div class="w-full lg:w-1/2 flex flex-col">
+            <div class="w-full lg:w-1/2 flex flex-col lg:pb-24">
                 
                 <!-- Título -->
                 <h1 id="prod-title" class="text-lg lg:text-xl font-bold tracking-tight text-gray-900 mb-2 leading-tight">
@@ -200,7 +202,7 @@
         </div>
         
         <!-- SECCIÓN: PRODUCTOS COMPLEMENTARIOS (Estilo Colecciones + Carrusel móvil) -->
-        <section class="mt-8 lg:mt-24 pt-8 lg:pt-10 border-t border-gray-200">
+        <section class="mt-8 lg:mt-0 pt-8 lg:pt-10 border-t border-gray-200">
             <h2 class="text-[20px] sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8 flex items-center justify-center gap-1.5 sm:gap-3 text-center whitespace-nowrap tracking-tight">
                 <i class="fa-solid fa-heart text-red-500 text-[18px] sm:text-[20px]"></i> 
                 ¡Otros clientes también vieron!
