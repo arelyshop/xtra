@@ -76,23 +76,68 @@
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col font-sans antialiased">
+    
     <!-- EL TRUCO ESTÁ AQUÍ: class="contents" permite que el sticky del header.html funcione globalmente -->
     <div id="header-container" class="contents"></div>
     
     <!-- Contenido Principal de la página -->
-    <main class="flex-grow">
-        <div class="md:container md:mx-auto py-8">
-             <div class="md:w-[85%] md:mx-auto">
-                <div class="max-w-7xl mx-auto border-4 border-dashed border-gray-300 rounded-xl h-[100vh] flex items-center justify-center text-gray-400 bg-gray-50">
-                    <p>Contenido principal del sitio web... (Haz scroll para probar el header)</p>
+    <main class="flex-grow bg-white">
+        <!-- Contenedor Principal (Ajustado con los mismos márgenes del header) -->
+        <div class="max-w-7xl mx-auto px-4 py-8 lg:py-12">
+            
+            <!-- Grilla de Categorías Destacadas (Estilo Asimétrico) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 w-full">
+                
+                <!-- Columna Izquierda (2 tarjetas apiladas) -->
+                <div class="flex flex-col gap-4 md:gap-6">
+                    
+                    <!-- Tarjeta 1: Hubs & Adaptadores -->
+                    <a href="colecciones.html?category=Hubs%20%26%20Adaptadores" class="relative rounded-lg overflow-hidden group/promo block w-full h-[200px] md:h-[250px] shadow-sm shadow-[#111827]/20">
+                        <img src="images/hubs-promo.webp" alt="Promo Hubs y Adaptadores" class="absolute inset-0 w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700 z-0">
+                        <!-- Sombra degradada para destacar el texto -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#111827]/95 via-[#111827]/40 to-transparent opacity-80 group-hover/promo:opacity-100 transition-opacity duration-500 z-10"></div>
+                        <div class="absolute inset-0 p-6 flex flex-col justify-end text-white z-20">
+                            <h4 class="text-xl md:text-2xl font-bold mb-1 drop-shadow-md">Hubs & Adaptadores</h4>
+                            <span class="text-[13px] font-medium hover:underline inline-flex items-center gap-1 drop-shadow-md">Ver todo <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                        </div>
+                    </a>
+
+                    <!-- Tarjeta 2: Cables & Conectores -->
+                    <a href="colecciones.html?category=Cables%20%26%20Conectores" class="relative rounded-lg overflow-hidden group/promo block w-full h-[200px] md:h-[250px] shadow-sm shadow-[#111827]/20">
+                        <img src="images/cables-promo.webp" alt="Promo Cables y Conectores" class="absolute inset-0 w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700 z-0">
+                        <!-- Sombra degradada para destacar el texto -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#111827]/95 via-[#111827]/40 to-transparent opacity-80 group-hover/promo:opacity-100 transition-opacity duration-500 z-10"></div>
+                        <div class="absolute inset-0 p-6 flex flex-col justify-end text-white z-20">
+                            <h4 class="text-xl md:text-2xl font-bold mb-1 drop-shadow-md">Cables & Conectores</h4>
+                            <span class="text-[13px] font-medium hover:underline inline-flex items-center gap-1 drop-shadow-md">Ver todo <i class="fa-solid fa-chevron-right text-[10px]"></i></span>
+                        </div>
+                    </a>
+
                 </div>
-             </div>
+
+                <!-- Columna Derecha (1 tarjeta grande) -->
+                <div class="h-full">
+                    
+                    <!-- Tarjeta 3: Cargadores (Grande) -->
+                    <a href="colecciones.html?category=Cargadores" class="relative rounded-lg overflow-hidden group/promo block w-full h-full min-h-[400px] md:min-h-full shadow-sm shadow-[#111827]/20">
+                        <img src="images/cargadores-promo.webp" alt="Promo Cargadores" class="absolute inset-0 w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700 z-0">
+                        <!-- Sombra degradada para destacar el texto -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#111827]/95 via-[#111827]/40 to-transparent opacity-80 group-hover/promo:opacity-100 transition-opacity duration-500 z-10"></div>
+                        <div class="absolute inset-0 p-8 flex flex-col justify-end text-white z-20">
+                            <h4 class="text-3xl md:text-4xl font-bold mb-2 drop-shadow-md">Cargadores</h4>
+                            <span class="text-[14px] md:text-base font-medium hover:underline inline-flex items-center gap-1 drop-shadow-md">Ver todo <i class="fa-solid fa-chevron-right text-[11px]"></i></span>
+                        </div>
+                    </a>
+
+                </div>
+            </div>
+
         </div>
     </main>
     
     <!-- Aquí se inyectará automáticamente el footer.html -->
     <div id="footer-container"></div>
-    
+
     <!-- Script para cargar el Header, Footer y luego la lógica principal -->
     <script>
         // Cargar componentes dinámicamente (Ideal para GitHub + Netlify)
