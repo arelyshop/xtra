@@ -119,18 +119,148 @@
                 <div class="h-full">
                     
                     <!-- Tarjeta 3: Cargadores (Grande) -->
-                    <a href="colecciones.html?category=Cargadores" class="relative rounded-lg overflow-hidden group/promo block w-full h-full shadow-sm shadow-[#111827]/20">
+                    <a href="colecciones.html?category=Cargadores" class="relative rounded-lg overflow-hidden group/promo block w-full h-full min-h-[400px] md:min-h-full shadow-sm shadow-[#111827]/20">
                         <img src="images/cargadores-promo.webp" alt="Promo Cargadores" class="absolute inset-0 w-full h-full object-cover transform group-hover/promo:scale-105 transition duration-700 z-0">
                         <!-- Sombra degradada para destacar el texto -->
                         <div class="absolute inset-0 bg-gradient-to-t from-[#111827]/95 via-[#111827]/40 to-transparent opacity-80 group-hover/promo:opacity-100 transition-opacity duration-500 z-10"></div>
-                        <div class="absolute inset-0 p-4 sm:p-6 md:p-8 flex flex-col justify-end text-white z-20">
-                            <h4 class="text-lg sm:text-3xl md:text-4xl font-bold mb-1 md:mb-2 drop-shadow-md leading-tight">Cargadores</h4>
-                            <span class="text-[11px] sm:text-[14px] md:text-base font-medium hover:underline inline-flex items-center gap-1 drop-shadow-md">Ver todo <i class="fa-solid fa-chevron-right text-[9px] md:text-[11px]"></i></span>
+                        <div class="absolute inset-0 p-8 flex flex-col justify-end text-white z-20">
+                            <h4 class="text-3xl md:text-4xl font-bold mb-2 drop-shadow-md">Cargadores</h4>
+                            <span class="text-[14px] md:text-base font-medium hover:underline inline-flex items-center gap-1 drop-shadow-md">Ver todo <i class="fa-solid fa-chevron-right text-[11px]"></i></span>
                         </div>
                     </a>
 
                 </div>
             </div>
+
+            <!-- SECCIÓN: PRODUCTOS RECIÉN LLEGADOS -->
+            <section class="mt-12 lg:mt-16 pt-8 border-t border-gray-200">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-900 mb-8 flex items-center justify-center gap-3 text-center tracking-tight">
+                    <i class="fa-solid fa-sparkles text-[#32CD32]"></i>
+                    Productos recién llegados
+                    <i class="fa-solid fa-sparkles text-[#32CD32]"></i>
+                </h2>
+                
+                <!-- Cuadrícula de Productos (5 por fila en desktop, 2 en móvil) -->
+                <div id="product-grid" class="grid grid-cols-2 md:grid-cols-5 gap-4 sm:gap-6 mb-10">
+                    <!-- Skeleton Loader inicial (10 tarjetas) -->
+                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                        <div class="bg-gray-200 aspect-square"></div>
+                        <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
+                            <div class="h-4 bg-gray-200 rounded-md w-full"></div>
+                            <div class="h-4 bg-gray-200 rounded-md w-3/4"></div>
+                            <div class="h-3 bg-gray-200 rounded-md w-1/2 mt-1"></div>
+                            <div class="mt-auto pt-2">
+                                <div class="h-5 bg-gray-300 rounded-md w-2/5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                        <div class="bg-gray-200 aspect-square"></div>
+                        <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
+                            <div class="h-4 bg-gray-200 rounded-md w-full"></div>
+                            <div class="h-4 bg-gray-200 rounded-md w-2/3"></div>
+                            <div class="h-3 bg-gray-200 rounded-md w-1/3 mt-1"></div>
+                            <div class="mt-auto pt-2">
+                                <div class="h-5 bg-gray-300 rounded-md w-1/2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                        <div class="bg-gray-200 aspect-square"></div>
+                        <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
+                            <div class="h-4 bg-gray-200 rounded-md w-11/12"></div>
+                            <div class="h-4 bg-gray-200 rounded-md w-4/5"></div>
+                            <div class="h-3 bg-gray-200 rounded-md w-2/5 mt-1"></div>
+                            <div class="mt-auto pt-2">
+                                <div class="h-5 bg-gray-300 rounded-md w-2/5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                        <div class="bg-gray-200 aspect-square"></div>
+                        <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
+                            <div class="h-4 bg-gray-200 rounded-md w-full"></div>
+                            <div class="h-4 bg-gray-200 rounded-md w-3/4"></div>
+                            <div class="h-3 bg-gray-200 rounded-md w-1/2 mt-1"></div>
+                            <div class="mt-auto pt-2">
+                                <div class="h-5 bg-gray-300 rounded-md w-2/5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                        <div class="bg-gray-200 aspect-square"></div>
+                        <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
+                            <div class="h-4 bg-gray-200 rounded-md w-full"></div>
+                            <div class="h-4 bg-gray-200 rounded-md w-2/3"></div>
+                            <div class="h-3 bg-gray-200 rounded-md w-1/3 mt-1"></div>
+                            <div class="mt-auto pt-2">
+                                <div class="h-5 bg-gray-300 rounded-md w-1/2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                        <div class="bg-gray-200 aspect-square"></div>
+                        <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
+                            <div class="h-4 bg-gray-200 rounded-md w-11/12"></div>
+                            <div class="h-4 bg-gray-200 rounded-md w-4/5"></div>
+                            <div class="h-3 bg-gray-200 rounded-md w-2/5 mt-1"></div>
+                            <div class="mt-auto pt-2">
+                                <div class="h-5 bg-gray-300 rounded-md w-2/5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                        <div class="bg-gray-200 aspect-square"></div>
+                        <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
+                            <div class="h-4 bg-gray-200 rounded-md w-full"></div>
+                            <div class="h-4 bg-gray-200 rounded-md w-3/4"></div>
+                            <div class="h-3 bg-gray-200 rounded-md w-1/2 mt-1"></div>
+                            <div class="mt-auto pt-2">
+                                <div class="h-5 bg-gray-300 rounded-md w-2/5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                        <div class="bg-gray-200 aspect-square"></div>
+                        <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
+                            <div class="h-4 bg-gray-200 rounded-md w-full"></div>
+                            <div class="h-4 bg-gray-200 rounded-md w-2/3"></div>
+                            <div class="h-3 bg-gray-200 rounded-md w-1/3 mt-1"></div>
+                            <div class="mt-auto pt-2">
+                                <div class="h-5 bg-gray-300 rounded-md w-1/2"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                        <div class="bg-gray-200 aspect-square"></div>
+                        <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
+                            <div class="h-4 bg-gray-200 rounded-md w-11/12"></div>
+                            <div class="h-4 bg-gray-200 rounded-md w-4/5"></div>
+                            <div class="h-3 bg-gray-200 rounded-md w-2/5 mt-1"></div>
+                            <div class="mt-auto pt-2">
+                                <div class="h-5 bg-gray-300 rounded-md w-2/5"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                        <div class="bg-gray-200 aspect-square"></div>
+                        <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
+                            <div class="h-4 bg-gray-200 rounded-md w-full"></div>
+                            <div class="h-4 bg-gray-200 rounded-md w-3/4"></div>
+                            <div class="h-3 bg-gray-200 rounded-md w-1/2 mt-1"></div>
+                            <div class="mt-auto pt-2">
+                                <div class="h-5 bg-gray-300 rounded-md w-2/5"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex justify-center">
+                    <a href="colecciones.html" class="px-8 py-3 bg-[#1F2937] text-white font-medium rounded-lg hover:opacity-90 transition shadow-md">
+                        Ver Catálogo Completo
+                    </a>
+                </div>
+            </section>
 
         </div>
     </main>
@@ -153,7 +283,106 @@
             const script = document.createElement('script');
             script.src = 'js/main.js';
             document.body.appendChild(script);
+            
+            // 3. Cargar los últimos productos
+            fetchLatestProducts();
         }).catch(err => console.error('Error cargando componentes:', err));
+        
+        async function fetchLatestProducts() {
+            try {
+                // Fetch up to 20 products to ensure we have enough in stock items
+                const response = await fetch('/.netlify/functions/get_tienda?limit=20');
+                if (!response.ok) throw new Error('Error fetching products');
+                
+                let products = await response.json();
+                
+                // Sort by ID descending (newest first)
+                products.sort((a, b) => b.id - a.id);
+                
+                // Prioritize in-stock products
+                products.sort((a, b) => {
+                    const aOut = (a.availability || '').trim().toLowerCase() === 'out of stock' ? 1 : 0;
+                    const bOut = (b.availability || '').trim().toLowerCase() === 'out of stock' ? 1 : 0;
+                    return aOut - bOut;
+                });
+                
+                // Take only top 10
+                products = products.slice(0, 10);
+                
+                renderProducts(products);
+            } catch (error) {
+                console.error('Failed to load latest products:', error);
+                document.getElementById('product-grid').innerHTML = `
+                    <div class="col-span-full py-10 text-center text-red-500">
+                        <i class="fa-solid fa-triangle-exclamation text-3xl mb-3"></i>
+                        <p>No se pudo cargar los productos en este momento.</p>
+                    </div>`;
+            }
+        }
+        
+        function renderProducts(products) {
+            const grid = document.getElementById('product-grid');
+            
+            if (!products || products.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-span-full py-10 text-center text-gray-500">
+                        <i class="fa-solid fa-box-open text-4xl mb-4 text-gray-300"></i>
+                        <p>No hay productos disponibles por ahora.</p>
+                    </div>`;
+                return;
+            }
+            
+            let newHtml = '';
+            
+            products.forEach((item, index) => {
+                const price = parseFloat(item.price) || 0;
+                const salePrice = parseFloat(item.sale_price) || price;
+                const isOutOfStock = (item.availability || '').trim().toLowerCase() === 'out of stock';
+                
+                let badgeHtml = '';
+                let priceHtml = '';
+                let imageClasses = 'product-img w-full h-full object-cover transition-transform duration-700';
+                
+                const imageLink = item.image_link || 'https://placehold.co/400x400?text=No+Image';
+                
+                // Optimize loading: eager load first 5
+                const loadingAttr = index < 5 ? 'eager' : 'lazy';
+                const fetchPriority = index < 5 ? 'high' : 'auto';
+                
+                if (isOutOfStock) {
+                    badgeHtml = `<span class="absolute bottom-2 left-2 bg-[#111827] text-white text-[10px] sm:text-xs font-bold px-2 py-1 sm:px-2.5 sm:py-1.5 uppercase rounded z-10 shadow-sm flex items-center gap-1"><i class="fa-solid fa-ban"></i> Agotado</span>`;
+                    imageClasses += ' grayscale opacity-50';
+                    priceHtml = `<span class="font-semibold text-[14px] sm:text-lg lg:text-xl text-gray-500 leading-none">Bs. ${salePrice.toFixed(2)}</span>`;
+                } else {
+                    if (price > salePrice) {
+                        badgeHtml = `<span class="absolute bottom-2 left-2 bg-gradient-to-r from-red-500 to-yellow-400 text-white text-[10px] sm:text-xs font-bold px-2 py-1 sm:px-2.5 sm:py-1.5 uppercase rounded z-10 shadow-sm flex items-center gap-1"><i class="fa-solid fa-fire"></i> Oferta</span>`;
+                        priceHtml = `
+                            <span class="font-semibold text-[14px] sm:text-lg lg:text-xl text-red-600 leading-none">Bs. ${salePrice.toFixed(2)}</span>
+                            <span class="text-gray-400 line-through text-[11px] sm:text-[14px] leading-none">Bs. ${price.toFixed(2)}</span>
+                        `;
+                    } else {
+                        priceHtml = `<span class="font-semibold text-[14px] sm:text-lg lg:text-xl text-gray-900 leading-none">Bs. ${salePrice.toFixed(2)}</span>`;
+                    }
+                }
+                
+                newHtml += `
+                <a href="producto.html?id=${item.id}" class="product-card group relative flex flex-col cursor-pointer bg-white rounded-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_25px_-5px_rgba(0,0,0,0.12)] border-2 border-gray-200 hover:border-gray-300 transition-all duration-300 overflow-hidden">
+                    <div class="relative bg-gray-100 aspect-square overflow-hidden">
+                        ${badgeHtml}
+                        <img src="${imageLink}" loading="${loadingAttr}" fetchpriority="${fetchPriority}" decoding="async" alt="${item.title}" class="${imageClasses}">
+                    </div>
+                    <div class="flex flex-col flex-1 p-3 pt-2">
+                        <h3 class="text-[14px] sm:text-base font-semibold leading-[1.1] text-gray-800 group-hover:text-blue-600 transition-colors line-clamp-2 mb-0.5">${item.title}</h3>
+                        <p class="text-gray-500 text-[12px] sm:text-[13px] mb-1.5 line-clamp-1">${item.category || item.brand || 'Varios'}</p>
+                        <div class="mt-auto flex items-center gap-1.5">
+                            ${priceHtml}
+                        </div>
+                    </div>
+                </a>`;
+            });
+            
+            grid.innerHTML = newHtml;
+        }
     </script>
 </body>
 </html>
