@@ -145,8 +145,8 @@
                 
                 <!-- Cuadrícula de Productos (4 por fila en desktop, 2 en móvil) -->
                 <div id="product-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 mb-10">
-                    <!-- Skeleton Loader inicial (8 visibles en desktop, 10 en móvil) -->
-                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                    <!-- Skeleton Loader inicial (8 visibles exactos) -->
+                    <div class="bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
                         <div class="bg-gray-200 aspect-square"></div>
                         <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
                             <div class="h-4 bg-gray-200 rounded-md w-full"></div>
@@ -157,7 +157,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                    <div class="bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
                         <div class="bg-gray-200 aspect-square"></div>
                         <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
                             <div class="h-4 bg-gray-200 rounded-md w-full"></div>
@@ -168,7 +168,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                    <div class="bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
                         <div class="bg-gray-200 aspect-square"></div>
                         <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
                             <div class="h-4 bg-gray-200 rounded-md w-11/12"></div>
@@ -179,7 +179,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                    <div class="bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
                         <div class="bg-gray-200 aspect-square"></div>
                         <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
                             <div class="h-4 bg-gray-200 rounded-md w-full"></div>
@@ -190,7 +190,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                    <div class="bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
                         <div class="bg-gray-200 aspect-square"></div>
                         <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
                             <div class="h-4 bg-gray-200 rounded-md w-full"></div>
@@ -201,7 +201,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                    <div class="bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
                         <div class="bg-gray-200 aspect-square"></div>
                         <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
                             <div class="h-4 bg-gray-200 rounded-md w-11/12"></div>
@@ -212,7 +212,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                    <div class="bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
                         <div class="bg-gray-200 aspect-square"></div>
                         <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
                             <div class="h-4 bg-gray-200 rounded-md w-full"></div>
@@ -223,7 +223,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                    <div class="bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
                         <div class="bg-gray-200 aspect-square"></div>
                         <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
                             <div class="h-4 bg-gray-200 rounded-md w-full"></div>
@@ -231,29 +231,6 @@
                             <div class="h-3 bg-gray-200 rounded-md w-1/3 mt-1"></div>
                             <div class="mt-auto pt-2">
                                 <div class="h-5 bg-gray-300 rounded-md w-1/2"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Estos dos skeletons adicionales se ocultan en escritorio (md:hidden) para mantener 4x2 = 8, pero en móvil se ven para hacer 2x5 = 10 -->
-                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse md:hidden">
-                        <div class="bg-gray-200 aspect-square"></div>
-                        <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
-                            <div class="h-4 bg-gray-200 rounded-md w-11/12"></div>
-                            <div class="h-4 bg-gray-200 rounded-md w-4/5"></div>
-                            <div class="h-3 bg-gray-200 rounded-md w-2/5 mt-1"></div>
-                            <div class="mt-auto pt-2">
-                                <div class="h-5 bg-gray-300 rounded-md w-2/5"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-xl border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse md:hidden">
-                        <div class="bg-gray-200 aspect-square"></div>
-                        <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
-                            <div class="h-4 bg-gray-200 rounded-md w-full"></div>
-                            <div class="h-4 bg-gray-200 rounded-md w-3/4"></div>
-                            <div class="h-3 bg-gray-200 rounded-md w-1/2 mt-1"></div>
-                            <div class="mt-auto pt-2">
-                                <div class="h-5 bg-gray-300 rounded-md w-2/5"></div>
                             </div>
                         </div>
                     </div>
@@ -310,8 +287,8 @@
                     return aOut - bOut;
                 });
                 
-                // Limitar a los 10 mejores resultados para manejar el caso móvil y escritorio de forma combinada
-                products = products.slice(0, 10);
+                // Limitar a exactamente 8 productos
+                products = products.slice(0, 8);
                 
                 renderProducts(products);
             } catch (error) {
@@ -349,9 +326,10 @@
                 
                 const imageLink = item.image_link || 'https://placehold.co/400x400?text=No+Image';
                 
-                // Optimize loading: eager load first 5
-                const loadingAttr = index < 5 ? 'eager' : 'lazy';
-                const fetchPriority = index < 5 ? 'high' : 'auto';
+                // Optimize loading: eager load first 6
+                const isPriority = index < 6;
+                const loadingAttr = isPriority ? 'eager' : 'lazy';
+                const fetchPriority = isPriority ? 'high' : 'auto';
                 
                 // Lógica de visualización (Precios ajustados para móvil y etiquetas con font-bold)
                 if (isOutOfStock) {
@@ -372,12 +350,9 @@
                     }
                 }
                 
-                // Clase dinámica: Ocultar los últimos 2 productos (índices 8 y 9) solo en pantallas md en adelante
-                const hiddenClass = index >= 8 ? ' md:hidden' : '';
-                
                 // Generación de tarjeta idéntica a colecciones.html (Hover, bordes, tipografía)
                 newHtml += `
-                <a href="producto.html?id=${item.id}" class="product-card group relative flex flex-col cursor-pointer bg-white rounded-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_25px_-5px_rgba(0,0,0,0.12)] border-2 border-gray-200 hover:border-gray-300 transition-all duration-300 overflow-hidden${hiddenClass}">
+                <a href="producto.html?id=${item.id}" class="product-card group relative flex flex-col cursor-pointer bg-white rounded-lg shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_25px_-5px_rgba(0,0,0,0.12)] border border-gray-200 hover:border-gray-300 transition-all duration-300 overflow-hidden">
                     <div class="relative bg-gray-100 aspect-square overflow-hidden">
                         ${badgeHtml}
                         <img src="${imageLink}" loading="${loadingAttr}" fetchpriority="${fetchPriority}" decoding="async" alt="${item.title}" class="${imageClasses}">
