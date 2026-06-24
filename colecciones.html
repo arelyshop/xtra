@@ -226,14 +226,15 @@
                 </div>
 
                 <!-- Paginación con Carga Diferida -->
-                <!-- Ajustado a mt-5 mb-0 (o mt-5 pb-0) para compensar el padding de <main> y lograr simetría visual -->
-                <div id="load-more-container" class="mt-5 mb-0 lg:mb-1 flex justify-center items-center hidden">
+                <!-- Ajustado a mt-5 mb-2 para lograr la simetría perfecta con el footer -->
+                <div id="load-more-container" class="mt-5 mb-2 flex justify-center items-center hidden">
                     <button onclick="loadMoreProducts()" class="px-8 py-2.5 bg-[#1F2937] text-white font-medium rounded-lg hover:opacity-90 transition shadow-md">
                         Ver más productos...
                     </button>
                 </div>
                 
-                <div id="end-of-catalog" class="mt-8 flex justify-center items-center gap-2 border-t border-gray-200 pt-5 hidden">
+                <!-- Ajustado también a mb-2 para coherencia si se muestra -->
+                <div id="end-of-catalog" class="mt-5 mb-2 flex justify-center items-center gap-2 border-t border-gray-200 pt-5 hidden">
                     <p class="text-gray-400 text-sm">Has visto todo el catálogo</p>
                 </div>
                 
