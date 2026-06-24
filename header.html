@@ -3,6 +3,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
     .font-inter { font-family: 'Inter', sans-serif !important; }
+    
+    /* Sincronización automática de la rotación del icono de categorías en el buscador */
+    #mobile-cat-wrapper:has(#mobile-cat-dropdown:not(.hidden)) #mobile-search-cat-icon {
+        transform: rotate(180deg);
+    }
 </style>
 
 <!-- 1. Banner Promocional (Separado para Móvil y Escritorio) -->
