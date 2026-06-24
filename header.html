@@ -43,20 +43,22 @@
             </div>
 
             <!-- Barra de Búsqueda Central (Desktop) -->
-            <div class="hidden lg:flex lg:w-[40%] justify-center relative">
-                <form class="w-full max-w-xl flex items-center relative z-20 bg-white border border-gray-300 rounded-md p-1 focus-within:border-[#32CD32] transition-colors shadow-sm">
-                    <input type="text" id="desktop-search" placeholder="Buscar productos aquí..." autocomplete="off" class="w-full flex-1 bg-transparent py-2 px-3 focus:outline-none text-left text-[14px] text-[#111827]">
-                    
-                    <button type="submit" class="bg-[#32CD32] text-white h-[36px] px-4 rounded hover:opacity-80 transition-opacity shrink-0 flex items-center justify-center">
-                        <svg class="w-4 h-4" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                    </button>
-                </form>
-                <!-- Cajón de Búsqueda Fija (Autocomplete Desktop) -->
-                <div id="desktop-search-results" class="absolute top-[100%] left-0 w-full mt-2 bg-white shadow-xl border border-gray-100 rounded-md hidden z-10 max-h-[70vh] overflow-y-auto pt-2">
-                    <!-- Los resultados se inyectan dinámicamente aquí -->
+            <div class="hidden lg:flex lg:w-[40%] justify-center">
+                <div class="w-full max-w-xl relative z-40">
+                    <form class="w-full flex items-center bg-white border border-gray-300 rounded-md p-1 focus-within:border-[#32CD32] transition-colors shadow-sm">
+                        <input type="text" id="desktop-search" placeholder="Buscar productos aquí..." autocomplete="off" class="w-full flex-1 bg-transparent py-2 px-3 focus:outline-none text-left text-[14px] text-[#111827]">
+                        
+                        <button type="submit" class="bg-[#32CD32] text-white h-[36px] px-4 rounded hover:opacity-80 transition-opacity shrink-0 flex items-center justify-center">
+                            <svg class="w-4 h-4" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                            </svg>
+                        </button>
+                    </form>
+                    <!-- Cajón de Búsqueda Fija (Autocomplete Desktop) -->
+                    <div id="desktop-search-results" class="absolute top-[100%] left-0 w-full mt-1.5 bg-white shadow-xl border border-gray-300 rounded-md hidden z-50 max-h-[70vh] overflow-y-auto py-2">
+                        <!-- Los resultados se inyectan dinámicamente aquí -->
+                    </div>
                 </div>
             </div>
 
@@ -93,7 +95,7 @@
 
         <!-- Búsqueda Móvil (Siempre Desplegada) -->
         <div class="mt-2 lg:hidden w-full relative z-40">
-            <form class="w-full flex items-center relative z-20 bg-white border border-gray-300 rounded-md p-1 focus-within:border-[#32CD32] transition-colors shadow-sm">
+            <form class="w-full flex items-center bg-white border border-gray-300 rounded-md p-1 focus-within:border-[#32CD32] transition-colors shadow-sm">
                 <!-- Selector de Categorías Dinámico (Móvil) - Custom -->
                 <div class="shrink-0 max-w-[125px]" id="mobile-cat-wrapper">
                     <button type="button" id="mobile-cat-toggle" class="relative flex items-center bg-white text-gray-700 border border-gray-200 rounded h-[36px] hover:bg-gray-50 transition-colors pl-2.5 pr-6 text-[13px] font-medium outline-none focus:outline-none focus:ring-0 w-full cursor-pointer z-10 text-left">
@@ -102,7 +104,7 @@
                     </button>
                     
                     <!-- Desplegable Custom -->
-                    <div id="mobile-cat-dropdown" class="absolute top-[100%] left-0 w-full mt-2 bg-white shadow-2xl border border-gray-100 rounded-md hidden z-50 max-h-[50vh] overflow-y-auto py-2">
+                    <div id="mobile-cat-dropdown" class="absolute top-[100%] left-0 w-full mt-1.5 bg-white shadow-xl border border-gray-300 rounded-md hidden z-50 max-h-[50vh] overflow-y-auto py-2">
                         <!-- Skeleton Loaders (10 Items) -->
                         <div class="skeleton-loader animate-pulse flex items-center gap-3 px-4 py-2">
                             <div class="w-6 h-6 rounded bg-slate-200 shrink-0"></div><div class="h-3 bg-slate-200 rounded w-3/4"></div>
@@ -146,7 +148,7 @@
                     </svg>
                 </button>
             </form>
-            <div id="mobile-search-results" class="absolute top-[100%] left-0 w-full mt-2 bg-white shadow-2xl border border-gray-100 rounded-md hidden max-h-[70vh] overflow-y-auto z-10 pt-2">
+            <div id="mobile-search-results" class="absolute top-[100%] left-0 w-full mt-1.5 bg-white shadow-xl border border-gray-300 rounded-md hidden z-50 max-h-[70vh] overflow-y-auto py-2">
                 <!-- Los resultados se inyectan dinámicamente aquí -->
             </div>
         </div>
