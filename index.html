@@ -271,13 +271,14 @@
         
         async function fetchLatestProducts() {
             try {
-                // Fetch up to 20 products to ensure we have enough in stock items
-                const response = await fetch('/.netlify/functions/get_tienda?limit=20');
+                // TRUCO: Pedimos limit=5000 igual que en colecciones.html para traer todo el catálogo a JS
+                // ya que el backend no ordena por defecto. Así JS puede encontrar los verdaderamente más nuevos.
+                const response = await fetch('/.netlify/functions/get_tienda?limit=5000');
                 if (!response.ok) throw new Error('Error fetching products');
                 
                 let products = await response.json();
                 
-                // Sort by ID descending (newest first)
+                // Sort by ID descending (newest first) - Ahora sí ordenará TODO el catálogo
                 products.sort((a, b) => b.id - a.id);
                 
                 // Prioritize in-stock products
@@ -287,7 +288,7 @@
                     return aOut - bOut;
                 });
                 
-                // Limitar a exactamente 8 productos
+                // Limitar a exactamente 8 productos para mostrar en el Home
                 products = products.slice(0, 8);
                 
                 renderProducts(products);
