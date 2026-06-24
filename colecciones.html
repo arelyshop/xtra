@@ -157,7 +157,7 @@
                 <!-- Cuadrícula de Productos (3 por fila en desktop, 2 en móvil) -->
                 <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
                     <!-- Skeleton Loader inicial (6 tarjetas) -->
-                    <div class="bg-white rounded-lg border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                    <div class="bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
                         <div class="bg-gray-200 aspect-square"></div>
                         <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
                             <div class="h-4 bg-gray-200 rounded-md w-full"></div>
@@ -168,7 +168,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-lg border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                    <div class="bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
                         <div class="bg-gray-200 aspect-square"></div>
                         <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
                             <div class="h-4 bg-gray-200 rounded-md w-full"></div>
@@ -179,7 +179,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-lg border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                    <div class="bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
                         <div class="bg-gray-200 aspect-square"></div>
                         <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
                             <div class="h-4 bg-gray-200 rounded-md w-11/12"></div>
@@ -190,7 +190,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-lg border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                    <div class="bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
                         <div class="bg-gray-200 aspect-square"></div>
                         <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
                             <div class="h-4 bg-gray-200 rounded-md w-full"></div>
@@ -201,7 +201,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-lg border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                    <div class="bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
                         <div class="bg-gray-200 aspect-square"></div>
                         <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
                             <div class="h-4 bg-gray-200 rounded-md w-full"></div>
@@ -212,7 +212,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-white rounded-lg border-2 border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                    <div class="bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
                         <div class="bg-gray-200 aspect-square"></div>
                         <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
                             <div class="h-4 bg-gray-200 rounded-md w-11/12"></div>
@@ -416,7 +416,7 @@
 
                 // También he aplicado la mejora del interlineado compacto (leading-[1.1] y márgenes reducidos)
                 newHtml += `
-                <a href="producto.html?id=${item.id}" class="product-card group relative flex flex-col cursor-pointer bg-white rounded-lg shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_25px_-5px_rgba(0,0,0,0.12)] border-2 border-gray-200 hover:border-gray-300 transition-all duration-300 overflow-hidden">
+                <a href="producto.html?id=${item.id}" class="product-card group relative flex flex-col cursor-pointer bg-white rounded-lg shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_25px_-5px_rgba(0,0,0,0.12)] border border-gray-200 hover:border-gray-300 transition-all duration-300 overflow-hidden">
                     <div class="relative bg-gray-100 aspect-square overflow-hidden">
                         ${badgeHtml}
                         <img src="${imageLink}" loading="${loadingAttr}" fetchpriority="${fetchPriority}" decoding="async" alt="${item.title}" class="${imageClasses}">
