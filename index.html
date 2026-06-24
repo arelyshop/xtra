@@ -88,6 +88,39 @@
         <!-- Contenedor Principal (Espacio superior reducido drásticamente) -->
         <div class="max-w-7xl mx-auto px-3 pt-4 pb-4 lg:px-4 lg:pt-6 lg:pb-4">
             
+            <!-- SLIDESHOW BANNER PRINCIPAL -->
+            <div class="mb-4 md:mb-6 w-full">
+                <a href="colecciones.html" class="block w-full relative rounded-lg overflow-hidden shadow-sm shadow-[#111827]/20 group/slider">
+                    <!-- Contenedor del Carrusel -->
+                    <div id="main-slideshow" class="flex transition-transform duration-700 ease-in-out w-full aspect-[2/1] md:aspect-[3/1] bg-gray-200">
+                        <!-- Diapositivas (Ajustadas para cubrir el contenedor) -->
+                        <div class="w-full h-full flex-shrink-0 relative">
+                            <img src="images/banner-1-showhome.webp" alt="Banner Principal 1" class="w-full h-full object-cover">
+                        </div>
+                        <div class="w-full h-full flex-shrink-0 relative">
+                            <img src="images/banner-2-showhome.webp" alt="Banner Principal 2" class="w-full h-full object-cover">
+                        </div>
+                        <div class="w-full h-full flex-shrink-0 relative">
+                            <img src="images/banner-3-showhome.webp" alt="Banner Principal 3" class="w-full h-full object-cover">
+                        </div>
+                        <div class="w-full h-full flex-shrink-0 relative">
+                            <img src="images/banner-4-showhome.webp" alt="Banner Principal 4" class="w-full h-full object-cover">
+                        </div>
+                    </div>
+                    
+                    <!-- Indicadores (Puntos) -->
+                    <div class="absolute bottom-2 md:bottom-4 left-0 right-0 flex justify-center gap-2 z-20">
+                        <span class="slide-dot w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-white/50 transition-colors duration-300"></span>
+                        <span class="slide-dot w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-white/50 transition-colors duration-300"></span>
+                        <span class="slide-dot w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-white/50 transition-colors duration-300"></span>
+                        <span class="slide-dot w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-white/50 transition-colors duration-300"></span>
+                    </div>
+                    
+                    <!-- Capa Hover sutil -->
+                    <div class="absolute inset-0 bg-black/0 group-hover/slider:bg-black/5 transition-colors duration-300 z-10"></div>
+                </a>
+            </div>
+
             <!-- Grilla de Categorías Destacadas (Fija a 2 columnas incluso en móvil) -->
             <div class="grid grid-cols-2 gap-3 md:gap-6 w-full">
                 
@@ -370,6 +403,50 @@
             
             grid.innerHTML = newHtml;
         }
+
+        // LÓGICA DEL SLIDESHOW PRINCIPAL
+        document.addEventListener('DOMContentLoaded', () => {
+            const slideshow = document.getElementById('main-slideshow');
+            const dots = document.querySelectorAll('.slide-dot');
+            let currentSlide = 0;
+            const totalSlides = 4; // Ajustado a 4 imágenes
+            const slideInterval = 4000; // 4 segundos
+            
+            if (slideshow && dots.length > 0) {
+                // Función para actualizar la vista
+                function updateSlide() {
+                    // Mover el contenedor
+                    slideshow.style.transform = `translateX(-${currentSlide * 100}%)`;
+                    
+                    // Actualizar puntos
+                    dots.forEach((dot, index) => {
+                        if (index === currentSlide) {
+                            dot.classList.remove('bg-white/50');
+                            dot.classList.add('bg-white', 'shadow-sm');
+                        } else {
+                            dot.classList.remove('bg-white', 'shadow-sm');
+                            dot.classList.add('bg-white/50');
+                        }
+                    });
+                }
+                
+                // Función para avanzar
+                function nextSlide() {
+                    currentSlide = (currentSlide + 1) % totalSlides;
+                    updateSlide();
+                }
+                
+                // Iniciar slideshow
+                updateSlide(); // Configuración inicial
+                let autoSlide = setInterval(nextSlide, slideInterval);
+                
+                // Opcional: Pausar al pasar el mouse por encima (Mejora la experiencia de usuario)
+                slideshow.parentElement.addEventListener('mouseenter', () => clearInterval(autoSlide));
+                slideshow.parentElement.addEventListener('mouseleave', () => {
+                    autoSlide = setInterval(nextSlide, slideInterval);
+                });
+            }
+        });
     </script>
 </body>
 </html>
