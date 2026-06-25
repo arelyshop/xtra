@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administración - Arelyshop</title>
+    
+    <!-- Preconexiones para acelerar la descarga de recursos -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+
     <!-- Tailwind CSS (CDN) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Iconos Lucide -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- SortableJS para arrastrar y soltar imágenes -->
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
-    <!-- HTML5 QR Code para el escáner -->
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
-    <!-- PapaParse para lectura de CSV -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     
     <style>
         /* Estilos para el drag and drop (arrastrar y soltar) */
@@ -486,6 +486,14 @@
             </div>
         </div>
     </div>
+
+    <!-- LIBRERÍAS PESADAS (Movidas al final para no bloquear la carga inicial de la pantalla) -->
+    <!-- SortableJS para arrastrar y soltar imágenes -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <!-- HTML5 QR Code para el escáner -->
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <!-- PapaParse para lectura de CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
     <!-- LÓGICA JAVASCRIPT INTEGRADA -->
     <script>
