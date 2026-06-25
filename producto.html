@@ -226,10 +226,10 @@
                 <i class="fa-solid fa-heart text-red-500 text-[18px] sm:text-[20px]"></i>
             </h2>
             
-            <!-- Carrusel en Móvil / Grilla en Desktop -->
-            <div id="related-products-grid" class="flex md:grid md:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto md:overflow-visible pb-4 hide-scrollbar snap-x snap-mandatory">
-                <!-- Skeleton Loader inicial (4 tarjetas adaptadas al carrusel móvil) -->
-                <div class="flex flex-col flex-shrink-0 w-[70%] sm:w-[45%] md:w-auto snap-start bg-white rounded-xl border-2 border-gray-100 overflow-hidden shadow-sm animate-pulse">
+            <!-- Cuadrícula de Productos (4 por fila en desktop, 2 en móvil) -->
+            <div id="related-products-grid" class="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6">
+                <!-- Skeleton Loader inicial -->
+                <div class="bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
                     <div class="bg-gray-200 aspect-square"></div>
                     <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
                         <div class="h-4 bg-gray-200 rounded-md w-full"></div>
@@ -240,18 +240,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-col flex-shrink-0 w-[70%] sm:w-[45%] md:w-auto snap-start bg-white rounded-xl border-2 border-gray-100 overflow-hidden shadow-sm animate-pulse">
-                    <div class="bg-gray-200 aspect-square"></div>
-                    <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
-                        <div class="h-4 bg-gray-200 rounded-md w-11/12"></div>
-                        <div class="h-4 bg-gray-200 rounded-md w-4/5"></div>
-                        <div class="h-3 bg-gray-200 rounded-md w-2/5 mt-1"></div>
-                        <div class="mt-auto pt-2">
-                            <div class="h-5 bg-gray-300 rounded-md w-2/5"></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="flex flex-col flex-shrink-0 w-[70%] sm:w-[45%] md:w-auto snap-start bg-white rounded-xl border-2 border-gray-100 overflow-hidden shadow-sm animate-pulse">
+                <div class="bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
                     <div class="bg-gray-200 aspect-square"></div>
                     <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
                         <div class="h-4 bg-gray-200 rounded-md w-full"></div>
@@ -262,7 +251,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-col flex-shrink-0 w-[70%] sm:w-[45%] md:w-auto snap-start bg-white rounded-xl border-2 border-gray-100 overflow-hidden shadow-sm animate-pulse">
+                <div class="bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
                     <div class="bg-gray-200 aspect-square"></div>
                     <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
                         <div class="h-4 bg-gray-200 rounded-md w-11/12"></div>
@@ -273,6 +262,23 @@
                         </div>
                     </div>
                 </div>
+                <div class="bg-white rounded-lg border border-gray-100 flex flex-col overflow-hidden shadow-sm animate-pulse">
+                    <div class="bg-gray-200 aspect-square"></div>
+                    <div class="flex flex-col flex-1 p-3 pt-3 gap-2">
+                        <div class="h-4 bg-gray-200 rounded-md w-full"></div>
+                        <div class="h-4 bg-gray-200 rounded-md w-3/4"></div>
+                        <div class="h-3 bg-gray-200 rounded-md w-1/2 mt-1"></div>
+                        <div class="mt-auto pt-2">
+                            <div class="h-5 bg-gray-300 rounded-md w-2/5"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-5 mb-2 flex justify-center items-center">
+                <a href="colecciones.html" class="px-6 py-3 text-base md:px-10 md:py-4 md:text-lg bg-[#1F2937] text-white font-medium rounded-lg hover:opacity-90 transition shadow-md">
+                    Ver Catálogo Completo
+                </a>
             </div>
         </section>
     </main>
@@ -542,9 +548,9 @@
                     priceHtml = `<span class="font-semibold text-[14px] sm:text-lg lg:text-xl text-gray-900 leading-none">Bs. ${itemSalePrice.toFixed(2)}</span>`;
                 }
                 
-                // Renderizado idéntico a colecciones.html manteniendo la clase w-[70%] y snap-start del carrusel móvil
+                // Renderizado adaptado a la nueva cuadrícula (Grid 2 columnas en móvil)
                 newHtml += `
-                <a href="producto.html?id=${item.id}" class="product-card group relative flex flex-col cursor-pointer flex-shrink-0 w-[70%] sm:w-[45%] md:w-auto snap-start bg-white rounded-xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_25px_-5px_rgba(0,0,0,0.12)] border-2 border-gray-200 hover:border-gray-300 transition-all duration-300 overflow-hidden">
+                <a href="producto.html?id=${item.id}" class="product-card group relative flex flex-col cursor-pointer bg-white rounded-lg border border-gray-100 hover:shadow-md transition-shadow duration-300 overflow-hidden shadow-sm">
                     <div class="relative bg-gray-100 aspect-square overflow-hidden">
                         ${badgeHtml}
                         <img src="${imageLink}" loading="${loadingAttr}" fetchpriority="${fetchPriority}" decoding="async" alt="${item.title}" class="${imageClasses}">
