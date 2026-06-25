@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cargando Producto... - Arelyshop.com</title>
 
-        <!-- SEO and Social Sharing Meta Tags -->
+    <!-- SEO and Social Sharing Meta Tags -->
     <meta name="description" content="Visita Arelyshop.com y descubre los mejores accesorios y gadgets de UGREEN | BASEUS | ANKER para hacer tu día más fácil.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://arelyshop.com/">
@@ -153,7 +153,14 @@
                 <div class="flex items-end gap-3 mb-4 lg:mb-6">
                     <span id="prod-sale-price" class="text-2xl font-semibold text-gray-900">Bs. 0.00</span>
                     <span id="prod-price" class="text-base text-gray-400 line-through mb-0.5 hidden">Bs. 0.00</span>
+                    
+                    <!-- Etiqueta de Ahorro -->
                     <span id="prod-savings" class="text-[12px] font-bold text-white bg-gradient-to-r from-red-500 to-yellow-500 px-2 py-0.5 rounded mb-1 hidden shadow-sm">Ahorras Bs. 0.00</span>
+                    
+                    <!-- Etiqueta Low Cost -->
+                    <span id="prod-low-cost" class="hidden text-[12px] font-bold text-white bg-gradient-to-r from-[#32CD32] to-green-600 px-2 py-0.5 rounded mb-1 shadow-sm items-center gap-1">
+                        <i class="fa-solid fa-heart"></i> Low Cost
+                    </span>
                 </div>
                 
                 <!-- Barra de Urgencia / Stock -->
@@ -394,15 +401,27 @@
                 .replace(/\n/g, '<br>');
             document.getElementById('prod-desc').innerHTML = formattedDesc;
 
-            // Precios
+            // Lógica de Precios (Ahorras vs Low Cost)
             document.getElementById('prod-sale-price').textContent = `Bs. ${salePrice.toFixed(2)}`;
+            const lowCostBadge = document.getElementById('prod-low-cost');
+            const savingsBadge = document.getElementById('prod-savings');
+            
             if (price > salePrice) {
                 document.getElementById('prod-price').textContent = `Bs. ${price.toFixed(2)}`;
                 document.getElementById('prod-price').classList.remove('hidden');
                 
                 const savings = price - salePrice;
-                document.getElementById('prod-savings').textContent = `Ahorras Bs. ${savings.toFixed(2)}`;
-                document.getElementById('prod-savings').classList.remove('hidden');
+                savingsBadge.textContent = `Ahorras Bs. ${savings.toFixed(2)}`;
+                savingsBadge.classList.remove('hidden');
+                
+                lowCostBadge.classList.add('hidden');
+                lowCostBadge.classList.remove('flex');
+            } else {
+                document.getElementById('prod-price').classList.add('hidden');
+                savingsBadge.classList.add('hidden');
+                
+                lowCostBadge.classList.remove('hidden');
+                lowCostBadge.classList.add('flex');
             }
 
             // Barra de Stock
@@ -525,7 +544,7 @@
                 const itemPrice = parseFloat(item.price) || 0;
                 const itemSalePrice = parseFloat(item.sale_price) || itemPrice || 0;
                 
-                // Lógica visual de Precios/Ofertas idéntica a colecciones.html
+                // Lógica visual de Precios/Ofertas
                 let priceHtml = '';
                 let badgeHtml = '';
                 let imageClasses = 'product-img w-full h-full object-cover transition-transform duration-700';
@@ -548,7 +567,7 @@
                     priceHtml = `<span class="font-semibold text-[14px] sm:text-lg lg:text-xl text-gray-900 leading-none">Bs. ${itemSalePrice.toFixed(2)}</span>`;
                 }
                 
-                // Renderizado adaptado a la nueva cuadrícula (Grid 2 columnas en móvil)
+                // Renderizado adaptado a la nueva cuadrícula y estilos
                 newHtml += `
                 <a href="producto.html?id=${item.id}" class="product-card group relative flex flex-col cursor-pointer bg-white rounded-lg shadow-[0_4px_20px_-4px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_25px_-5px_rgba(0,0,0,0.12)] border border-gray-200 hover:border-gray-300 transition-all duration-300 overflow-hidden">
                     <div class="relative bg-gray-100 aspect-square overflow-hidden">
@@ -573,7 +592,6 @@
         document.addEventListener('DOMContentLoaded', initProductPage);
 
         // --- FUNCIONES DE INTERFAZ (Galería, Zoom y Botones) ---
-
         function changeMainImage(index) {
             currentImageIndex = index;
             
@@ -892,9 +910,6 @@
                     e.preventDefault();
                     const currentDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
                     currentScale = Math.min(Math.max(1, initialScale * (currentDist / touchStartDist)), 4);
-                    
-                    // CORRECCIÓN: Se eliminó el "img.style.transformOrigin = 'center center';" que reiniciaba forzosamente 
-                    // la imagen al centro ignorando el clic previo. Ahora el escalado fluye desde donde estabas.
                     
                     img.style.transform = `translate(${translateX}px, ${translateY}px) scale(${currentScale})`;
                     
