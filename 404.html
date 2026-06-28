@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arelyshop.com - Página No Encontrada (404)</title>
+
+    <!-- SEO Meta Tags para 404 (evita que los buscadores indexen este error) -->
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome para los iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#111827',
+                        secondary: '#f3f4f6',
+                        accent: '#2563eb'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Estilos básicos heredados del index */
+        body { font-family: 'Inter', sans-serif; }
+        .mobile-menu-active { transform: translateX(0%); }
+        .mobile-menu-inactive { transform: translateX(-100%); }
+        .cart-active { transform: translateX(0%); }
+        .cart-inactive { transform: translateX(100%); }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col font-sans antialiased">
+    
+    <!-- Contenedor del Header dinámico -->
+    <div id="header-container" class="contents"></div>
+    
+    <!-- Contenido Principal 404 -->
+    <main class="flex-grow bg-white flex flex-col justify-center items-center py-16 px-4">
+        <div class="max-w-lg w-full flex flex-col items-center text-center">
+            
+            <!-- Imagen 404 Principal -->
+            <img src="images/404.webp" alt="Error 404 - Página no encontrada" class="w-full max-w-[400px] h-auto mb-8 object-contain drop-shadow-sm">
+            
+            <!-- Texto amigable para el error -->
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 tracking-tight">¡Ups! Parece que te perdiste</h1>
+            <p class="text-gray-500 text-[15px] md:text-lg mb-8 leading-relaxed">
+                La página que estás buscando no existe, ha sido movida o está temporalmente inaccesible.
+            </p>
+            
+            <!-- Botón replicado exactamente del index -->
+            <div class="mt-2 mb-2 flex justify-center items-center w-full">
+                <a href="colecciones.html" class="px-6 py-3 text-base md:px-10 md:py-4 md:text-lg bg-[#1F2937] text-white font-medium rounded-lg hover:opacity-90 transition shadow-md">
+                    Ver Catálogo Completo
+                </a>
+            </div>
+            
+        </div>
+    </main>
+    
+    <!-- Contenedor del Footer dinámico -->
+    <div id="footer-container"></div>
+
+    <!-- Script para cargar el Header, Footer y main.js -->
+    <script>
+        // Cargar componentes dinámicamente como en el index
+        Promise.all([
+            fetch('header.html').then(res => res.text()),
+            fetch('footer.html').then(res => res.text())
+        ]).then(([headerHtml, footerHtml]) => {
+            // Inyectar el HTML
+            document.getElementById('header-container').innerHTML = headerHtml;
+            document.getElementById('footer-container').innerHTML = footerHtml;
+            
+            // Cargar main.js DESPUÉS de que el DOM esté listo y el header exista
+            const script = document.createElement('script');
+            script.src = 'js/main.js';
+            document.body.appendChild(script);
+        }).catch(err => console.error('Error cargando componentes:', err));
+    </script>
+</body>
+</html>
