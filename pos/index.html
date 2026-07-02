@@ -553,7 +553,6 @@
             }
             
             resultsContainer.classList.remove('hidden');
-            // AGREGADO: clase animate-spin de Tailwind e inline-block para asegurar que gire
             resultsContainer.innerHTML = '<div class="p-8 text-center text-gray-400"><i class="fa-solid fa-circle-notch animate-spin inline-block text-2xl"></i><div class="mt-2 text-sm">Buscando...</div></div>';
 
             searchTimeout = setTimeout(async () => {
@@ -593,8 +592,9 @@
                                 const stock = p.cantidad ?? 0;
                                 const imageUrl = p.urlFoto1 || 'https://placehold.co/100x100/e2e8f0/94a3b8?text=Sin+Foto';
                                 
+                                // Preview aumentado un 30% en móvil (w-[74px] h-[74px] aprox.)
                                 div.innerHTML = `
-                                    <img src="${imageUrl}" alt="${p.nombre || 'Producto'}" class="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-md border border-gray-200 shrink-0" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e2e8f0/94a3b8?text=Sin+Foto';">
+                                    <img src="${imageUrl}" alt="${p.nombre || 'Producto'}" class="w-[74px] h-[74px] sm:w-20 sm:h-20 object-cover rounded-md border border-gray-200 shrink-0" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e2e8f0/94a3b8?text=Sin+Foto';">
                                     <div class="flex-1">
                                         <div class="text-sm font-medium text-gray-800 leading-tight line-clamp-1">${p.nombre}</div>
                                         <div class="text-xs text-gray-500 mt-1">SKU: ${p.sku || 'N/A'} &bull; <span class="${priceColorClass}">Bs ${displayPrice}</span> &bull; Stock: ${stock}</div>
@@ -701,7 +701,8 @@
                         </td>
                         <td class="px-4 py-3 text-sm text-gray-800 align-middle">
                             <div class="flex items-center space-x-3">
-                                <img src="${imageUrl}" alt="${item.nombre || 'Producto'}" class="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-md border border-gray-200 shrink-0" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e2e8f0/94a3b8?text=Sin+Foto';">
+                                <!-- Preview aumentado un 30% en móvil -->
+                                <img src="${imageUrl}" alt="${item.nombre || 'Producto'}" class="w-[74px] h-[74px] sm:w-20 sm:h-20 object-cover rounded-md border border-gray-200 shrink-0" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e2e8f0/94a3b8?text=Sin+Foto';">
                                 <div class="flex flex-col">
                                     <span class="font-medium">${item.nombre || 'Producto Desconocido'}</span>
                                     <span class="text-xs text-gray-500">SKU: ${item.sku || 'N/A'}</span>
@@ -793,8 +794,20 @@
              }
 
             try {
+                // Generar registro
                 const result = await simpleFetch(`${API_BASE_URL}/sales`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(saleData) });
+                
                 if (result.status === 'success' && result.data?.saleId) {
+                    // Cargar Base64 de las imagenes exclusivamente para el PDF DESPUÉS de guardar la venta
+                    // Para no enviar peso excesivo a la base de datos
+                    for (let item of saleData.items) {
+                        const cartItem = cart.find(c => c.id === item.productId);
+                        if (cartItem && cartItem.urlFoto1) {
+                            const imgData = await loadImageAsJpegDataUrl(cartItem.urlFoto1);
+                            item.base64Img = imgData ? imgData.dataURL : null;
+                        }
+                    }
+
                     const { pdfBlob, fileName } = generateSalePDF(result.data.saleId, saleData);
                     showShareOptions(pdfBlob, fileName, 'Venta Completada', 'Venta guardada y PDF generado.');
                     
@@ -818,17 +831,51 @@
             return generateDocumentPDF('Nota de Venta', `Nr: ${saleId}`, validSaleData);
         }
 
-        function handleGenerateQuote() {
+        async function handleGenerateQuote() {
             if (cart.length === 0) { showNotification("Carrito vacío.", 'error'); return; }
-            const quoteData = {
-                customer: { name: document.getElementById('customer-name')?.value || '', contact: document.getElementById('customer-contact')?.value || '', id: document.getElementById('customer-id')?.value || '' },
-                items: cart.map(item => ({ Nombre: item?.nombre || '', SKU: item?.sku || '', cantidad: item?.quantity ?? 0, precio: item?.customPrice ?? 0, precioRegular: item?.precioVenta ?? 0 })).filter(item => item.cantidad > 0),
-                total: cart.reduce((sum, item) => sum + ((item?.quantity ?? 0) * (item?.customPrice ?? 0)), 0)
-            };
-             if (quoteData.items.length === 0) { showNotification("No hay productos válidos.", "error"); return; }
-            const { pdfBlob, fileName } = generateQuotePDF(quoteData);
-             if(pdfBlob && fileName) { showShareOptions(pdfBlob, fileName, 'Cotización Generada', 'PDF generado.'); }
-             else { showNotification("Error al generar PDF.", "error"); }
+            
+            const quoteBtn = document.getElementById('generate-quote-button');
+            const originalHtml = quoteBtn.innerHTML;
+            quoteBtn.innerHTML = '<i class="fa-solid fa-circle-notch animate-spin mr-2"></i> Procesando...';
+            quoteBtn.disabled = true;
+
+            try {
+                const quoteData = {
+                    customer: { name: document.getElementById('customer-name')?.value || '', contact: document.getElementById('customer-contact')?.value || '', id: document.getElementById('customer-id')?.value || '' },
+                    items: [],
+                    total: cart.reduce((sum, item) => sum + ((item?.quantity ?? 0) * (item?.customPrice ?? 0)), 0)
+                };
+                
+                for (const item of cart) {
+                    if ((item?.quantity ?? 0) > 0) {
+                        let base64Img = null;
+                        if (item.urlFoto1) {
+                            const imgData = await loadImageAsJpegDataUrl(item.urlFoto1);
+                            base64Img = imgData ? imgData.dataURL : null;
+                        }
+                        quoteData.items.push({ 
+                            Nombre: item?.nombre || '', 
+                            SKU: item?.sku || '', 
+                            cantidad: item?.quantity ?? 0, 
+                            precio: item?.customPrice ?? 0, 
+                            precioRegular: item?.precioVenta ?? 0,
+                            base64Img: base64Img
+                        });
+                    }
+                }
+
+                 if (quoteData.items.length === 0) { showNotification("No hay productos válidos.", "error"); return; }
+                const { pdfBlob, fileName } = generateQuotePDF(quoteData);
+                 if(pdfBlob && fileName) { showShareOptions(pdfBlob, fileName, 'Cotización Generada', 'PDF generado.'); }
+                 else { showNotification("Error al generar PDF.", "error"); }
+                 
+            } catch (e) {
+                console.error("Error al generar cotización:", e);
+                showNotification("Error generando documento.", "error");
+            } finally {
+                quoteBtn.innerHTML = originalHtml;
+                quoteBtn.disabled = false;
+            }
         }
 
 
@@ -851,9 +898,24 @@
             doc.setFontSize(16); doc.text(docType, pageW - margin - 5, margin + 12, { align: 'right' }); doc.setFontSize(10); doc.text(docIdentifier, pageW - margin - 5, margin + 18, { align: 'right' }); doc.text(`Fecha: ${new Date().toLocaleDateString('es-BO')}`, pageW - margin - 5, margin + 24, { align: 'right' });
             const startY = margin + headerH + 10; doc.setTextColor('#000000'); doc.setFontSize(12); doc.text("Cliente:", margin, startY); doc.setFontSize(10); 
             const customerInfo = `Nombre: ${data.customer.name || 'N/A'} | Contacto: ${data.customer.contact || 'N/A'} | NIT/CI: ${data.customer.id || 'N/A'}`; doc.text(customerInfo, margin, startY + 8);
-            const tableColumn = ["Cant.", "Desc.", "P.U.", "Subt."]; 
+            
+            // Nueva columna para la Imagen en primera posición
+            const tableColumn = ["Img", "Cant.", "Desc.", "P.U.", "Subt."]; 
             const tableRows = [];
-            if (Array.isArray(data.items)) { data.items.forEach(item => { if (!item || typeof item !== 'object') return; const price = typeof item.precio === 'number' ? item.precio : 0; const quantity = typeof item.cantidad === 'number' ? item.cantidad : 0; const subtotal = quantity * price; const description = `${item.Nombre || 'N/A'}\n(SKU: ${item.SKU || 'N/A'})`; const itemData = [ quantity, description, `Bs ${price.toFixed(2)}`, `Bs ${subtotal.toFixed(2)}` ]; tableRows.push(itemData); }); } else { console.error("items no es array:", data.items); }
+            
+            if (Array.isArray(data.items)) { 
+                data.items.forEach(item => { 
+                    if (!item || typeof item !== 'object') return; 
+                    const price = typeof item.precio === 'number' ? item.precio : 0; 
+                    const quantity = typeof item.cantidad === 'number' ? item.cantidad : 0; 
+                    const subtotal = quantity * price; 
+                    const description = `${item.Nombre || 'N/A'}\n(SKU: ${item.SKU || 'N/A'})`; 
+                    const itemData = ['', quantity, description, `Bs ${price.toFixed(2)}`, `Bs ${subtotal.toFixed(2)}` ]; 
+                    tableRows.push(itemData); 
+                }); 
+            } else { 
+                console.error("items no es array:", data.items); 
+            }
             if (typeof doc.autoTable !== 'function') { console.error("autoTable no cargado."); showNotification("Error: Tablas PDF.", "error"); return { pdfBlob: null, fileName: 'error.pdf'}; }
              let finalY = startY + 15; 
              try { 
@@ -864,15 +926,38 @@
                      margin: { left: margin, right: margin }, 
                      headStyles: { fillColor: '#cdcdcd', textColor: '#000000', fontSize: 8 }, 
                      styles: { cellPadding: 1.5, fontSize: 8 }, 
-                     columnStyles: { 0: { halign: 'center', cellWidth: 15 }, 2: { halign: 'right', cellWidth: 25 }, 3: { halign: 'right', cellWidth: 25 } }, 
+                     columnStyles: { 
+                         0: { cellWidth: 15, minCellHeight: 15, halign: 'center' }, // Img
+                         1: { halign: 'center', cellWidth: 10 }, // Cant.
+                         3: { halign: 'right', cellWidth: 20 },  // P.U.
+                         4: { halign: 'right', cellWidth: 20 }   // Subt.
+                     }, 
+                     didDrawCell: (cellData) => {
+                         // Lógica para pintar la imagen precargada
+                         if (cellData.section === 'body' && cellData.column.index === 0) {
+                             const item = data.items[cellData.row.index];
+                             if (item && item.base64Img) {
+                                 try {
+                                     // Centrar la imagen de 11x11 dentro de la celda
+                                     const dim = 11;
+                                     const xOffset = cellData.cell.x + (cellData.cell.width - dim) / 2;
+                                     const yOffset = cellData.cell.y + (cellData.cell.height - dim) / 2;
+                                     doc.addImage(item.base64Img, 'JPEG', xOffset, yOffset, dim, dim);
+                                 } catch (e) {
+                                     console.error("Error al pintar imagen PDF:", e);
+                                 }
+                             }
+                         }
+                     },
                      didParseCell: (cellData) => { 
-                         if (cellData.column.index === 1) cellData.cell.styles.fontSize = 7; 
+                         if (cellData.column.index === 2) cellData.cell.styles.fontSize = 7; 
                          if (cellData.section === 'body') {
                              const item = data.items[cellData.row.index];
                              if (item) {
                                  const pBase = parseFloat(item.precioRegular || 0);
                                  const pAct = parseFloat(item.precio || 0);
-                                 if (Math.abs(pAct - pBase) > 0.001 && (cellData.column.index === 2 || cellData.column.index === 3)) {
+                                 // Check column index 3 (PU) and 4 (Subtotal) instead of 2 and 3
+                                 if (Math.abs(pAct - pBase) > 0.001 && (cellData.column.index === 3 || cellData.column.index === 4)) {
                                      cellData.cell.styles.textColor = [220, 38, 38]; // Color rojo de Tailwind (red-600)
                                      cellData.cell.styles.fontStyle = 'bold';
                                  }
