@@ -801,13 +801,15 @@
                      columnStyles: { 0: { halign: 'center', cellWidth: 15 }, 2: { halign: 'right', cellWidth: 25 }, 3: { halign: 'right', cellWidth: 25 } }, 
                      didParseCell: (cellData) => { 
                          if (cellData.column.index === 1) cellData.cell.styles.fontSize = 7; 
-                         const item = data.items[cellData.row.index];
-                         if (item) {
-                             const pBase = parseFloat(item.precioRegular || 0);
-                             const pAct = parseFloat(item.precio || 0);
-                             if (Math.abs(pAct - pBase) > 0.001 && (cellData.column.index === 2 || cellData.column.index === 3)) {
-                                 cellData.cell.styles.textColor = [220, 38, 38]; // Color rojo de Tailwind (red-600)
-                                 cellData.cell.styles.fontStyle = 'bold';
+                         if (cellData.section === 'body') {
+                             const item = data.items[cellData.row.index];
+                             if (item) {
+                                 const pBase = parseFloat(item.precioRegular || 0);
+                                 const pAct = parseFloat(item.precio || 0);
+                                 if (Math.abs(pAct - pBase) > 0.001 && (cellData.column.index === 2 || cellData.column.index === 3)) {
+                                     cellData.cell.styles.textColor = [220, 38, 38]; // Color rojo de Tailwind (red-600)
+                                     cellData.cell.styles.fontStyle = 'bold';
+                                 }
                              }
                          }
                      } 
