@@ -234,7 +234,7 @@
         const API_BASE_URL = '/.netlify/functions';
 
         let cart = [];
-        let preloadedPdfQr = null;
+        let preloadedLogo = null;
         let html5QrCode = null;
         let currentPdfBlob = null;
         let currentPdfFileName = '';
@@ -276,8 +276,8 @@
 
             try {
                 await Promise.all([
-                    // Ya no cargamos todos los productos al inicio para que sea más veloz.
-                    loadImageAsJpegDataUrl('/images/qr-pdf.webp').then(qr => preloadedPdfQr = qr),
+                    // Precargamos el logo para el encabezado negro del PDF
+                    loadImageAsJpegDataUrl('/images/logo-escritorio.svg', 400).then(img => preloadedLogo = img),
                     fetchSalesForNextId() 
                 ]);
             } catch (error) {
@@ -372,19 +372,31 @@
             }, 4000);
         }
 
-        const loadImageAsJpegDataUrl = (url) => new Promise((resolve) => {
+        // Función optimizada para re-escalar la imagen antes de convertir a Base64
+        const loadImageAsJpegDataUrl = (url, maxSize = 800) => new Promise((resolve) => {
              if (!url) { resolve(null); return; }
             const img = new Image();
             img.crossOrigin = 'Anonymous';
             img.onload = () => {
+                let width = img.naturalWidth || img.width || 300;
+                let height = img.naturalHeight || img.height || 300;
+                
+                // Redimensionar si supera el tamaño máximo
+                if (width > maxSize || height > maxSize) {
+                    const ratio = Math.min(maxSize / width, maxSize / height);
+                    width = Math.round(width * ratio);
+                    height = Math.round(height * ratio);
+                }
+                
                 const canvas = document.createElement('canvas');
-                canvas.width = img.naturalWidth;
-                canvas.height = img.naturalHeight;
+                canvas.width = width;
+                canvas.height = height;
                 const ctx = canvas.getContext('2d');
                  ctx.fillStyle = '#FFFFFF';
                  ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0);
-                resolve({dataURL: canvas.toDataURL('image/jpeg', 0.8), width: img.naturalWidth, height: img.naturalHeight});
+                ctx.drawImage(img, 0, 0, width, height);
+                // Compresión de 0.7 para optimizar el peso sin perder calidad perceptible en miniatura
+                resolve({dataURL: canvas.toDataURL('image/jpeg', 0.7), width, height});
             };
             img.onerror = (e) => {
                  console.error("Error cargando imagen JPEG:", url, e);
@@ -398,20 +410,16 @@
             const refreshBtn = document.getElementById('refresh-db-btn');
             const icon = refreshBtn.querySelector('i');
 
-            // Añadir animación de giro y desactivar botón temporalmente
             icon.classList.add('fa-spin');
             refreshBtn.disabled = true;
 
             try {
-                // Al no cargar todo el catálogo de golpe, la sincronización aquí solo
-                // requiere actualizar el contador de ventas para asegurar que el correlativo sea correcto
                 await fetchSalesForNextId();
                 showNotification('Base de datos sincronizada correctamente.', 'success');
             } catch (error) {
                 console.error("Error en sincronización manual:", error);
                 showNotification('Error al sincronizar la base de datos.', 'error');
             } finally {
-                // Quitar animación de giro y restaurar botón
                 icon.classList.remove('fa-spin');
                 refreshBtn.disabled = false;
             }
@@ -444,7 +452,6 @@
             const closeScannerBtn = document.getElementById('close-scanner-btn');
             if(closeScannerBtn) closeScannerBtn.addEventListener('click', stopScanner);
 
-            // Listener para el botón refrescar BD
             const refreshDbBtn = document.getElementById('refresh-db-btn');
             if(refreshDbBtn) refreshDbBtn.addEventListener('click', refreshDatabase);
 
@@ -458,7 +465,6 @@
                 });
             });
 
-            // Cerrar resultados de búsqueda al hacer clic fuera
             document.addEventListener('click', (e) => {
                 const searchInputEl = document.getElementById('search-product');
                 const searchResultsEl = document.getElementById('search-results');
@@ -497,7 +503,6 @@
                     salesList = result.data.sort((a, b) => new Date(b.fechaVenta) - new Date(a.fechaVenta));
                 }
                 
-                // Determine next sale ID
                 let nextId = "AS1";
                 if (salesList.length > 0 && salesList[0].saleId) {
                      const lastSaleId = salesList[0].saleId; const lastIdNumber = parseInt(lastSaleId.substring(2));
@@ -519,7 +524,6 @@
                 const barcode = e.target.value.trim();
                 if (barcode === '') return;
                 
-                // Hacemos una búsqueda rápida solo por el código de barras
                 simpleFetch(`${API_BASE_URL}/getpos?search=${encodeURIComponent(barcode)}`)
                     .then(result => {
                         if (result.status === 'success' && Array.isArray(result.data) && result.data.length > 0) {
@@ -557,14 +561,11 @@
 
             searchTimeout = setTimeout(async () => {
                 try {
-                    // Petición a la API con el término de búsqueda (carga diferida real)
                     const res = await simpleFetch(`${API_BASE_URL}/getpos?search=${encodeURIComponent(val)}&limit=15`);
                     
                     if (res.status === 'success' && Array.isArray(res.data)) {
                         let rawData = res.data;
                         
-                        // Fallback de seguridad: si el backend (getpos.js) aún no filtra por el parámetro ?search 
-                        // (es decir, ignora la búsqueda y devuelve todo), filtramos localmente para no romper la vista
                         if (rawData.length > 15) {
                             rawData = rawData.filter(p => 
                                 (p.title && p.title.toLowerCase().includes(val)) || 
@@ -578,7 +579,6 @@
                         resultsContainer.innerHTML = '';
                         
                         if (filteredProducts.length > 0) {
-                            // Almacenamos temporalmente los productos encontrados para poder agregarlos al carrito
                             window._tempSearchResults = filteredProducts;
                             
                             filteredProducts.forEach((p, index) => {
@@ -592,15 +592,13 @@
                                 const stock = p.cantidad ?? 0;
                                 const imageUrl = p.urlFoto1 || 'https://placehold.co/100x100/e2e8f0/94a3b8?text=Sin+Foto';
                                 
-                                // Preview aumentado un 30% en móvil (w-[74px] h-[74px] aprox.)
                                 div.innerHTML = `
-                                    <img src="${imageUrl}" alt="${p.nombre || 'Producto'}" class="w-[74px] h-[74px] sm:w-20 sm:h-20 object-cover rounded-md border border-gray-200 shrink-0" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e2e8f0/94a3b8?text=Sin+Foto';">
+                                    <img src="${imageUrl}" alt="${p.nombre || 'Producto'}" class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-md border border-gray-200 shrink-0" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e2e8f0/94a3b8?text=Sin+Foto';">
                                     <div class="flex-1">
                                         <div class="text-sm font-medium text-gray-800 leading-tight line-clamp-1">${p.nombre}</div>
                                         <div class="text-xs text-gray-500 mt-1">SKU: ${p.sku || 'N/A'} &bull; <span class="${priceColorClass}">Bs ${displayPrice}</span> &bull; Stock: ${stock}</div>
                                     </div>
                                 `;
-                                // Llamamos a addToCart usando el producto del array temporal
                                 div.onclick = () => {
                                     addToCart(window._tempSearchResults[index]);
                                 };
@@ -616,7 +614,7 @@
                     console.error(err);
                     resultsContainer.innerHTML = '<div class="p-8 text-center text-red-500 text-sm">Error de conexión. Intenta de nuevo.</div>';
                 }
-            }, 500); // 500ms debounce
+            }, 500);
         }
 
 
@@ -658,7 +656,7 @@
                      codigoBarras: product.codigoBarras,
                      urlFoto1: product.urlFoto1,
                      quantity: 1,
-                     maxStock: product.cantidad, // Guardamos el stock máximo disponible en este momento
+                     maxStock: product.cantidad,
                      customPrice: defaultPrice
                  });
             }
@@ -701,8 +699,7 @@
                         </td>
                         <td class="px-4 py-3 text-sm text-gray-800 align-middle">
                             <div class="flex items-center space-x-3">
-                                <!-- Preview aumentado un 30% en móvil -->
-                                <img src="${imageUrl}" alt="${item.nombre || 'Producto'}" class="w-[74px] h-[74px] sm:w-20 sm:h-20 object-cover rounded-md border border-gray-200 shrink-0" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e2e8f0/94a3b8?text=Sin+Foto';">
+                                <img src="${imageUrl}" alt="${item.nombre || 'Producto'}" class="w-16 h-16 sm:w-20 sm:h-20 object-cover rounded-md border border-gray-200 shrink-0" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e2e8f0/94a3b8?text=Sin+Foto';">
                                 <div class="flex flex-col">
                                     <span class="font-medium">${item.nombre || 'Producto Desconocido'}</span>
                                     <span class="text-xs text-gray-500">SKU: ${item.sku || 'N/A'}</span>
@@ -799,11 +796,11 @@
                 
                 if (result.status === 'success' && result.data?.saleId) {
                     // Cargar Base64 de las imagenes exclusivamente para el PDF DESPUÉS de guardar la venta
-                    // Para no enviar peso excesivo a la base de datos
+                    // Aquí la función loadImageAsJpegDataUrl recibe el parámetro 150 para bajar la resolución en el PDF
                     for (let item of saleData.items) {
                         const cartItem = cart.find(c => c.id === item.productId);
                         if (cartItem && cartItem.urlFoto1) {
-                            const imgData = await loadImageAsJpegDataUrl(cartItem.urlFoto1);
+                            const imgData = await loadImageAsJpegDataUrl(cartItem.urlFoto1, 150);
                             item.base64Img = imgData ? imgData.dataURL : null;
                         }
                     }
@@ -850,7 +847,8 @@
                     if ((item?.quantity ?? 0) > 0) {
                         let base64Img = null;
                         if (item.urlFoto1) {
-                            const imgData = await loadImageAsJpegDataUrl(item.urlFoto1);
+                            // Resolución minimizada a 150px para el PDF
+                            const imgData = await loadImageAsJpegDataUrl(item.urlFoto1, 150);
                             base64Img = imgData ? imgData.dataURL : null;
                         }
                         quoteData.items.push({ 
@@ -878,7 +876,6 @@
             }
         }
 
-
         function generateQuotePDF(quoteData) {
              const validQuoteData = { ...quoteData, items: Array.isArray(quoteData.items) ? quoteData.items : [] };
             return generateDocumentPDF('Cotización', 'Válido por 24hrs.', validQuoteData, 'Cotizacion');
@@ -890,16 +887,42 @@
             if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') { console.error("jsPDF no cargado."); showNotification("Error: Librería PDF.", "error"); return { pdfBlob: null, fileName: 'error.pdf'}; }
             const { jsPDF } = window.jspdf; let doc; try { doc = new jsPDF(); } catch (e) { console.error("Error jsPDF:", e); return { pdfBlob: null, fileName: 'error.pdf'}; }
 
-            const pageW = doc.internal.pageSize.getWidth(); const margin = 14; const headerW = pageW - (margin * 2); const headerH = 30; const r = 3;
-            doc.setFillColor('#303c54'); doc.roundedRect(margin, margin, headerW, headerH, r, r, 'F'); doc.setTextColor('#FFFFFF');
-            let textStartX = margin + 5;
+            const pageW = doc.internal.pageSize.getWidth(); const margin = 14; 
             
-            doc.setFontSize(17.6); doc.text("ArelyShop", textStartX, margin + 15); doc.setFontSize(8.8); doc.text("Santa Cruz, Bolivia", textStartX, margin + 21);
-            doc.setFontSize(16); doc.text(docType, pageW - margin - 5, margin + 12, { align: 'right' }); doc.setFontSize(10); doc.text(docIdentifier, pageW - margin - 5, margin + 18, { align: 'right' }); doc.text(`Fecha: ${new Date().toLocaleDateString('es-BO')}`, pageW - margin - 5, margin + 24, { align: 'right' });
-            const startY = margin + headerH + 10; doc.setTextColor('#000000'); doc.setFontSize(12); doc.text("Cliente:", margin, startY); doc.setFontSize(10); 
-            const customerInfo = `Nombre: ${data.customer.name || 'N/A'} | Contacto: ${data.customer.contact || 'N/A'} | NIT/CI: ${data.customer.id || 'N/A'}`; doc.text(customerInfo, margin, startY + 8);
+            // 1. Encabezado (Barra Negra Superior)
+            const headerH = 22;
+            doc.setFillColor('#000000'); 
+            doc.rect(0, 0, pageW, headerH, 'F'); 
+            doc.setTextColor('#FFFFFF');
             
-            // Nueva columna para la Imagen en primera posición
+            if (preloadedLogo && preloadedLogo.dataURL) {
+                const logoH = 10;
+                const logoW = (preloadedLogo.width / preloadedLogo.height) * logoH;
+                doc.addImage(preloadedLogo.dataURL, 'JPEG', margin, (headerH - logoH) / 2, logoW, logoH);
+            } else {
+                doc.setFontSize(16); doc.setFont(undefined, 'bold');
+                doc.text("ArelyShop", margin, 15);
+            }
+            
+            doc.setFontSize(10); doc.setFont(undefined, 'normal');
+            doc.text(`Fecha: ${new Date().toLocaleDateString('es-BO')}`, pageW - margin, 14, { align: 'right' });
+
+            // 2. Título de Documento y Datos (Sin fondo negro)
+            const startY = headerH + 12; 
+            doc.setTextColor('#000000'); 
+            doc.setFontSize(16); doc.setFont(undefined, 'bold'); 
+            doc.text(docType, margin, startY); 
+            doc.setFontSize(11); doc.setFont(undefined, 'normal'); 
+            doc.text(docIdentifier, pageW - margin, startY, { align: 'right' }); 
+            
+            // 3. Información del Cliente
+            const customerY = startY + 10;
+            doc.setFontSize(11); doc.setFont(undefined, 'bold'); 
+            doc.text("Cliente:", margin, customerY); 
+            doc.setFontSize(10); doc.setFont(undefined, 'normal'); 
+            const customerInfo = `Nombre: ${data.customer.name || 'N/A'} | Contacto: ${data.customer.contact || 'N/A'} | NIT/CI: ${data.customer.id || 'N/A'}`; 
+            doc.text(customerInfo, margin, customerY + 6);
+            
             const tableColumn = ["Img", "Cant.", "Desc.", "P.U.", "Subt."]; 
             const tableRows = [];
             
@@ -917,12 +940,12 @@
                 console.error("items no es array:", data.items); 
             }
             if (typeof doc.autoTable !== 'function') { console.error("autoTable no cargado."); showNotification("Error: Tablas PDF.", "error"); return { pdfBlob: null, fileName: 'error.pdf'}; }
-             let finalY = startY + 15; 
+             let finalY = customerY + 12; 
              try { 
                  doc.autoTable({ 
                      head: [tableColumn], 
                      body: tableRows, 
-                     startY: startY + 15, 
+                     startY: finalY, 
                      margin: { left: margin, right: margin }, 
                      headStyles: { fillColor: '#cdcdcd', textColor: '#000000', fontSize: 8 }, 
                      styles: { cellPadding: 1.5, fontSize: 8 }, 
@@ -933,12 +956,10 @@
                          4: { halign: 'right', cellWidth: 20 }   // Subt.
                      }, 
                      didDrawCell: (cellData) => {
-                         // Lógica para pintar la imagen precargada
                          if (cellData.section === 'body' && cellData.column.index === 0) {
                              const item = data.items[cellData.row.index];
                              if (item && item.base64Img) {
                                  try {
-                                     // Centrar la imagen de 11x11 dentro de la celda
                                      const dim = 11;
                                      const xOffset = cellData.cell.x + (cellData.cell.width - dim) / 2;
                                      const yOffset = cellData.cell.y + (cellData.cell.height - dim) / 2;
@@ -956,9 +977,8 @@
                              if (item) {
                                  const pBase = parseFloat(item.precioRegular || 0);
                                  const pAct = parseFloat(item.precio || 0);
-                                 // Check column index 3 (PU) and 4 (Subtotal) instead of 2 and 3
                                  if (Math.abs(pAct - pBase) > 0.001 && (cellData.column.index === 3 || cellData.column.index === 4)) {
-                                     cellData.cell.styles.textColor = [220, 38, 38]; // Color rojo de Tailwind (red-600)
+                                     cellData.cell.styles.textColor = [220, 38, 38]; 
                                      cellData.cell.styles.fontStyle = 'bold';
                                  }
                              }
@@ -968,8 +988,14 @@
                  finalY = doc.autoTable.previous.finalY; 
              } catch (e) { console.error("Error autoTable:", e); }
              const total = typeof data.total === 'number' ? data.total : 0; doc.setFontSize(12); doc.setFont(undefined, 'bold'); doc.text("TOTAL:", margin, finalY + 10); doc.text(`Bs ${total.toFixed(2)}`, pageW - margin, finalY + 10, { align: 'right' }); doc.setFont(undefined, 'normal');
-            doc.setFontSize(9); const thankYou = filePrefix === 'Cotizacion' ? "¡Gracias por su interés!" : "¡Gracias por su compra!"; doc.text(thankYou, pageW / 2, finalY + 20, { align: 'center' }); doc.text("Visítanos: www.arelyshop.com", pageW / 2, finalY + 24, { align: 'center' });
-            if (preloadedPdfQr && preloadedPdfQr.dataURL) { const qrSize = 20; const qrX = (pageW - qrSize) / 2; const qrY = finalY + 28; try { doc.addImage(preloadedPdfQr.dataURL, 'JPEG', qrX, qrY, qrSize, qrSize, undefined, 'FAST'); } catch (e) { console.error("Error QR PDF:", e); } }
+            
+            // NUEVO FOOTER 
+            doc.setFontSize(9);
+            doc.setTextColor('#666666'); 
+            doc.text("4to Anillo Av. Paraguá, Santa Cruz • Bolivia", pageW / 2, finalY + 24, { align: 'center' });
+            doc.text("www.arelyshop.com", pageW / 2, finalY + 28, { align: 'center' });
+            doc.text("© 2026 - Todos los derechos reservados.", pageW / 2, finalY + 32, { align: 'center' });
+
             const customerName = (data.customer.name || '').trim().replace(/\s+/g, "_") || "sin-cliente"; let fileName; if (filePrefix === 'Nota_Venta') { const saleId = (docIdentifier.split(': ')[1] || '').replace(/\s+/g, "_"); fileName = `${filePrefix}_${saleId}_${customerName}.pdf`; } else { fileName = `${filePrefix}_${customerName}.pdf`; } fileName = fileName.replace(/[^a-zA-Z0-9_.-]/g, '');
             let pdfBlob = null; try { pdfBlob = doc.output('blob'); } catch (e) { console.error("Error generando Blob:", e); showNotification("Error al generar PDF.", "error"); }
             return { pdfBlob, fileName };
