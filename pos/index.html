@@ -138,7 +138,16 @@
                             <!-- QR Code Section -->
                             <div class="bg-white rounded-xl shadow-lg p-6 text-center">
                                 <h3 class="text-xl font-bold text-gray-800 mb-4">Escanea y paga</h3>
-                                <img id="pos-qr-code" src="/images/qr-pago.webp" alt="Código QR para pago" class="w-full h-auto max-w-xs mx-auto rounded-lg cursor-pointer" onclick="showQrModal()" onerror="this.onerror=null; this.src='https://placehold.co/192x192/e2e8f0/94a3b8?text=QR';">
+                                <div class="flex justify-center gap-4">
+                                    <div class="w-1/2">
+                                        <p class="text-sm text-gray-600 mb-2 font-semibold">Yape</p>
+                                        <img src="/images/qr-yape.webp" alt="QR Yape" class="w-full h-auto rounded-lg cursor-pointer hover:opacity-80 transition-opacity shadow-sm border border-gray-200" onclick="showQrModal(this.src)" onerror="this.onerror=null; this.src='https://placehold.co/192x192/e2e8f0/94a3b8?text=QR+Yape';">
+                                    </div>
+                                    <div class="w-1/2">
+                                        <p class="text-sm text-gray-600 mb-2 font-semibold">Banco</p>
+                                        <img src="/images/qr-banco.webp" alt="QR Banco" class="w-full h-auto rounded-lg cursor-pointer hover:opacity-80 transition-opacity shadow-sm border border-gray-200" onclick="showQrModal(this.src)" onerror="this.onerror=null; this.src='https://placehold.co/192x192/e2e8f0/94a3b8?text=QR+Banco';">
+                                    </div>
+                                </div>
                             </div>
                             <!-- Go to Online Store Button (Mobile Only) -->
                             <div class="lg:hidden">
@@ -184,10 +193,10 @@
     </div>
 
     <!-- QR Code Modal -->
-    <div id="qrCodeModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center p-4 hidden z-50">
-        <div class="bg-white p-4 rounded-lg shadow-xl max-w-sm w-full relative">
-            <button id="closeQrModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-800 text-3xl font-bold z-10">&times;</button>
-            <img id="modalQrImage" src="" alt="Código QR para pago ampliado" class="w-full h-auto rounded-lg">
+    <div id="qrCodeModal" class="fixed inset-0 bg-gray-900 bg-opacity-90 flex items-center justify-center p-4 hidden z-50">
+        <div class="relative max-w-2xl w-full flex justify-center">
+            <button id="closeQrModal" class="absolute -top-10 right-0 md:-right-10 text-white hover:text-gray-300 text-4xl font-bold z-10">&times;</button>
+            <img id="modalQrImage" src="" alt="Código QR para pago ampliado" class="max-w-full max-h-[85vh] object-contain rounded-lg bg-white p-2">
         </div>
     </div>
 
@@ -828,7 +837,7 @@
 
         function copyToClipboard(text, buttonElement) { if (!text || text === 'N/A' || !buttonElement) return; navigator.clipboard.writeText(text).then(() => { const originalHTML = buttonElement.innerHTML; buttonElement.innerHTML = '¡Copiado!'; clearTimeout(buttonElement.copyTimeoutId); buttonElement.copyTimeoutId = setTimeout(() => { buttonElement.innerHTML = originalHTML; }, 1500); }).catch(err => { console.warn('navigator.clipboard falló:', err); try { const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); const ok = document.execCommand('copy'); document.body.removeChild(ta); if(ok) { const oHTML = buttonElement.innerHTML; buttonElement.innerHTML = '¡Copiado!'; clearTimeout(buttonElement.copyTimeoutId); buttonElement.copyTimeoutId = setTimeout(() => { buttonElement.innerHTML = oHTML; }, 1500); } else { throw new Error('execCommand falló'); } } catch (execErr) { showNotification('No se pudo copiar.', 'error'); console.error('Fallback execCommand falló:', execErr); } }); }
         
-        function showQrModal() { const qrImg = document.getElementById('pos-qr-code'); const modalImg = document.getElementById('modalQrImage'); const modal = document.getElementById('qrCodeModal'); if (qrImg && modalImg && modal && qrImg.src && !qrImg.src.includes('placehold.co')) { modalImg.src = qrImg.src; modal.classList.remove('hidden'); } }
+        function showQrModal(src) { const modalImg = document.getElementById('modalQrImage'); const modal = document.getElementById('qrCodeModal'); if (modalImg && modal && src) { modalImg.src = src; modal.classList.remove('hidden'); } }
         
         function showShareOptions(pdfBlob, fileName, title, text) { if (!(pdfBlob instanceof Blob)) { console.error("showShareOptions: pdfBlob inválido", pdfBlob); showNotification("Error PDF.", "error"); return; } if (!fileName) fileName = "doc.pdf"; currentPdfBlob = pdfBlob; currentPdfFileName = fileName; const modal = document.getElementById('share-modal'); const modalTitle = document.getElementById('share-modal-title'); const modalText = document.getElementById('share-modal-text'); const shareBtn = document.getElementById('share-pdf-btn'); const downloadBtn = document.getElementById('download-pdf-btn'); const closeModalBtn = document.getElementById('close-share-modal'); if (!modal || !modalTitle || !modalText || !shareBtn || !downloadBtn || !closeModalBtn) { console.error("Elementos modal compartir no encontrados."); try { const link = document.createElement('a'); link.href = URL.createObjectURL(currentPdfBlob); link.download = currentPdfFileName; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href); } catch (e) { showNotification("No se pudo descargar PDF.", "error"); } return; } modalTitle.textContent = title; modalText.textContent = text; let fileToShare; try { fileToShare = new File([currentPdfBlob], currentPdfFileName, { type: 'application/pdf' }); } catch (e) { console.error("Error creando File:", e); showNotification("No se pudo preparar archivo.", "error"); shareBtn.classList.add('hidden'); shareBtn.onclick = null; } const dataToShare = fileToShare ? { files: [fileToShare] } : null; if (dataToShare && navigator.share && navigator.canShare && navigator.canShare(dataToShare)) { shareBtn.classList.remove('hidden'); shareBtn.onclick = async () => { try { await navigator.share({ files: [fileToShare], title: `Doc: ${currentPdfFileName}`, text: 'Doc desde ArelyShop.' }); modal.classList.add('hidden'); } catch (error) { console.error('Error al compartir:', error); if (error.name !== 'AbortError') showNotification('No se pudo compartir.', 'error'); } }; } else { shareBtn.classList.add('hidden'); shareBtn.onclick = null; if(dataToShare) console.log("Web Share API no soportada."); } modal.classList.remove('hidden'); downloadBtn.onclick = () => { try { const link = document.createElement('a'); link.href = URL.createObjectURL(currentPdfBlob); link.download = currentPdfFileName; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href); modal.classList.add('hidden'); } catch (e) { console.error("Error descarga PDF:", e); showNotification("No se pudo descargar.", "error"); } }; closeModalBtn.onclick = () => { modal.classList.add('hidden'); }; }
 
