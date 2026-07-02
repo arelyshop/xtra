@@ -67,8 +67,9 @@
                 <!-- Point of Sale Content -->
                 <div>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div class="lg:col-span-2 bg-white rounded-xl shadow-lg overflow-hidden">
-                            <div class="p-6 flex justify-between items-center" style="background-color: #2c3c53; color: white;">
+                        <!-- ELIMINADO: overflow-hidden que cortaba el desplegable -->
+                        <div class="lg:col-span-2 bg-white rounded-xl shadow-lg">
+                            <div class="p-6 flex justify-between items-center rounded-t-xl" style="background-color: #2c3c53; color: white;">
                                 <div class="flex items-center space-x-4">
                                     <img src="/images/logo-escritorio.svg" alt="ArelyShop" class="h-12" onerror="this.onerror=null; this.style.display='none';">
                                     <div class="hidden md:block">
@@ -519,7 +520,8 @@
             }
             
             resultsContainer.classList.remove('hidden');
-            resultsContainer.innerHTML = '<div class="p-8 text-center text-gray-400"><i class="fa-solid fa-circle-notch fa-spin text-2xl"></i><div class="mt-2 text-sm">Buscando...</div></div>';
+            // AGREGADO: clase animate-spin de Tailwind e inline-block para asegurar que gire
+            resultsContainer.innerHTML = '<div class="p-8 text-center text-gray-400"><i class="fa-solid fa-circle-notch animate-spin inline-block text-2xl"></i><div class="mt-2 text-sm">Buscando...</div></div>';
 
             searchTimeout = setTimeout(async () => {
                 try {
