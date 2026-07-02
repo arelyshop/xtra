@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema POS - ArelyShop</title>
+    <title>Punto de Venta - ArelyShop</title>
     <link rel="icon" type="image/svg+xml" href="https://www.svgrepo.com/show/373594/favicon.svg">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -18,41 +18,18 @@
         .loader { border: 4px solid #f3f3f3; border-radius: 50%; border-top: 4px solid #3b82f6; width: 24px; height: 24px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Tab Styling */
-        .tab-button {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 0.5rem 0.25rem;
-            font-size: 0.75rem;
-            line-height: 1rem;
-            text-align: center;
-            flex-grow: 1;
-        }
-        .tab-button svg { width: 24px; height: 24px; margin-bottom: 0.25rem; }
-
-        @media (min-width: 640px) {
-            .tab-button { flex-direction: row; font-size: 0.875rem; line-height: 1.25rem; padding: 0.5rem 0.75rem; flex-grow: 0; }
-            .tab-button svg { margin-bottom: 0; margin-right: 0.5rem; }
-        }
-
-        .tab-inactive { border-color: transparent; color: #6b7280; }
-        .tab-inactive svg { fill: #6b7280; }
-        #tab-pos.tab-active { border-color: #2563eb; color: #2563eb; font-weight: 600; }
-        #tab-pos.tab-active svg { fill: #2563eb; }
-        #tab-sales-registry.tab-active { border-color: #16a34a; color: #16a34a; font-weight: 600; }
-        #tab-sales-registry.tab-active svg { fill: #16a34a; }
-        .tab-content { display: none; }
         .copy-btn { background: none; border: none; cursor: pointer; margin-left: 8px; color: #6b7280; }
         .copy-btn:hover { color: #2c3c53; }
         #scanner-modal #reader { width: 100%; border-radius: 0.5rem; overflow: hidden; }
+        
         /* Notification Banner */
         #notification-banner { transition: transform 0.5s ease-in-out; transform: translateY(-100%); }
-        /* Summary Modal Scrollbar */
-        #summary-products-list::-webkit-scrollbar { width: 6px; }
-        #summary-products-list::-webkit-scrollbar-track { background: #e5e7eb; }
-        #summary-products-list::-webkit-scrollbar-thumb { background: #9ca3af; border-radius: 3px; }
-        #summary-products-list::-webkit-scrollbar-thumb:hover { background: #6b7280; }
+        
+        /* Scrollbar styles for dropdowns */
+        #search-results::-webkit-scrollbar { width: 6px; }
+        #search-results::-webkit-scrollbar-track { background: #e5e7eb; }
+        #search-results::-webkit-scrollbar-thumb { background: #9ca3af; border-radius: 3px; }
+        #search-results::-webkit-scrollbar-thumb:hover { background: #6b7280; }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -62,17 +39,17 @@
         <span id="notification-message"></span>
     </div>
 
-    <!-- App Container (Visible por defecto por el bypass de login) -->
+    <!-- App Container -->
     <div id="app-container" class="flex flex-col min-h-screen">
         <header class="bg-gray-800 text-white shadow-md">
             <div class="container mx-auto p-4 flex justify-between items-center">
                 <div class="flex items-center space-x-4">
                     <h1 class="text-xl font-bold hidden sm:block">Punto de Venta</h1>
                 </div>
-                 <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-4">
                     <div id="user-info" class="text-right">
-                         <p class="font-semibold text-sm" id="user-fullname"></p>
-                         <p class="text-xs text-gray-400" id="user-role"></p>
+                        <p class="font-semibold text-sm" id="user-fullname"></p>
+                        <p class="text-xs text-gray-400" id="user-role"></p>
                     </div>
                     <button id="logout-button" class="bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 text-sm flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3" class="mr-1"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
@@ -84,22 +61,8 @@
 
         <main class="flex-grow">
             <div class="container mx-auto p-4 md:p-8">
-                <!-- Tab Navigation -->
-                <div class="mb-8 border-b border-gray-200">
-                    <nav class="flex justify-center space-x-0 sm:space-x-4" aria-label="Tabs">
-                        <button id="tab-pos" class="text-sm font-medium border-b-2 tab-active tab-button">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M280-640q-33 0-56.5-23.5T200-720v-80q0-33 23.5-56.5T280-880h400q33 0 56.5 23.5T760-800v80q0 33-23.5 56.5T680-640H280Zm0-80h400v-80H280v80ZM160-80q-33 0-56.5-23.5T80-160v-40h800v40q0 33-23.5 56.5T800-80H160ZM80-240l139-313q10-22 30-34.5t43-12.5h376q23 0 43 12.5t30 34.5l139 313H80Zm260-80h40q8 0 14-6t6-14q0-8-6-14t-14-6h-40q-8 0-14 6t-6 14q0 8 6 14t14 6Zm0-80h40q8 0 14-6t6-14q0-8-6-14t-14-6h-40q-8 0-14 6t-6 14q0 8 6 14t14 6Zm0-80h40q8 0 14-6t6-14q0-8-6-14t-14-6h-40q-8 0-14 6t-6 14q0 8 6 14t14 6Zm120 160h40q8 0 14-6t6-14q0-8-6-14t-14-6h-40q-8 0-14 6t-6 14q0 8 6 14t14 6Zm0-80h40q8 0 14-6t6-14q0-8-6-14t-14-6h-40q-8 0-14 6t-6 14q0 8 6 14t14 6Zm0-80h40q8 0 14-6t6-14q0-8-6-14t-14-6h-40q-8 0-14 6t-6 14q0 8 6 14t14 6Zm120 160h40q8 0 14-6t6-14q0-8-6-14t-14-6h-40q-8 0-14 6t-6 14q0 8 6 14t14 6Zm0-80h40q8 0 14-6t6-14q0-8-6-14t-14-6h-40q-8 0-14 6t-6 14q0 8 6 14t14 6Zm0-80h40q8 0 14-6t6-14q0-8-6-14t-14-6h-40q-8 0-14 6t-6 14q0 8 6 14t14 6Z"/></svg>
-                            <span>Punto de Venta</span>
-                        </button>
-                        <button id="tab-sales-registry" class="text-sm font-medium border-b-2 tab-inactive tab-button">
-                           <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px"><path d="M200-120q-33 0-56.5-23.5T120-200v-640h80v640h640v80H200Zm40-120v-360h160v360H240Zm200 0v-560h160v560H440Zm200 0v-200h160v200H640Z"/></svg>
-                            <span>Registro de Ventas</span>
-                        </button>
-                    </nav>
-                </div>
-
-                <!-- Tab: Point of Sale -->
-                <div id="content-pos" class="tab-content">
+                <!-- Point of Sale Content -->
+                <div>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <div class="lg:col-span-2 bg-white rounded-xl shadow-lg overflow-hidden">
                             <div class="p-6 flex justify-between items-center" style="background-color: #2c3c53; color: white;">
@@ -185,18 +148,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Tab: Sales Registry -->
-                <div id="content-sales-registry" class="tab-content">
-                    <div class="w-full max-w-7xl mx-auto bg-white rounded-xl shadow-lg p-6">
-                        <h2 class="text-2xl font-bold text-gray-800 mb-4">Registro de Ventas</h2>
-                        <input type="text" id="search-sales-input" placeholder="Buscar por Nro. Venta, Cliente, Contacto o Vendedor..." class="w-full px-4 py-2 border border-gray-300 rounded-lg mb-6">
-                        <div id="sales-results-container" class="space-y-4 max-h-[70vh] overflow-y-auto">
-                            <!-- Sales results will be injected here -->
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </main>
 
@@ -266,61 +217,18 @@
         </div>
     </div>
 
-    <!-- Annul Sale Confirmation Modal -->
-    <div id="annul-confirm-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div class="mt-3 text-center">
-                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
-                    <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                </div>
-                <h3 class="text-lg leading-6 font-medium text-gray-900 mt-2">Anular Venta</h3>
-                <div class="mt-2 px-7 py-3"><p id="annul-modal-text" class="text-sm text-gray-500">¿Estás seguro? Esta acción no se puede deshacer y el stock será restaurado.</p></div>
-                <div class="items-center px-4 py-3">
-                    <button id="confirm-annul-btn" class="px-4 py-2 bg-red-500 text-white text-base font-medium rounded-lg w-auto shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
-                        <span id="annul-button-text">Confirmar Anulación</span>
-                        <div id="annul-loader" class="loader hidden mx-auto"></div>
-                    </button>
-                    <button id="cancel-annul-btn" class="px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-lg w-auto ml-2 hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300">Cancelar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sale Summary Modal -->
-    <div id="sale-summary-modal" class="fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center hidden z-50 p-4">
-        <div class="bg-white p-6 rounded-lg shadow-xl w-full max-w-2xl relative max-h-[90vh] flex flex-col">
-             <button id="close-summary-modal-btn" class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-3xl font-bold z-10">&times;</button>
-             <h3 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2" id="summary-modal-title">Resumen de Venta</h3>
-             <div class="text-sm text-gray-700 space-y-2 mb-4">
-                <p><strong>Cliente:</strong> <span id="summary-customer-name"></span></p>
-                <p><strong>Contacto:</strong> <span id="summary-customer-contact"></span> | <strong>NIT/CI:</strong> <span id="summary-customer-id"></span></p>
-                <p><strong>Fecha:</strong> <span id="summary-sale-date"></span></p>
-                <p><strong>Vendido por:</strong> <span id="summary-seller-name" class="font-semibold"></span></p>
-             </div>
-             <h4 class="text-lg font-semibold text-gray-800 mt-4 mb-2">Productos Vendidos</h4>
-             <div id="summary-products-list" class="flex-grow overflow-y-auto border rounded-lg p-3 bg-gray-50 mb-4 max-h-60">
-                 <p class="text-gray-500">Cargando productos...</p>
-             </div>
-             <div class="mt-auto pt-4 border-t text-right">
-                 <p class="text-xl font-bold text-blue-600">Total Venta: Bs <span id="summary-total-amount">0.00</span></p>
-             </div>
-        </div>
-    </div>
-
-    <!-- SCRIPT UNIFICADO -->
+    <!-- SCRIPT -->
     <script>
         // --- GLOBAL APP STATE ---
         const API_BASE_URL = '/.netlify/functions';
 
         let products = [];
-        let sales = [];
         let cart = [];
-        let preloadedPdfQr = null; // Removed preloadedLogo
+        let preloadedPdfQr = null;
         let html5QrCode = null;
         let currentPdfBlob = null;
         let currentPdfFileName = '';
         let currentUser = null;
-        let saleIdToAnnul = null;
 
         // --- AUTHENTICATION & INITIALIZATION ---
         document.addEventListener('DOMContentLoaded', () => {
@@ -348,29 +256,22 @@
         });
 
         async function initializeApp() {
-            // Document container is now active by default in HTML, just updating logic
             document.getElementById('user-fullname').textContent = currentUser.name || currentUser.full_name || 'Usuario';
             document.getElementById('user-role').textContent = currentUser.role || 'Rol';
 
-            initTabs();
             setupEventListeners();
             updateDateTime();
             setInterval(updateDateTime, 60000); 
 
-            const salesContainer = document.getElementById('sales-results-container');
-            if (salesContainer) salesContainer.innerHTML = '<p class="text-gray-500 text-center">Cargando ventas...</p>';
             const productSearch = document.getElementById('search-product');
             if (productSearch) productSearch.disabled = true;
 
             try {
                 await Promise.all([
                     fetchProducts(),
-                    loadImageAsJpegDataUrl('/images/qr-pdf.webp').then(qr => preloadedPdfQr = qr)
+                    loadImageAsJpegDataUrl('/images/qr-pdf.webp').then(qr => preloadedPdfQr = qr),
+                    fetchSalesForNextId() // Fetch sales only to determine the next Sale ID
                 ]);
-                await fetchSales(); 
-
-                renderSalesResults();
-                displayNextSaleId();
             } catch (error) {
                  console.error("Error durante la inicialización (carga de datos):", error);
                  showNotification(`Error al cargar datos iniciales: ${error.message}. Intenta recargar.`, 'error');
@@ -486,34 +387,6 @@
              img.src = url.startsWith('data:') ? url : (url + (url.includes('?') ? '&' : '?') + Date.now());
         });
 
-        function initTabs() {
-            const tabs = {
-                pos: { btn: document.getElementById('tab-pos'), content: document.getElementById('content-pos') },
-                salesRegistry: { btn: document.getElementById('tab-sales-registry'), content: document.getElementById('content-sales-registry') }
-            };
-
-            Object.keys(tabs).forEach(key => {
-                 if(tabs[key].btn) {
-                    tabs[key].btn.addEventListener('click', () => {
-                        Object.values(tabs).forEach(t => {
-                            if(t.btn) t.btn.classList.remove('tab-active', 'tab-inactive'); 
-                            if(t.btn) t.btn.classList.add('tab-inactive'); 
-                            if(t.content) t.content.style.display = 'none';
-                        });
-                        tabs[key].btn.classList.remove('tab-inactive'); 
-                        tabs[key].btn.classList.add('tab-active'); 
-                        if(tabs[key].content) tabs[key].content.style.display = 'block';
-                        if (key === 'salesRegistry') renderSalesResults();
-                    });
-                 }
-            });
-             if(tabs.pos.btn) tabs.pos.btn.classList.add('tab-active');
-             if(tabs.pos.btn) tabs.pos.btn.classList.remove('tab-inactive');
-             if(tabs.pos.content) tabs.pos.content.style.display = 'block';
-             if(tabs.salesRegistry.content) tabs.salesRegistry.content.style.display = 'none';
-        }
-
-
         function setupEventListeners() {
             const searchInput = document.getElementById('search-product');
             if (searchInput) { searchInput.addEventListener('input', handleSearch); searchInput.addEventListener('keydown', handleBarcodeScan); }
@@ -534,36 +407,12 @@
             const scanPosBtn = document.getElementById('scan-pos-btn');
             if(scanPosBtn) scanPosBtn.addEventListener('click', () => startScanner('search-product'));
 
-            const searchSalesInput = document.getElementById('search-sales-input');
-            if(searchSalesInput) searchSalesInput.addEventListener('input', renderSalesResults);
-            const salesResultsContainer = document.getElementById('sales-results-container');
-            if(salesResultsContainer) {
-                salesResultsContainer.addEventListener('click', (event) => {
-                    const summaryBtn = event.target.closest('.view-summary-btn');
-                    const reprintBtn = event.target.closest('.reprint-btn');
-                    const annulBtn = event.target.closest('.annul-btn');
-
-                    const saleId = summaryBtn?.dataset.saleid || reprintBtn?.dataset.saleid || annulBtn?.dataset.saleid;
-
-                    if (summaryBtn && saleId) { showSaleSummaryModal(saleId); } 
-                    else if (reprintBtn && saleId) { reprintSale(saleId); }
-                    else if (annulBtn && saleId && !annulBtn.disabled) { openAnnulConfirmModal(saleId); }
-                });
-            }
-
             const closeProductModalBtn = document.getElementById('closeProductModal');
             if(closeProductModalBtn) closeProductModalBtn.addEventListener('click', () => { document.getElementById('productDetailModal')?.classList.add('hidden'); });
             const closeQrModalBtn = document.getElementById('closeQrModal');
             if(closeQrModalBtn) closeQrModalBtn.addEventListener('click', () => { document.getElementById('qrCodeModal')?.classList.add('hidden'); });
             const closeScannerBtn = document.getElementById('close-scanner-btn');
             if(closeScannerBtn) closeScannerBtn.addEventListener('click', stopScanner);
-            const cancelAnnulBtn = document.getElementById('cancel-annul-btn');
-             if(cancelAnnulBtn) cancelAnnulBtn.addEventListener('click', () => { document.getElementById('annul-confirm-modal')?.classList.add('hidden'); saleIdToAnnul = null; });
-            const confirmAnnulBtn = document.getElementById('confirm-annul-btn');
-             if(confirmAnnulBtn) confirmAnnulBtn.addEventListener('click', () => { if (saleIdToAnnul) { annulSaleInBackend(saleIdToAnnul); } });
-             const closeSummaryModalBtn = document.getElementById('close-summary-modal-btn'); 
-             if (closeSummaryModalBtn) closeSummaryModalBtn.addEventListener('click', closeSaleSummaryModal);
-
 
              const copyBtns = document.querySelectorAll('.copy-btn');
              copyBtns.forEach(button => {
@@ -576,7 +425,6 @@
             });
         }
 
-
         // --- DATA MAPPING ---
         const mapProductToFrontend = (p) => {
              if (!p || typeof p !== 'object') {
@@ -585,16 +433,16 @@
              }
              return {
                 id: p.id, 
-                nombre: p.title, // Ahora toma el nombre de "title"
-                sku: p.gtin || p.id, // Si no hay GTIN, usamos el ID como SKU
-                precioVenta: p.price, // Precio regular de la columna "price"
-                precioDescuento: p.sale_price, // Precio con descuento
+                nombre: p.title, 
+                sku: p.gtin || p.id, 
+                precioVenta: p.price, 
+                precioDescuento: p.sale_price, 
                 precioCompra: p.purchase_price, 
                 precioMayoreo: p.wholesale_price, 
-                cantidad: p.quantity_to_sell_on_facebook, // El inventario ahora es esta columna
+                cantidad: p.quantity_to_sell_on_facebook, 
                 codigoBarras: p.barcode, 
-                ciudadSucursal: 'Principal', // Dato fijo (ya no existe en la tabla)
-                urlFoto1: p.image_link || p.foto_1 // Tomamos image_link o foto_1 por defecto
+                ciudadSucursal: 'Principal', 
+                urlFoto1: p.image_link || p.foto_1 
             };
         };
 
@@ -614,32 +462,29 @@
             }
         }
 
-        async function fetchSales() {
+        async function fetchSalesForNextId() {
             try {
                 const result = await simpleFetch(`${API_BASE_URL}/sales`);
+                let salesList = [];
                 if (result.status === 'success' && Array.isArray(result.data)) {
-                    sales = result.data.sort((a, b) => new Date(b.fechaVenta) - new Date(a.fechaVenta));
-                } else {
-                     sales = []; if (result.status !== 'success') console.warn("La respuesta de fetchSales no fue exitosa:", result);
+                    salesList = result.data.sort((a, b) => new Date(b.fechaVenta) - new Date(a.fechaVenta));
                 }
+                
+                // Determine next sale ID
+                let nextId = "AS1";
+                if (salesList.length > 0 && salesList[0].saleId) {
+                     const lastSaleId = salesList[0].saleId; const lastIdNumber = parseInt(lastSaleId.substring(2));
+                    if (!isNaN(lastIdNumber)) nextId = 'AS' + (lastIdNumber + 1);
+                }
+                const saleIdElement = document.getElementById('current-sale-id');
+                if(saleIdElement) saleIdElement.textContent = nextId;
+                
             } catch (error) {
-                console.error("Fallo al cargar las ventas:", error);
-                showNotification(`No se pudieron cargar las ventas: ${error.message}`, 'error'); sales = [];
+                console.error("Fallo al cargar las ventas para ID:", error);
+                const saleIdElement = document.getElementById('current-sale-id');
+                if(saleIdElement) saleIdElement.textContent = `AS_${Math.floor(Date.now() / 1000)}`;
             }
         }
-
-
-        function displayNextSaleId() {
-            let nextId = "AS1";
-            if (sales.length > 0 && sales[0].saleId) {
-                 const lastSaleId = sales[0].saleId; const lastIdNumber = parseInt(lastSaleId.substring(2));
-                if (!isNaN(lastIdNumber)) nextId = 'AS' + (lastIdNumber + 1);
-                else console.warn("El último saleId no tiene formato numérico:", lastSaleId);
-            }
-            const saleIdElement = document.getElementById('current-sale-id');
-            if(saleIdElement) saleIdElement.textContent = nextId;
-        }
-
 
         function handleBarcodeScan(e) {
             if (e.key === 'Enter') {
@@ -859,8 +704,13 @@
                 if (result.status === 'success' && result.data?.saleId) {
                     const { pdfBlob, fileName } = generateSalePDF(result.data.saleId, saleData);
                     showShareOptions(pdfBlob, fileName, 'Venta Completada', 'Venta guardada y PDF generado.');
-                    await Promise.all([fetchProducts(), fetchSales()]);
-                    cart = []; renderCart(); const customerForm = document.getElementById('customer-form'); if(customerForm) customerForm.reset(); renderSalesResults(); displayNextSaleId();
+                    
+                    // Refresh data for next sale
+                    await Promise.all([fetchProducts(), fetchSalesForNextId()]);
+                    cart = []; 
+                    renderCart(); 
+                    const customerForm = document.getElementById('customer-form'); 
+                    if(customerForm) customerForm.reset(); 
                 } else { throw new Error(result.message || 'Error al guardar venta.'); }
             } catch (error) {
                 console.error('Error al registrar venta:', error); showNotification(`Error: ${error.message}`, 'error');
@@ -869,7 +719,6 @@
                 buttonText.classList.remove('hidden'); loader.classList.add('hidden'); button.disabled = cart.length === 0;
             }
         }
-
 
         function generateSalePDF(saleId, saleData) {
             const validSaleData = { ...saleData, items: Array.isArray(saleData.items) ? saleData.items : [] };
@@ -921,33 +770,6 @@
             let pdfBlob = null; try { pdfBlob = doc.output('blob'); } catch (e) { console.error("Error generando Blob:", e); showNotification("Error al generar PDF.", "error"); }
             return { pdfBlob, fileName };
         }
-
-
-        function renderSalesResults() {
-            const searchTerm = document.getElementById('search-sales-input')?.value.toLowerCase() || '';
-            const container = document.getElementById('sales-results-container');
-             if(!container) return;
-            container.innerHTML = '';
-            if (!Array.isArray(sales)) { container.innerHTML = '<p class="text-gray-500 text-center">No hay datos.</p>'; return; }
-            const filteredSales = sales.filter(s => s && typeof s === 'object' && ( s.saleId?.toLowerCase().includes(searchTerm) || s.nombreCliente?.toLowerCase().includes(searchTerm) || s.contacto?.toString().toLowerCase().includes(searchTerm) || s.userName?.toLowerCase().includes(searchTerm) ));
-            if (filteredSales.length === 0) { container.innerHTML = '<p class="text-gray-500 text-center">No se encontraron ventas.</p>'; return; }
-            filteredSales.forEach(sale => {
-                 if (!sale || typeof sale !== 'object') return;
-                const isAnnulled = sale.estado === 'Anulada'; const statusText = isAnnulled ? 'Anulada' : 'Completada'; const statusColor = isAnnulled ? 'bg-red-500 text-white' : 'bg-green-500 text-white'; const card = document.createElement('div'); card.className = `p-4 border rounded-lg ${isAnnulled ? 'bg-gray-200 opacity-70' : 'bg-white'}`;
-                let productsHtml = '<ul>'; try { let saleProducts; if (typeof sale.productosVendidos === 'string') { try { saleProducts = JSON.parse(sale.productosVendidos); } catch (e) { saleProducts = null; } } else { saleProducts = sale.productosVendidos; } if (Array.isArray(saleProducts)) { saleProducts.forEach(p => { if (p && typeof p === 'object' && p.hasOwnProperty('cantidad') && p.hasOwnProperty('Nombre') && p.hasOwnProperty('precio')) { const price = p.precio !== undefined ? parseFloat(p.precio).toFixed(2) : 'N/A'; const sku = p.SKU || 'N/A'; productsHtml += `<li class="text-xs">${p.cantidad} x ${p.Nombre} (SKU: ${sku}) @ Bs ${price}</li>`; } else { console.warn(`Item inválido venta ${sale.saleId}:`, p); productsHtml += `<li class="text-xs text-red-500">Error: Item</li>`; } }); } else { productsHtml += `<li class="text-xs text-red-500">Error: Datos prod.</li>`; } } catch(e) { console.error(`Error proc. prod. venta ${sale.saleId}:`, e); productsHtml += `<li class="text-xs text-red-500">Error leer prod.</li>`; } productsHtml += '</ul>';
-                const totalVenta = sale.totalVenta !== undefined ? parseFloat(sale.totalVenta).toFixed(2) : 'N/A'; const fechaVentaStr = sale.fechaVenta ? new Date(sale.fechaVenta).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short'}) : 'Fecha inv.';
-                card.innerHTML = `<div class="flex flex-wrap justify-between items-start gap-2"><div><p class="font-bold text-lg">Venta ${sale.saleId || 'ID Inv.'}</p><p class="text-sm text-gray-600">${fechaVentaStr} - ${sale.nombreCliente || 'N/A'}</p><p class="text-sm text-gray-600">Vendido por: <strong>${sale.userName || 'N/A'}</strong></p><p class="font-semibold text-blue-600">Total: Bs ${totalVenta}</p></div><div class="text-right"><span class="font-semibold text-sm px-2 py-1 rounded-lg ${statusColor}">${statusText}</span><div class="mt-2 flex space-x-2 justify-end flex-wrap gap-1"><button class="view-summary-btn text-xs bg-purple-600 text-white px-3 py-1 rounded-lg hover:bg-purple-700" data-saleid="${sale.saleId || ''}">Ver Resumen</button><button class="reprint-btn text-xs bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700" data-saleid="${sale.saleId || ''}">Reimprimir</button><button class="annul-btn text-xs bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700 disabled:bg-gray-400" data-saleid="${sale.saleId || ''}" ${isAnnulled || !sale.saleId ? 'disabled' : ''}>Anular</button></div></div></div><div class="mt-2 text-sm border-t pt-2">${productsHtml}</div>`;
-                container.appendChild(card);
-            });
-        }
-
-
-        // --- Funciones de Anulación ---
-        function openAnnulConfirmModal(saleId) { if (!saleId) { showNotification("ID inválido.", "error"); return; } saleIdToAnnul = saleId; const sale = sales.find(s => s && s.saleId === saleId); if (!sale) { showNotification("Venta no encontrada.", "error"); return; } const modalTextEl = document.getElementById('annul-modal-text'); if(modalTextEl) modalTextEl.textContent = `¿Anular venta ${saleId}? Stock será restaurado.`; const modalEl = document.getElementById('annul-confirm-modal'); if(modalEl) modalEl.classList.remove('hidden'); }
-        async function annulSaleInBackend(saleId) { if (!saleId) { showNotification("ID faltante.", "error"); return; } const button = document.getElementById('confirm-annul-btn'); const buttonText = document.getElementById('annul-button-text'); const loader = document.getElementById('annul-loader'); if (!button || !buttonText || !loader) { console.error("Elementos modal anulación no encontrados."); const modal = document.getElementById('annul-confirm-modal'); if (modal) modal.classList.add('hidden'); saleIdToAnnul = null; return; } buttonText.classList.add('hidden'); loader.classList.remove('hidden'); button.disabled = true; try { const result = await simpleFetch(`${API_BASE_URL}/sales`, { method: 'PUT', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ saleId: saleId }) }); if (result.status === 'success') { showNotification(result.message || `Venta ${saleId} anulada.`, 'success'); await Promise.all([fetchSales(), fetchProducts()]); renderSalesResults(); } else { throw new Error(result.message || 'Error al anular.'); } } catch (error) { console.error('Error al anular:', error); showNotification(`Error: ${error.message}`, 'error'); } finally { const modal = document.getElementById('annul-confirm-modal'); if (modal) modal.classList.add('hidden'); buttonText.classList.remove('hidden'); loader.classList.add('hidden'); button.disabled = false; saleIdToAnnul = null; } }
-        // --- Fin Funciones de Anulación ---
-
-        function reprintSale(saleId) { if (!saleId) return; const saleToReprint = sales.find(s => s && s.saleId === saleId); if (!saleToReprint) { showNotification("Venta no encontrada.", 'error'); return; } try { let saleItems; if (typeof saleToReprint.productosVendidos === 'string') { try { saleItems = JSON.parse(saleToReprint.productosVendidos); } catch (e) { saleItems = []; } } else { saleItems = Array.isArray(saleToReprint.productosVendidos) ? saleToReprint.productosVendidos : []; } if (!Array.isArray(saleItems)) { console.warn(`productosVendidos (reprint ${saleId}) no es array:`, saleToReprint.productosVendidos); saleItems = []; } const saleData = { customer: { name: saleToReprint.nombreCliente, contact: saleToReprint.contacto, id: saleToReprint.nitCi }, items: saleItems, total: parseFloat(saleToReprint.totalVenta || 0) }; const { pdfBlob, fileName } = generateSalePDF(saleId, saleData); if(pdfBlob && fileName) { showShareOptions(pdfBlob, fileName, 'Reimprimir Nota Venta', 'PDF generado.'); } else { throw new Error("No se generó Blob PDF."); } } catch (error) { console.error("Error PDF reprint:", error); showNotification(`Error al generar PDF: ${error.message}`, 'error'); } }
 
         function showProductModal(product) {
              if (!product || typeof product !== 'object' || !product.id) { 
@@ -1003,14 +825,13 @@
         }
 
         function copyToClipboard(text, buttonElement) { if (!text || text === 'N/A' || !buttonElement) return; navigator.clipboard.writeText(text).then(() => { const originalHTML = buttonElement.innerHTML; buttonElement.innerHTML = '¡Copiado!'; clearTimeout(buttonElement.copyTimeoutId); buttonElement.copyTimeoutId = setTimeout(() => { buttonElement.innerHTML = originalHTML; }, 1500); }).catch(err => { console.warn('navigator.clipboard falló:', err); try { const ta = document.createElement('textarea'); ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); const ok = document.execCommand('copy'); document.body.removeChild(ta); if(ok) { const oHTML = buttonElement.innerHTML; buttonElement.innerHTML = '¡Copiado!'; clearTimeout(buttonElement.copyTimeoutId); buttonElement.copyTimeoutId = setTimeout(() => { buttonElement.innerHTML = oHTML; }, 1500); } else { throw new Error('execCommand falló'); } } catch (execErr) { showNotification('No se pudo copiar.', 'error'); console.error('Fallback execCommand falló:', execErr); } }); }
+        
         function showQrModal() { const qrImg = document.getElementById('pos-qr-code'); const modalImg = document.getElementById('modalQrImage'); const modal = document.getElementById('qrCodeModal'); if (qrImg && modalImg && modal && qrImg.src && !qrImg.src.includes('placehold.co')) { modalImg.src = qrImg.src; modal.classList.remove('hidden'); } }
+        
         function showShareOptions(pdfBlob, fileName, title, text) { if (!(pdfBlob instanceof Blob)) { console.error("showShareOptions: pdfBlob inválido", pdfBlob); showNotification("Error PDF.", "error"); return; } if (!fileName) fileName = "doc.pdf"; currentPdfBlob = pdfBlob; currentPdfFileName = fileName; const modal = document.getElementById('share-modal'); const modalTitle = document.getElementById('share-modal-title'); const modalText = document.getElementById('share-modal-text'); const shareBtn = document.getElementById('share-pdf-btn'); const downloadBtn = document.getElementById('download-pdf-btn'); const closeModalBtn = document.getElementById('close-share-modal'); if (!modal || !modalTitle || !modalText || !shareBtn || !downloadBtn || !closeModalBtn) { console.error("Elementos modal compartir no encontrados."); try { const link = document.createElement('a'); link.href = URL.createObjectURL(currentPdfBlob); link.download = currentPdfFileName; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href); } catch (e) { showNotification("No se pudo descargar PDF.", "error"); } return; } modalTitle.textContent = title; modalText.textContent = text; let fileToShare; try { fileToShare = new File([currentPdfBlob], currentPdfFileName, { type: 'application/pdf' }); } catch (e) { console.error("Error creando File:", e); showNotification("No se pudo preparar archivo.", "error"); shareBtn.classList.add('hidden'); shareBtn.onclick = null; } const dataToShare = fileToShare ? { files: [fileToShare] } : null; if (dataToShare && navigator.share && navigator.canShare && navigator.canShare(dataToShare)) { shareBtn.classList.remove('hidden'); shareBtn.onclick = async () => { try { await navigator.share({ files: [fileToShare], title: `Doc: ${currentPdfFileName}`, text: 'Doc desde ArelyShop.' }); modal.classList.add('hidden'); } catch (error) { console.error('Error al compartir:', error); if (error.name !== 'AbortError') showNotification('No se pudo compartir.', 'error'); } }; } else { shareBtn.classList.add('hidden'); shareBtn.onclick = null; if(dataToShare) console.log("Web Share API no soportada."); } modal.classList.remove('hidden'); downloadBtn.onclick = () => { try { const link = document.createElement('a'); link.href = URL.createObjectURL(currentPdfBlob); link.download = currentPdfFileName; document.body.appendChild(link); link.click(); document.body.removeChild(link); URL.revokeObjectURL(link.href); modal.classList.add('hidden'); } catch (e) { console.error("Error descarga PDF:", e); showNotification("No se pudo descargar.", "error"); } }; closeModalBtn.onclick = () => { modal.classList.add('hidden'); }; }
 
-        // --- Funciones del Visor Resumen ---
-        function showSaleSummaryModal(saleId) { if(!saleId) return; const sale = sales.find(s => s && s.saleId === saleId); if (!sale) { showNotification("Venta no encontrada.", "error"); return; } const modal = document.getElementById('sale-summary-modal'); const titleEl = document.getElementById('summary-modal-title'); const custNameEl = document.getElementById('summary-customer-name'); const custContactEl = document.getElementById('summary-customer-contact'); const custIdEl = document.getElementById('summary-customer-id'); const dateEl = document.getElementById('summary-sale-date'); const sellerEl = document.getElementById('summary-seller-name'); const prodListEl = document.getElementById('summary-products-list'); const totalEl = document.getElementById('summary-total-amount'); if(!modal || !titleEl || !custNameEl || !custContactEl || !custIdEl || !dateEl || !sellerEl || !prodListEl || !totalEl) { console.error("Elementos modal resumen no encontrados."); return; } try { titleEl.textContent = `Resumen - Venta ${sale.saleId}`; custNameEl.textContent = sale.nombreCliente || 'N/A'; custContactEl.textContent = sale.contacto || 'N/A'; custIdEl.textContent = sale.nitCi || 'N/A'; dateEl.textContent = sale.fechaVenta ? new Date(sale.fechaVenta).toLocaleString('es-ES', { dateStyle: 'medium', timeStyle: 'short'}) : 'Inv.'; sellerEl.textContent = sale.userName || 'N/A'; totalEl.textContent = sale.totalVenta !== undefined ? parseFloat(sale.totalVenta).toFixed(2) : '0.00'; prodListEl.innerHTML = ''; let saleProducts; if (typeof sale.productosVendidos === 'string') { try { saleProducts = JSON.parse(sale.productosVendidos); } catch (e) { saleProducts = null; } } else { saleProducts = sale.productosVendidos; } if (Array.isArray(saleProducts) && saleProducts.length > 0) { saleProducts.forEach(p => { if (p && typeof p === 'object' && p.hasOwnProperty('cantidad') && p.hasOwnProperty('Nombre') && p.hasOwnProperty('precio')) { const price = p.precio !== undefined ? parseFloat(p.precio).toFixed(2) : 'N/A'; const sku = p.SKU || 'N/A'; const li = document.createElement('div'); li.className = 'text-xs py-1 border-b border-gray-200 last:border-b-0'; li.textContent = `${p.cantidad} x ${p.Nombre} (SKU: ${sku}) @ Bs ${price}`; prodListEl.appendChild(li); } else { const errLi = document.createElement('div'); errLi.className = 'text-xs py-1 text-red-500'; errLi.textContent = 'Error: Item'; prodListEl.appendChild(errLi); } }); } else { prodListEl.innerHTML = '<p class="text-xs text-gray-500">No hay productos.</p>'; } modal.classList.remove('hidden'); } catch (error) { console.error("Error mostrando resumen:", error); showNotification(`Error resumen: ${error.message}`, "error"); closeSaleSummaryModal(); } }
-        function closeSaleSummaryModal() { const modal = document.getElementById('sale-summary-modal'); if (modal) modal.classList.add('hidden'); const prodListEl = document.getElementById('summary-products-list'); if(prodListEl) prodListEl.innerHTML = '<p class="text-gray-500">...</p>'; }
-
         function startScanner(targetInputId) { if (!html5QrCode) { console.warn("Html5Qrcode no inicializado."); try { const readerElement = document.getElementById("reader"); if (!readerElement) throw new Error("Elemento 'reader' no encontrado."); html5QrCode = new Html5Qrcode("reader"); } catch (e) { console.error("Error re-inicializando:", e); showNotification("Error escáner.", "error"); return; } } const modal = document.getElementById('scanner-modal'); if(modal) modal.classList.remove('hidden'); const onScanSuccess = (decodedText, decodedResult) => { const targetInput = document.getElementById(targetInputId); if (targetInput) { targetInput.value = decodedText; const inputEvent = new Event('input', { bubbles: true }); targetInput.dispatchEvent(inputEvent); if (targetInputId === 'search-product') { const enterEvent = new KeyboardEvent('keydown', { key: 'Enter', code: 'Enter', keyCode: 13, which: 13, bubbles: true }); targetInput.dispatchEvent(enterEvent); } } stopScanner(); }; const config = { fps: 10, qrbox: { width: 250, height: 250 }, aspectRatio: 1.0 }; Html5Qrcode.getCameras().then(devices => { if (devices && devices.length) { const rearCam = devices.find(d => d.label.toLowerCase().includes('back') || d.label.toLowerCase().includes('environment')); const camId = rearCam ? rearCam.id : devices[0].id; const state = (typeof html5QrCode.getState === 'function') ? html5QrCode.getState() : null; const SCANNING = 2; if (state !== SCANNING) { html5QrCode.start( camId, config, onScanSuccess, (errorMessage) => {}) .catch(err => { console.warn("Fallo escanear cámara preferida, fallback:", err); const fallbackState = (typeof html5QrCode.getState === 'function') ? html5QrCode.getState() : null; if (fallbackState !== SCANNING) { html5QrCode.start( { facingMode: "environment" }, config, onScanSuccess, (e)=>{}) .catch(errFallback => { console.error("Fallback escáner falló.", errFallback); showNotification("No se pudo iniciar cámara.", 'error'); stopScanner(); }); } }); } else { console.log("Escáner ya activo."); } } else { console.error("No se encontraron cámaras."); showNotification("No hay cámaras.", 'error'); stopScanner(); } }).catch(err => { console.error("Error obteniendo cámaras:", err); showNotification("Error acceso cámaras.", 'error'); stopScanner(); }); }
+        
         function stopScanner() { const SCANNING = 2; const state = (html5QrCode && typeof html5QrCode.getState === 'function') ? html5QrCode.getState() : null; if (state === SCANNING) { html5QrCode.stop().then(ignore => { console.log("Scan stopped."); }).catch(err => { console.error("Fallo al detener:", err); }).finally(() => { const modal = document.getElementById('scanner-modal'); if(modal) modal.classList.add('hidden'); }); } else { const modal = document.getElementById('scanner-modal'); if(modal) modal.classList.add('hidden'); } }
     </script>
 </body>
