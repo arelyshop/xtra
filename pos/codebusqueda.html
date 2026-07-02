@@ -1,0 +1,252 @@
+<!-- ... existing code ... -->
+        let html5QrCode = null;
+        let currentPdfBlob = null;
+        let currentPdfFileName = '';
+        let currentUser = null;
+        let searchTimeout = null;
+
+        // --- AUTHENTICATION & INITIALIZATION ---
+<!-- ... existing code ... -->
+            try {
+                await Promise.all([
+                    // Ya no cargamos todos los productos al inicio para que sea más veloz.
+                    // fetchProducts(), 
+                    loadImageAsJpegDataUrl('/images/qr-pdf.webp').then(qr => preloadedPdfQr = qr),
+                    fetchSalesForNextId() 
+                ]);
+            } catch (error) {
+<!-- ... existing code ... -->
+        const mapProductToFrontend = (p) => {
+             if (!p || typeof p !== 'object') {
+                  console.warn("Intento de mapear un producto inválido:", p);
+                  return null;
+             }
+             return {
+                id: p.id, 
+                nombre: p.title, 
+                sku: p.gtin || p.id, 
+                precioVenta: p.price, 
+                precioDescuento: p.sale_price, 
+                precioCompra: p.purchase_price, 
+                precioMayoreo: p.wholesale_price, 
+                cantidad: p.quantity_to_sell_on_facebook, 
+                codigoBarras: p.barcode, 
+                urlFoto1: p.image_link || p.foto_1 
+            };
+        };
+
+
+        // Se elimina fetchProducts() ya que la búsqueda será dinámica.
+        // async function fetchProducts() { ... }
+
+        async function fetchSalesForNextId() {
+<!-- ... existing code ... -->
+        function handleBarcodeScan(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const barcode = e.target.value.trim();
+                if (barcode === '') return;
+                
+                // Hacemos una búsqueda rápida solo por el código de barras
+                simpleFetch(`${API_BASE_URL}/getpos?search=${encodeURIComponent(barcode)}`)
+                    .then(result => {
+                        if (result.status === 'success' && Array.isArray(result.data) && result.data.length > 0) {
+                            const foundProduct = mapProductToFrontend(result.data[0]);
+                            if (foundProduct) {
+                                addToCart(foundProduct);
+                                e.target.value = '';
+                                document.getElementById('search-results')?.classList.add('hidden');
+                            }
+                        } else {
+                            showNotification('Producto no encontrado con ese código de barras.', 'error');
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        showNotification('Error al buscar el código de barras.', 'error');
+                    });
+            }
+        }
+
+        function handleSearch(e) {
+            clearTimeout(searchTimeout);
+            const val = e.target.value.trim().toLowerCase();
+            const resultsContainer = document.getElementById('search-results');
+            if (!resultsContainer) return;
+
+            if (val.length < 2) {
+                resultsContainer.innerHTML = '';
+                resultsContainer.classList.add('hidden');
+                return;
+            }
+            
+            resultsContainer.classList.remove('hidden');
+            resultsContainer.innerHTML = '<div class="p-4 text-center text-gray-500"><i class="fa-solid fa-circle-notch fa-spin"></i> Buscando...</div>';
+
+            searchTimeout = setTimeout(async () => {
+                try {
+                    // Se asume que tu API /getpos soporta un parámetro ?search=... (o envías todos y filtras localmente si no)
+                    // Si tu endpoint /getpos aún NO soporta ?search en el backend, traerá todos, pero lo optimizaremos localmente aquí:
+                    const res = await simpleFetch(`${API_BASE_URL}/getpos`);
+                    
+                    if (res.status === 'success' && Array.isArray(res.data)) {
+                        // Filtramos localmente (si en el futuro actualizas tu /getpos para aceptar ?search, este filter() no hará falta)
+                        const rawFiltered = res.data.filter(p => 
+                            (p.title && p.title.toLowerCase().includes(val)) || 
+                            (p.gtin && p.gtin.toString().toLowerCase().includes(val)) ||
+                            (p.id && p.id.toString().toLowerCase().includes(val))
+                        ).slice(0, 15); // Limitamos a 15 resultados para velocidad
+                        
+                        const filteredProducts = rawFiltered.map(mapProductToFrontend).filter(p => p !== null);
+
+                        resultsContainer.innerHTML = '';
+                        
+                        if (filteredProducts.length > 0) {
+                            // Almacenamos temporalmente los productos encontrados para poder agregarlos al carrito
+                            window._tempSearchResults = filteredProducts;
+                            
+                            filteredProducts.forEach((p, index) => {
+                                const div = document.createElement('div');
+                                div.className = 'p-3 hover:bg-gray-100 cursor-pointer flex items-center space-x-3 border-b border-gray-100 last:border-b-0';
+                                const hasDiscount = p.precioDescuento && parseFloat(p.precioDescuento) > 0;
+                                const displayPrice = hasDiscount
+                                                    ? parseFloat(p.precioDescuento).toFixed(2)
+                                                    : parseFloat(p.precioVenta || 0).toFixed(2);
+                                const priceColorClass = hasDiscount ? 'text-red-600 font-bold' : 'text-gray-500';
+                                const stock = p.cantidad ?? 0;
+                                const imageUrl = p.urlFoto1 || 'https://placehold.co/100x100/e2e8f0/94a3b8?text=Sin+Foto';
+                                
+                                div.innerHTML = `
+                                    <img src="${imageUrl}" alt="${p.nombre || 'Producto'}" class="w-14 h-14 sm:w-16 sm:h-16 object-cover rounded-md border border-gray-200 shrink-0" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e2e8f0/94a3b8?text=Sin+Foto';">
+                                    <div class="flex-1">
+                                        <div class="text-sm font-medium text-gray-800">${p.nombre}</div>
+                                        <div class="text-xs text-gray-500">SKU: ${p.sku || 'N/A'} &bull; <span class="${priceColorClass}">Bs ${displayPrice}</span> &bull; Stock: ${stock}</div>
+                                    </div>
+                                `;
+                                // Llamamos a addToCart usando el producto del array temporal
+                                div.onclick = () => {
+                                    addToCart(window._tempSearchResults[index]);
+                                };
+                                resultsContainer.appendChild(div);
+                            });
+                        } else {
+                            resultsContainer.innerHTML = '<div class="p-4 text-gray-500 text-center">No se encontraron productos</div>';
+                        }
+                    } else {
+                        throw new Error("Datos inválidos del servidor");
+                    }
+                } catch (err) {
+                    console.error(err);
+                    resultsContainer.innerHTML = '<div class="p-4 text-red-500 text-center">Error al buscar productos.</div>';
+                }
+            }, 300); // 300ms debounce
+        }
+
+
+        function addToCart(product) {
+            if (!product || !product.id) {
+<!-- ... existing code ... -->
+            const existingCartItem = cart.find(item => item.id === product.id);
+
+            if (existingCartItem) {
+                if (existingCartItem.quantity < product.cantidad) {
+                    existingCartItem.quantity++;
+                } else {
+                    showNotification(`No se puede añadir más. Stock máximo: ${product.cantidad}`, 'error');
+                }
+            } else {
+                const defaultPrice = (product.precioDescuento && parseFloat(product.precioDescuento) > 0)
+                               ? parseFloat(product.precioDescuento)
+                               : parseFloat(product.precioVenta || 0);
+                cart.push({
+                     id: product.id,
+                     nombre: product.nombre,
+                     sku: product.sku,
+                     precioVenta: product.precioVenta,
+                     precioDescuento: product.precioDescuento,
+                     precioCompra: product.precioCompra,
+                     precioMayoreo: product.precioMayoreo,
+                     codigoBarras: product.codigoBarras,
+                     urlFoto1: product.urlFoto1,
+                     quantity: 1,
+                     maxStock: product.cantidad, // Guardamos el stock máximo disponible en este momento
+                     customPrice: defaultPrice
+                 });
+            }
+
+            const searchInput = document.getElementById('search-product');
+            if(searchInput) searchInput.value = '';
+            const searchResults = document.getElementById('search-results');
+            if(searchResults) searchResults.classList.add('hidden');
+            renderCart();
+        }
+
+
+        function renderCart() {
+<!-- ... existing code ... -->
+            } else {
+                cart.forEach((item, index) => {
+                     if (!item || typeof item !== 'object') { console.warn("Item inválido en el carrito:", item); return; }
+                     const currentStock = item.maxStock ?? 0;
+                    const quantity = item.quantity ?? 0;
+                    const customPrice = item.customPrice ?? 0;
+                    const subtotal = quantity * customPrice;
+                    const imageUrl = item.urlFoto1 || 'https://placehold.co/100x100/e2e8f0/94a3b8?text=Sin+Foto';
+<!-- ... existing code ... -->
+        function updateItemPrice(index, newPrice) {
+            if (index >= 0 && index < cart.length) {
+                 const price = parseFloat(newPrice);
+                 if (!isNaN(price) && price >= 0) {
+                     cart[index].customPrice = price;
+                 } else {
+                      const item = cart[index];
+                      cart[index].customPrice = (item.precioDescuento && parseFloat(item.precioDescuento) > 0)
+                                               ? parseFloat(item.precioDescuento)
+                                               : parseFloat(item.precioVenta || 0);
+                 }
+                 renderCart();
+            }
+        }
+
+
+        function setQuantity(index, newQuantity) {
+             if (index < 0 || index >= cart.length) return;
+            const cartItem = cart[index];
+             if (!cartItem) return;
+            const maxStock = cartItem.maxStock ?? 0;
+            let quantity = parseInt(newQuantity);
+            if (isNaN(quantity) || quantity < 0) quantity = 0;
+            if (quantity > maxStock) { showNotification(`Stock insuficiente. Máximo: ${maxStock}`, 'error'); quantity = maxStock; }
+            if (quantity === 0) cart.splice(index, 1);
+            else if(cart[index]) cart[index].quantity = quantity;
+            renderCart();
+        }
+<!-- ... existing code ... -->
+        async function completeSale() {
+<!-- ... existing code ... -->
+            try {
+                const result = await simpleFetch(`${API_BASE_URL}/sales`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(saleData) });
+                if (result.status === 'success' && result.data?.saleId) {
+                    const { pdfBlob, fileName } = generateSalePDF(result.data.saleId, saleData);
+                    showShareOptions(pdfBlob, fileName, 'Venta Completada', 'Venta guardada y PDF generado.');
+                    
+                    // Refresh data for next sale
+                    await fetchSalesForNextId();
+                    cart = []; 
+                    renderCart(); 
+                    const customerForm = document.getElementById('customer-form'); 
+                    if(customerForm) customerForm.reset(); 
+                } else { throw new Error(result.message || 'Error al guardar venta.'); }
+            } catch (error) {
+<!-- ... existing code ... -->
+        function showProductModal(product) {
+             if (!product || typeof product !== 'object' || !product.id) { 
+                 console.error("showProductModal: Datos inválidos o sin ID:", product);
+                 return;
+             }
+
+            const displayProduct = product;
+            const currentStock = displayProduct.maxStock ?? displayProduct.cantidad ?? 0; 
+
+            const modal = document.getElementById('productDetailModal');
+<!-- ... existing code ... -->
