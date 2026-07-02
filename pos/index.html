@@ -54,9 +54,15 @@
                         <p class="font-semibold text-sm" id="user-fullname"></p>
                         <p class="text-xs text-gray-400" id="user-role"></p>
                     </div>
-                    <button id="logout-button" class="bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 text-sm flex items-center">
+                    
+                    <!-- Botón para refrescar la BD -->
+                    <button id="refresh-db-btn" class="bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 text-sm flex items-center transition-colors">
+                        <i class="fa-solid fa-arrows-rotate mr-1 md:mr-2"></i> <span class="hidden md:inline">Sincronizar</span>
+                    </button>
+
+                    <button id="logout-button" class="bg-red-600 text-white px-3 py-2 rounded-lg hover:bg-red-700 text-sm flex items-center transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3" class="mr-1"><path d="M200-120q-33 0-56.5-23.5T120-200v-560q0-33 23.5-56.5T200-840h280v80H200v560h280v80H200Zm440-160-55-58 102-102H360v-80h327L585-622l55-58 200 200-200 200Z"/></svg>
-                        Salir
+                        <span class="hidden md:inline">Salir</span>
                     </button>
                 </div>
             </div>
@@ -67,7 +73,6 @@
                 <!-- Point of Sale Content -->
                 <div>
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <!-- ELIMINADO: overflow-hidden que cortaba el desplegable -->
                         <div class="lg:col-span-2 bg-white rounded-xl shadow-lg">
                             <div class="p-6 flex justify-between items-center rounded-t-xl" style="background-color: #2c3c53; color: white;">
                                 <div class="flex items-center space-x-4">
@@ -388,6 +393,30 @@
              img.src = url.startsWith('data:') ? url : (url + (url.includes('?') ? '&' : '?') + Date.now());
         });
 
+        // NUEVA FUNCION PARA SINCRONIZAR DB MANUALMENTE
+        async function refreshDatabase() {
+            const refreshBtn = document.getElementById('refresh-db-btn');
+            const icon = refreshBtn.querySelector('i');
+
+            // Añadir animación de giro y desactivar botón temporalmente
+            icon.classList.add('fa-spin');
+            refreshBtn.disabled = true;
+
+            try {
+                // Al no cargar todo el catálogo de golpe, la sincronización aquí solo
+                // requiere actualizar el contador de ventas para asegurar que el correlativo sea correcto
+                await fetchSalesForNextId();
+                showNotification('Base de datos sincronizada correctamente.', 'success');
+            } catch (error) {
+                console.error("Error en sincronización manual:", error);
+                showNotification('Error al sincronizar la base de datos.', 'error');
+            } finally {
+                // Quitar animación de giro y restaurar botón
+                icon.classList.remove('fa-spin');
+                refreshBtn.disabled = false;
+            }
+        }
+
         function setupEventListeners() {
             const searchInput = document.getElementById('search-product');
             if (searchInput) { searchInput.addEventListener('input', handleSearch); searchInput.addEventListener('keydown', handleBarcodeScan); }
@@ -414,6 +443,10 @@
             if(closeQrModalBtn) closeQrModalBtn.addEventListener('click', () => { document.getElementById('qrCodeModal')?.classList.add('hidden'); });
             const closeScannerBtn = document.getElementById('close-scanner-btn');
             if(closeScannerBtn) closeScannerBtn.addEventListener('click', stopScanner);
+
+            // Listener para el botón refrescar BD
+            const refreshDbBtn = document.getElementById('refresh-db-btn');
+            if(refreshDbBtn) refreshDbBtn.addEventListener('click', refreshDatabase);
 
              const copyBtns = document.querySelectorAll('.copy-btn');
              copyBtns.forEach(button => {
