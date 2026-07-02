@@ -584,9 +584,17 @@
                   return null;
              }
              return {
-                id: p.id, nombre: p.name, sku: p.sku, precioVenta: p.sale_price, precioDescuento: p.discount_price,
-                precioCompra: p.purchase_price, precioMayoreo: p.wholesale_price, cantidad: p.stock,
-                codigoBarras: p.barcode, ciudadSucursal: p.ciudad_sucursal, urlFoto1: p.photo_url_1
+                id: p.id, 
+                nombre: p.title, // Ahora toma el nombre de "title"
+                sku: p.gtin || p.id, // Si no hay GTIN, usamos el ID como SKU
+                precioVenta: p.price, // Precio regular de la columna "price"
+                precioDescuento: p.sale_price, // Precio con descuento
+                precioCompra: p.purchase_price, 
+                precioMayoreo: p.wholesale_price, 
+                cantidad: p.quantity_to_sell_on_facebook, // El inventario ahora es esta columna
+                codigoBarras: p.barcode, 
+                ciudadSucursal: 'Principal', // Dato fijo (ya no existe en la tabla)
+                urlFoto1: p.image_link || p.foto_1 // Tomamos image_link o foto_1 por defecto
             };
         };
 
