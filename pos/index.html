@@ -449,7 +449,7 @@
 
         async function fetchProducts() {
             try {
-                const result = await simpleFetch(`${API_BASE_URL}/products`);
+                const result = await simpleFetch(`${API_BASE_URL}/getpos`);
                  products = (result.status === 'success' && Array.isArray(result.data))
                      ? result.data.map(mapProductToFrontend).filter(p => p !== null)
                      : [];
