@@ -44,8 +44,8 @@ function setupLoginListener() {
         const password = document.getElementById('password').value;
 
         try {
-            // Usar fetch normal, NO robustFetch aquí
-            const response = await fetch(`${API_BASE_URL}/login`, {
+            // Usar fetch normal, apuntando al nuevo endpoint loginpos
+            const response = await fetch(`${API_BASE_URL}/loginpos`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username, password }),
@@ -140,7 +140,8 @@ async function initializeApp() {
     document.getElementById('app-container').classList.remove('hidden');
     document.getElementById('app-container').classList.add('flex');
 
-    document.getElementById('user-fullname').textContent = currentUser.full_name || 'Usuario';
+    // Adaptado para leer "name" de la tabla userpos (con fallback a full_name)
+    document.getElementById('user-fullname').textContent = currentUser.name || currentUser.full_name || 'Usuario';
     document.getElementById('user-role').textContent = currentUser.role || 'Rol';
 
     initTabs();
@@ -679,7 +680,8 @@ async function completeSale() {
         customer: { name: document.getElementById('customer-name')?.value || '', contact: document.getElementById('customer-contact')?.value || '', id: document.getElementById('customer-id')?.value || '' },
          items: cart.map(item => ({ productId: item.id, Nombre: item.nombre, SKU: item.sku, cantidad: item.quantity, precio: item.customPrice, 'Precio (Compra)': item.precioCompra })).filter(item => item.productId && item.cantidad > 0),
         total: cart.reduce((sum, item) => sum + ((item?.quantity ?? 0) * (item?.customPrice ?? 0)), 0),
-        user: { id: currentUser.id, fullName: currentUser.full_name }
+        // Adaptado para usar "name" de la nueva base de datos al guardar la venta
+        user: { id: currentUser.id, fullName: currentUser.name || currentUser.full_name }
     };
      if (saleData.items.length === 0) {
          showNotification("Error: No hay productos válidos.", "error");
