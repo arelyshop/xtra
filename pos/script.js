@@ -4,7 +4,6 @@ const API_BASE_URL = '/.netlify/functions';
 let products = [];
 let sales = [];
 let cart = [];
-let preloadedLogo = null;
 let preloadedPdfQr = null;
 let html5QrCode = null;
 let currentPdfBlob = null;
@@ -21,119 +20,25 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (e) {
          console.error("Error inicializando Html5Qrcode:", e);
     }
-    setupLoginListener();
-    checkAuth();
-    document.getElementById('logout-button').addEventListener('click', logout);
-});
-
-function setupLoginListener() {
-    const loginForm = document.getElementById('login-form');
-    const errorMessage = document.getElementById('error-message');
-    const loginButton = document.getElementById('login-button');
-    const buttonText = document.getElementById('login-button-text');
-    const loader = document.getElementById('login-loader');
-
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        errorMessage.textContent = '';
-        buttonText.classList.add('hidden');
-        loader.classList.remove('hidden');
-        loginButton.disabled = true;
-
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-
-        try {
-            // Usar fetch normal, apuntando al nuevo endpoint loginpos
-            const response = await fetch(`${API_BASE_URL}/loginpos`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password }),
-            });
-
-            // Parsear respuesta independientemente del status code
-            let result;
-            try {
-                result = await response.json();
-            } catch (jsonError) {
-                 // Si la respuesta no es JSON (ej. error 502 HTML)
-                 console.error("Respuesta del login no es JSON:", response.status, response.statusText);
-                 throw new Error(`Error ${response.status}: ${response.statusText || 'Respuesta inválida del servidor'}`); // Usar statusText o mensaje genérico
-            }
-
-
-            if (response.ok && result.status === 'success') {
-                sessionStorage.setItem('arelyShopUser', JSON.stringify(result.user));
-                currentUser = result.user;
-                initializeApp();
-            } else {
-                // Usar mensaje del backend si existe, si no, mensaje genérico
-                errorMessage.textContent = result.message || 'Credenciales incorrectas o error del servidor.';
-            }
-        } catch (error) {
-            // Captura errores de red (fetch falló) o errores de parseo/status
-            console.error('Error en el proceso de login:', error);
-            errorMessage.textContent = error.message.includes('Failed to fetch') || error.message.includes('Load failed') ? 'No se pudo conectar al servidor. Revisa tu conexión.' : error.message; // Mensaje más específico para error de red
-        } finally {
-            buttonText.classList.remove('hidden');
-            loader.classList.add('hidden');
-            loginButton.disabled = false;
-        }
+    
+    // --- MODO ACCESO DIRECTO (BYPASS LOGIN) ---
+    // Creamos un usuario de sesión automáticamente sin pedir credenciales
+    currentUser = {
+        id: 999,
+        username: 'acceso_directo',
+        name: 'Administrador (Directo)',
+        role: 'admin'
+    };
+    sessionStorage.setItem('arelyShopUser', JSON.stringify(currentUser));
+    
+    // Iniciamos la app inmediatamente
+    initializeApp();
+    
+    // Cambiamos el comportamiento del botón "Salir"
+    document.getElementById('logout-button').addEventListener('click', () => {
+        showNotification('El cierre de sesión está desactivado temporalmente.', 'success');
     });
-}
-
-
-function checkAuth() {
-    const userString = sessionStorage.getItem('arelyShopUser');
-    if (userString) {
-        try {
-            currentUser = JSON.parse(userString);
-            // Validar si currentUser tiene las propiedades esperadas
-            if (currentUser && currentUser.id && currentUser.username) {
-                initializeApp();
-            } else {
-                console.warn("Datos de usuario en sessionStorage inválidos. Limpiando.");
-                logout(); // Limpiar sesión si los datos no son válidos
-            }
-        } catch (e) {
-            console.error("Error parseando datos de usuario desde sessionStorage:", e);
-            logout(); // Limpiar sesión si hay error de parseo
-        }
-    } else {
-         // Asegurarse que el panel esté oculto si no hay sesión
-        const appContainer = document.getElementById('app-container');
-        if (appContainer) appContainer.classList.add('hidden');
-        const loginContainer = document.getElementById('login-container');
-        if (loginContainer) loginContainer.classList.remove('hidden'); // Mostrar login
-    }
-}
-
-
-function logout() {
-    sessionStorage.removeItem('arelyShopUser');
-    currentUser = null;
-    products = [];
-    sales = [];
-    cart = [];
-
-     // Ocultar app, mostrar login
-     const appContainer = document.getElementById('app-container');
-     if (appContainer) appContainer.classList.add('hidden');
-     const loginContainer = document.getElementById('login-container');
-     if (loginContainer) loginContainer.classList.remove('hidden');
-
-
-    // Resetear UI (asegurándose que los elementos existen)
-     const cartItemsEl = document.getElementById('cart-items');
-     if(cartItemsEl) cartItemsEl.innerHTML = '<tr id="empty-cart-row"><td colspan="6" class="text-center py-8 text-gray-500">El carrito está vacío</td></tr>';
-     const salesResultsEl = document.getElementById('sales-results-container');
-     if(salesResultsEl) salesResultsEl.innerHTML = '';
-     const customerFormEl = document.getElementById('customer-form');
-     if(customerFormEl) customerFormEl.reset();
-    updateTotal(); // Llama a updateTotal para resetear botones si es necesario
-     // Considerar no recargar si el manejo de estado es robusto
-     // window.location.reload();
-}
+});
 
 async function initializeApp() {
     document.getElementById('login-container').classList.add('hidden');
@@ -159,7 +64,6 @@ async function initializeApp() {
     try {
         await Promise.all([
             fetchProducts(),
-            loadImageAsPngDataUrl('/images/logo-escritorio.svg').then(logo => preloadedLogo = logo),
             loadImageAsJpegDataUrl('/images/qr-pdf.webp').then(qr => preloadedPdfQr = qr)
         ]);
         await fetchSales(); // Cargar ventas después
@@ -739,7 +643,6 @@ function generateDocumentPDF(docType, docIdentifier, data, filePrefix = 'Nota_Ve
     const pageW = doc.internal.pageSize.getWidth(); const margin = 14; const headerW = pageW - (margin * 2); const headerH = 30; const r = 3;
     doc.setFillColor('#303c54'); doc.roundedRect(margin, margin, headerW, headerH, r, r, 'F'); doc.setTextColor('#FFFFFF');
     let textStartX = margin + 5;
-    if (preloadedLogo && preloadedLogo.dataURL) { const logoH = 7.2; const logoW = (preloadedLogo.width / preloadedLogo.height) * logoH; const logoY = margin + (headerH - logoH) / 2; try { doc.addImage(preloadedLogo.dataURL, 'PNG', margin + 5, logoY, logoW, logoH, undefined, 'FAST'); textStartX = margin + logoW + 8; } catch (e) { console.error("Error logo PDF:", e); } }
     doc.setFontSize(17.6); doc.text("ArelyShop", textStartX, margin + 15); doc.setFontSize(8.8); doc.text("Santa Cruz, Bolivia", textStartX, margin + 21); // Simplificado
     doc.setFontSize(16); doc.text(docType, pageW - margin - 5, margin + 12, { align: 'right' }); doc.setFontSize(10); doc.text(docIdentifier, pageW - margin - 5, margin + 18, { align: 'right' }); doc.text(`Fecha: ${new Date().toLocaleDateString('es-BO')}`, pageW - margin - 5, margin + 24, { align: 'right' });
     const startY = margin + headerH + 10; doc.setTextColor('#000000'); doc.setFontSize(12); doc.text("Cliente:", margin, startY); doc.setFontSize(10); // Simplificado
