@@ -179,7 +179,6 @@
                 <div class="space-y-3 text-gray-700 text-base">
                     <p class="flex items-center justify-between"><strong>SKU:</strong> <span class="bg-gray-100 px-2 py-1 rounded"><span id="modalProductSku"></span> <button class="copy-btn" data-copy-target="modalProductSku" title="Copiar SKU"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"></path><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"></path></svg></button></span></p>
                     <p class="flex items-center justify-between"><strong>Código:</strong> <span class="bg-gray-100 px-2 py-1 rounded"><span id="modalProductCode"></span> <button class="copy-btn" data-copy-target="modalProductCode" title="Copiar Código"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 16 16"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"></path><path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"></path></svg></button></span></p>
-                    <p><strong>Sucursal:</strong> <span id="modalProductBranch" class="font-semibold"></span></p>
                     <p><strong>Stock:</strong> <span id="modalProductStock" class="font-semibold"></span></p>
                     <div class="mt-4 pt-4 border-t space-y-2">
                         <p class="flex justify-between"><strong>Precio Regular:</strong> <span id="modalProductPrice" class="font-semibold text-lg text-gray-600"></span></p>
@@ -452,7 +451,6 @@
                 precioMayoreo: p.wholesale_price, 
                 cantidad: p.quantity_to_sell_on_facebook, 
                 codigoBarras: p.barcode, 
-                ciudadSucursal: 'Principal', 
                 urlFoto1: p.image_link || p.foto_1 
             };
         };
@@ -533,12 +531,20 @@
                 filteredProducts.forEach(p => {
                      if (!p) return;
                     const div = document.createElement('div');
-                    div.className = 'p-3 hover:bg-gray-100 cursor-pointer';
+                    div.className = 'p-3 hover:bg-gray-100 cursor-pointer flex items-center space-x-3 border-b border-gray-100 last:border-b-0';
                     const displayPrice = (p.precioDescuento && parseFloat(p.precioDescuento) > 0)
                                         ? parseFloat(p.precioDescuento).toFixed(2)
                                         : parseFloat(p.precioVenta || 0).toFixed(2);
                     const stock = p.cantidad ?? 0;
-                    div.textContent = `${p.nombre} (Bs ${displayPrice}) - Stock: ${stock}`;
+                    const imageUrl = p.urlFoto1 || 'https://placehold.co/100x100/e2e8f0/94a3b8?text=Sin+Foto';
+                    
+                    div.innerHTML = `
+                        <img src="${imageUrl}" alt="${p.nombre || 'Producto'}" class="w-10 h-10 object-cover rounded-md border border-gray-200" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e2e8f0/94a3b8?text=Sin+Foto';">
+                        <div class="flex-1">
+                            <div class="text-sm font-medium text-gray-800">${p.nombre}</div>
+                            <div class="text-xs text-gray-500">Bs ${displayPrice} &bull; Stock: ${stock}</div>
+                        </div>
+                    `;
                     div.onclick = () => addToCart(p);
                     resultsContainer.appendChild(div);
                 });
@@ -586,7 +592,6 @@
                      precioCompra: latestProductInfo.precioCompra,
                      precioMayoreo: latestProductInfo.precioMayoreo,
                      codigoBarras: latestProductInfo.codigoBarras,
-                     ciudadSucursal: latestProductInfo.ciudadSucursal,
                      urlFoto1: latestProductInfo.urlFoto1,
                      quantity: 1,
                      customPrice: defaultPrice
@@ -627,7 +632,7 @@
                         </td>
                         <td class="px-4 py-3 text-sm text-gray-800 align-middle">
                             <div class="flex items-center space-x-3">
-                                <img src="${imageUrl}" alt="${item.nombre || 'Producto'}" class="w-10 h-10 object-cover rounded-md border border-gray-200" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e2e8f0/94a3b8?text=Sin+Foto';">
+                                <img src="${imageUrl}" alt="${item.nombre || 'Producto'}" class="w-12 h-12 object-cover rounded-md border border-gray-200" onerror="this.onerror=null; this.src='https://placehold.co/100x100/e2e8f0/94a3b8?text=Sin+Foto';">
                                 <span>${item.nombre || 'Producto Desconocido'}</span>
                             </div>
                         </td>
@@ -804,7 +809,6 @@
             const nameEl = document.getElementById('modalProductName');
             const skuEl = document.getElementById('modalProductSku');
             const codeEl = document.getElementById('modalProductCode');
-            const branchEl = document.getElementById('modalProductBranch');
             const stockEl = document.getElementById('modalProductStock');
             const priceEl = document.getElementById('modalProductPrice');
             const purchasePriceEl = document.getElementById('modalProductPurchasePrice');
@@ -816,7 +820,6 @@
             if(nameEl) nameEl.textContent = displayProduct.nombre || 'S/N';
             if(skuEl) skuEl.textContent = displayProduct.sku || 'N/A';
             if(codeEl) codeEl.textContent = displayProduct.codigoBarras || 'N/A';
-            if(branchEl) branchEl.textContent = displayProduct.ciudadSucursal || 'N/A';
             if(stockEl) stockEl.textContent = currentStock.toString(); 
 
             const salePrice = parseFloat(displayProduct.precioVenta || 0).toFixed(2);
