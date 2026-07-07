@@ -1125,25 +1125,37 @@
                  } 
                  fileName = fileName.replace(/[^a-zA-Z0-9_.-]/g, '');
 
+                 // Preparar el Logo del encabezado (con texto de respaldo en caso de error)
+                 let headerLogo = { 
+                     text: 'Arelyshop.com', 
+                     italics: true, 
+                     fontSize: 22, 
+                     bold: true, 
+                     color: 'white', 
+                     margin: [15, 10, 0, 10] 
+                 };
+                 
+                 // Usar la imagen pre-cargada conservando la transparencia
+                 if (preloadedPdfLogo && preloadedPdfLogo.dataURL) {
+                     headerLogo = {
+                         image: preloadedPdfLogo.dataURL,
+                         width: 140, // Ancho adaptado para que encaje bien en el encabezado
+                         margin: [15, 10, 0, 10]
+                     };
+                 }
+
                  // Estructura declarativa del PDF usando PdfMake
                  const docDefinition = {
                      pageSize: 'A4',
                      pageMargins: [30, 30, 30, 30],
                      content: [
-                         // Banner Superior Oscuro (Texto en lugar de Logo y Tipo de Documento)
+                         // Banner Superior Oscuro (Con Logo y Tipo de Documento)
                          {
                              table: {
                                  widths: ['*', '*'],
                                  body: [
                                      [
-                                         { 
-                                             text: 'Arelyshop.com', 
-                                             italics: true, 
-                                             fontSize: 22, 
-                                             bold: true, 
-                                             color: 'white', 
-                                             margin: [15, 10, 0, 10] 
-                                         },
+                                         headerLogo,
                                          { 
                                              text: docType, 
                                              fontSize: 18, 
@@ -1158,7 +1170,7 @@
                              },
                              layout: { 
                                  defaultBorder: false, 
-                                 fillColor: '#2c3c53',
+                                 fillColor: '#111827', // Fondo del encabezado actualizado
                                  paddingLeft: function() { return 0; },
                                  paddingRight: function() { return 0; },
                                  paddingTop: function() { return 0; },
