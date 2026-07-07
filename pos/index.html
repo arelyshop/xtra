@@ -1036,12 +1036,15 @@
                     const quantity = parseInt(item.cantidad || 0, 10); 
                     
                     const hasDiscount = regularPrice > price && Math.abs(price - regularPrice) > 0.001;
+                    
                     let priceStr = `Bs ${price.toFixed(2)}`;
                     let subtotalStr = `Bs ${(price * quantity).toFixed(2)}`;
 
                     if (hasDiscount) {
-                        priceStr = `Bs ${regularPrice.toFixed(2)}\nBs ${price.toFixed(2)}`;
-                        subtotalStr = `Bs ${(regularPrice * quantity).toFixed(2)}\nBs ${(price * quantity).toFixed(2)}`;
+                        // Añadimos un salto de línea para empujar el precio de descuento hacia abajo
+                        // El espacio libre arriba lo llenaremos dibujando el precio viejo en gris desde didDrawCell
+                        priceStr = `\nBs ${price.toFixed(2)}`;
+                        subtotalStr = `\nBs ${(price * quantity).toFixed(2)}`;
                         totalSaved += (regularPrice - price) * quantity;
                     }
 
@@ -1085,7 +1088,7 @@
                              }
                          }
 
-                         // Tachado para los precios originales cuando hay descuento
+                         // Dibujar de forma manual el precio original (Gris y Tachado)
                          if (cellData.section === 'body' && (cellData.column.index === 3 || cellData.column.index === 4)) {
                              const item = data.items[cellData.row.index];
                              if (item) {
@@ -1094,8 +1097,14 @@
                                  if (pBase > pAct && Math.abs(pAct - pBase) > 0.001) {
                                      const oldPriceVal = cellData.column.index === 3 ? pBase : pBase * item.cantidad;
                                      const oldPriceStr = `Bs ${oldPriceVal.toFixed(2)}`;
-                                     doc.setFontSize(9);
-                                     doc.setFont("helvetica", "bold");
+                                     
+                                     const currentFontSize = doc.internal.getFontSize();
+                                     const currentTextColor = doc.getTextColor ? doc.getTextColor() : '#000000';
+                                     
+                                     doc.setFontSize(8.5);
+                                     doc.setFont("helvetica", "normal");
+                                     doc.setTextColor(140, 140, 140); // Gris Oscuro
+                                     
                                      const textWidth = doc.getTextWidth(oldPriceStr);
                                      
                                      const padding = cellData.cell.padding;
@@ -1103,11 +1112,16 @@
                                      const padTop = typeof padding === 'object' ? padding.top : padding;
 
                                      const startX = cellData.cell.x + cellData.cell.width - padRight - textWidth;
-                                     const startY = cellData.cell.y + padTop + 2.2; 
+                                     const startY = cellData.cell.y + padTop + 2.5; 
                                      
-                                     doc.setDrawColor(100, 100, 100);
-                                     doc.setLineWidth(0.4);
-                                     doc.line(startX, startY, startX + textWidth, startY);
+                                     doc.text(oldPriceStr, startX, startY);
+                                     
+                                     doc.setDrawColor(140, 140, 140);
+                                     doc.setLineWidth(0.3);
+                                     doc.line(startX, startY - 1.2, startX + textWidth, startY - 1.2);
+                                     
+                                     // Restaurar valores para la siguiente celda
+                                     doc.setFontSize(currentFontSize);
                                  }
                              }
                          }
@@ -1119,7 +1133,7 @@
                              if (item) {
                                  const pBase = parseFloat(item.precioRegular !== undefined ? item.precioRegular : item.precio || 0);
                                  const pAct = parseFloat(item.precio || 0);
-                                 // Modificar color si hay descuento
+                                 // Colorear el texto de la celda de rojo si hay descuento
                                  if (pBase > pAct && Math.abs(pAct - pBase) > 0.001 && (cellData.column.index === 3 || cellData.column.index === 4)) {
                                      cellData.cell.styles.textColor = [220, 38, 38]; // Color rojo (red-600)
                                      cellData.cell.styles.fontStyle = 'bold';
