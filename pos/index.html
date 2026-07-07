@@ -436,10 +436,10 @@
             if (searchInput) { searchInput.addEventListener('input', handleSearch); searchInput.addEventListener('keydown', handleBarcodeScan); }
             
             const completeSaleBtn = document.getElementById('complete-sale-button');
-            if(completeSaleBtn) completeSaleBtn.addEventListener('click', () => completeSale(false));
+            if(completeSaleBtn) completeSaleBtn.addEventListener('click', completeSale);
             
             const quickSaleBtn = document.getElementById('quick-sale-button');
-            if(quickSaleBtn) quickSaleBtn.addEventListener('click', () => completeSale(true));
+            if(quickSaleBtn) quickSaleBtn.addEventListener('click', handleQuickSale);
             
             const generateQuoteBtn = document.getElementById('generate-quote-button');
             if(generateQuoteBtn) generateQuoteBtn.addEventListener('click', handleGenerateQuote);
@@ -789,18 +789,13 @@
         }
 
 
-        async function completeSale(isQuick = false) {
-            const isQuickSale = isQuick === true;
+        async function completeSale() {
             if (cart.length === 0) return;
             if (!currentUser || !currentUser.id) { showNotification("Error: Sesión inválida.", "error"); return; }
 
-            const buttonId = isQuickSale ? 'quick-sale-button' : 'complete-sale-button';
-            const textId = isQuickSale ? 'quick-sale-button-text' : 'sale-button-text';
-            const loaderId = isQuickSale ? 'quick-sale-loader' : 'sale-loader';
-
-            const button = document.getElementById(buttonId);
-            const buttonText = document.getElementById(textId);
-            const loader = document.getElementById(loaderId);
+            const button = document.getElementById('complete-sale-button');
+            const buttonText = document.getElementById('sale-button-text');
+            const loader = document.getElementById('sale-loader');
             
             if (!button || !buttonText || !loader) { console.error("Elementos del botón no encontrados."); return; }
 
@@ -809,16 +804,11 @@
             const saleIdEl = document.getElementById('current-sale-id');
             const saleId = saleIdEl ? saleIdEl.textContent : `AS_ERR_${Date.now()}`;
 
-            let customerData = { name: '', contact: '', id: '' };
-            if (isQuickSale) {
-                customerData = { name: 'Cliente Ocasional', contact: 'S/N', id: '0' };
-            } else {
-                customerData = {
-                    name: document.getElementById('customer-name')?.value || '',
-                    contact: document.getElementById('customer-contact')?.value || '',
-                    id: document.getElementById('customer-id')?.value || ''
-                };
-            }
+            const customerData = {
+                name: document.getElementById('customer-name')?.value || '',
+                contact: document.getElementById('customer-contact')?.value || '',
+                id: document.getElementById('customer-id')?.value || ''
+            };
 
             const paymentMethod = document.getElementById('payment-method')?.value || 'Efectivo';
 
@@ -826,7 +816,15 @@
                 saleId: saleId,
                 customer: customerData,
                 paymentMethod: paymentMethod,
-                items: cart.map(item => ({ productId: item.id, Nombre: item.nombre, SKU: item.sku, cantidad: item.quantity, precio: item.customPrice, precioRegular: item.precioVenta, 'Precio (Compra)': item.precioCompra })).filter(item => item.productId && item.cantidad > 0),
+                items: cart.map(item => ({ 
+                    productId: item.id, 
+                    Nombre: item.nombre, 
+                    SKU: item.sku, 
+                    cantidad: item.quantity, 
+                    precio: item.customPrice, 
+                    precioRegular: parseFloat(item.precioVenta || item.customPrice || 0), 
+                    'Precio (Compra)': item.precioCompra 
+                })).filter(item => item.productId && item.cantidad > 0),
                 total: cart.reduce((sum, item) => sum + ((item?.quantity ?? 0) * (item?.customPrice ?? 0)), 0),
                 user: { id: currentUser.id, fullName: currentUser.name || currentUser.full_name }
             };
@@ -853,7 +851,7 @@
                     }
 
                     const { pdfBlob, fileName } = generateSalePDF(result.data.saleId, saleData);
-                    showShareOptions(pdfBlob, fileName, isQuickSale ? 'Venta Rápida Completada' : 'Venta Completada', 'Venta guardada y PDF generado.');
+                    showShareOptions(pdfBlob, fileName, 'Venta Completada', 'Venta guardada y PDF generado.');
                     
                     // Refresh data for next sale
                     await fetchSalesForNextId();
@@ -867,6 +865,66 @@
                  if (error.message?.toLowerCase().includes('stock insuficiente')) { renderCart(); }
             } finally {
                 buttonText.classList.remove('hidden'); loader.classList.add('hidden'); button.disabled = cart.length === 0;
+            }
+        }
+
+        async function handleQuickSale() {
+            if (cart.length === 0) { showNotification("Carrito vacío.", 'error'); return; }
+            
+            const btn = document.getElementById('quick-sale-button');
+            const text = document.getElementById('quick-sale-button-text');
+            const loader = document.getElementById('quick-sale-loader');
+
+            text.classList.add('hidden'); loader.classList.remove('hidden'); btn.disabled = true;
+
+            try {
+                const customerData = { name: 'Cliente Ocasional', contact: 'S/N', id: '0' };
+                const paymentMethod = document.getElementById('payment-method')?.value || 'Efectivo';
+
+                const saleData = {
+                    customer: customerData,
+                    paymentMethod: paymentMethod,
+                    items: [],
+                    total: cart.reduce((sum, item) => sum + ((item?.quantity ?? 0) * (item?.customPrice ?? 0)), 0)
+                };
+                
+                for (const item of cart) {
+                    if ((item?.quantity ?? 0) > 0) {
+                        let base64Img = null;
+                        if (item.urlFoto1) {
+                            const imgData = await loadImageAsJpegDataUrl(item.urlFoto1);
+                            base64Img = imgData ? imgData.dataURL : null;
+                        }
+                        saleData.items.push({ 
+                            Nombre: item?.nombre || '', 
+                            SKU: item?.sku || '', 
+                            cantidad: item?.quantity ?? 0, 
+                            precio: item?.customPrice ?? 0, 
+                            precioRegular: parseFloat(item?.precioVenta || item?.customPrice || 0),
+                            base64Img: base64Img
+                        });
+                    }
+                }
+
+                if (saleData.items.length === 0) { showNotification("No hay productos válidos.", "error"); return; }
+                
+                const saleIdEl = document.getElementById('current-sale-id');
+                const saleId = saleIdEl ? saleIdEl.textContent : `VR_${Date.now()}`;
+
+                const { pdfBlob, fileName } = generateDocumentPDF('Nota de Venta', `Nr: ${saleId}`, saleData, 'Venta_Rapida');
+                if(pdfBlob && fileName) { 
+                    showShareOptions(pdfBlob, fileName, 'Venta Rápida Generada', 'PDF generado (sin registro).'); 
+                    cart = [];
+                    renderCart();
+                } else { 
+                    showNotification("Error al generar PDF.", "error"); 
+                }
+                 
+            } catch (e) {
+                console.error("Error al generar venta rápida:", e);
+                showNotification("Error generando documento.", "error");
+            } finally {
+                text.classList.remove('hidden'); loader.classList.add('hidden'); btn.disabled = false;
             }
         }
 
@@ -911,7 +969,7 @@
                             SKU: item?.sku || '', 
                             cantidad: item?.quantity ?? 0, 
                             precio: item?.customPrice ?? 0, 
-                            precioRegular: item?.precioVenta ?? 0,
+                            precioRegular: parseFloat(item?.precioVenta || item?.customPrice || 0),
                             base64Img: base64Img
                         });
                     }
@@ -973,9 +1031,9 @@
             if (Array.isArray(data.items)) { 
                 data.items.forEach(item => { 
                     if (!item || typeof item !== 'object') return; 
-                    const price = typeof item.precio === 'number' ? item.precio : 0; 
-                    const regularPrice = typeof item.precioRegular === 'number' ? item.precioRegular : price;
-                    const quantity = typeof item.cantidad === 'number' ? item.cantidad : 0; 
+                    const price = parseFloat(item.precio || 0); 
+                    const regularPrice = parseFloat(item.precioRegular !== undefined ? item.precioRegular : price);
+                    const quantity = parseInt(item.cantidad || 0, 10); 
                     
                     const hasDiscount = regularPrice > price && Math.abs(price - regularPrice) > 0.001;
                     let priceStr = `Bs ${price.toFixed(2)}`;
@@ -1031,19 +1089,24 @@
                          if (cellData.section === 'body' && (cellData.column.index === 3 || cellData.column.index === 4)) {
                              const item = data.items[cellData.row.index];
                              if (item) {
-                                 const pBase = parseFloat(item.precioRegular || 0);
+                                 const pBase = parseFloat(item.precioRegular !== undefined ? item.precioRegular : item.precio || 0);
                                  const pAct = parseFloat(item.precio || 0);
                                  if (pBase > pAct && Math.abs(pAct - pBase) > 0.001) {
                                      const oldPriceVal = cellData.column.index === 3 ? pBase : pBase * item.cantidad;
                                      const oldPriceStr = `Bs ${oldPriceVal.toFixed(2)}`;
                                      doc.setFontSize(9);
+                                     doc.setFont("helvetica", "bold");
                                      const textWidth = doc.getTextWidth(oldPriceStr);
-                                     const startX = cellData.cell.x + cellData.cell.width - cellData.cell.padding('right') - textWidth;
-                                     // Y position approximation for the strikethrough (middle of first line)
-                                     const startY = cellData.cell.y + cellData.cell.padding('top') + 1.6; 
+                                     
+                                     const padding = cellData.cell.padding;
+                                     const padRight = typeof padding === 'object' ? padding.right : padding;
+                                     const padTop = typeof padding === 'object' ? padding.top : padding;
+
+                                     const startX = cellData.cell.x + cellData.cell.width - padRight - textWidth;
+                                     const startY = cellData.cell.y + padTop + 2.2; 
                                      
                                      doc.setDrawColor(100, 100, 100);
-                                     doc.setLineWidth(0.3);
+                                     doc.setLineWidth(0.4);
                                      doc.line(startX, startY, startX + textWidth, startY);
                                  }
                              }
@@ -1054,7 +1117,7 @@
                          if (cellData.section === 'body') {
                              const item = data.items[cellData.row.index];
                              if (item) {
-                                 const pBase = parseFloat(item.precioRegular || 0);
+                                 const pBase = parseFloat(item.precioRegular !== undefined ? item.precioRegular : item.precio || 0);
                                  const pAct = parseFloat(item.precio || 0);
                                  // Modificar color si hay descuento
                                  if (pBase > pAct && Math.abs(pAct - pBase) > 0.001 && (cellData.column.index === 3 || cellData.column.index === 4)) {
