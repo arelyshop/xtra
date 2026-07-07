@@ -249,6 +249,7 @@
 
         let cart = [];
         let preloadedPdfQr = null;
+        let preloadedPdfLogo = null;
         let html5QrCode = null;
         let currentPdfBlob = null;
         let currentPdfFileName = '';
@@ -292,6 +293,7 @@
                 await Promise.all([
                     // Ya no cargamos todos los productos al inicio para que sea más veloz.
                     loadImageAsJpegDataUrl('/images/qr-pdf.webp').then(qr => preloadedPdfQr = qr),
+                    loadImageAsJpegDataUrl('/images/logo-escritorio.svg').then(img => preloadedPdfLogo = img),
                     fetchSalesForNextId() 
                 ]);
             } catch (error) {
@@ -392,13 +394,13 @@
             img.crossOrigin = 'Anonymous';
             img.onload = () => {
                 const canvas = document.createElement('canvas');
-                canvas.width = img.naturalWidth;
-                canvas.height = img.naturalHeight;
+                canvas.width = img.naturalWidth || 512;
+                canvas.height = img.naturalHeight || 512;
                 const ctx = canvas.getContext('2d');
                  ctx.fillStyle = '#FFFFFF';
                  ctx.fillRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0, 0);
-                resolve({dataURL: canvas.toDataURL('image/jpeg', 0.8), width: img.naturalWidth, height: img.naturalHeight});
+                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                resolve({dataURL: canvas.toDataURL('image/jpeg', 0.8), width: canvas.width, height: canvas.height});
             };
             img.onerror = (e) => {
                  console.error("Error cargando imagen JPEG:", url, e);
@@ -1073,6 +1075,26 @@
                      });
                  }
 
+                 let footerTableBody = [];
+                 
+                 // Fila de Total Ahorrado (si aplica)
+                 if (totalSaved > 0) {
+                     footerTableBody.push([
+                         { text: '', border: [false, false, false, false] },
+                         { text: '', border: [false, false, false, false] },
+                         { text: 'Total Ahorrado:', color: '#16a34a', bold: true, alignment: 'right', border: [false, false, false, false], margin: [0, 2, 5, 2] },
+                         { text: `Bs ${totalSaved.toFixed(2)}`, color: '#16a34a', bold: true, alignment: 'right', border: [false, false, false, false], margin: [0, 2, 0, 2] }
+                     ]);
+                 }
+                 
+                 // Fila principal con Método de Pago en la misma línea y justo antes que el TOTAL
+                 footerTableBody.push([
+                     { text: '', border: [false, false, false, false] },
+                     { text: data.paymentMethod ? `Método de Pago: ${data.paymentMethod}` : '', color: '#4b5563', fontSize: 11, alignment: 'right', border: [false, false, false, false], margin: [0, 7, 20, 5] },
+                     { text: 'TOTAL:', bold: true, fontSize: 14, alignment: 'right', border: [false, false, false, false], margin: [0, 5, 5, 5] },
+                     { text: `Bs ${total.toFixed(2)}`, bold: true, fontSize: 14, alignment: 'right', border: [false, false, false, false], margin: [0, 5, 0, 5] }
+                 ]);
+
                  const customerName = (data.customer.name || '').trim().replace(/\s+/g, "_") || "sin-cliente"; 
                  let fileName; 
                  if (filePrefix === 'Nota_Venta' || filePrefix === 'Venta_Rapida') { 
@@ -1088,31 +1110,47 @@
                      pageSize: 'A4',
                      pageMargins: [30, 30, 30, 30],
                      content: [
-                         // Banner Superior
+                         // Banner Superior Oscuro (Solo Logo y Tipo de Documento)
                          {
                              table: {
                                  widths: ['*', '*'],
                                  body: [
                                      [
                                          {
-                                             stack: [
-                                                 { text: 'ArelyShop', fontSize: 22, bold: true, color: 'white' },
-                                                 { text: 'Santa Cruz, Bolivia', fontSize: 11, color: 'white', margin: [0, 5, 0, 0] }
-                                             ],
-                                             margin: [15, 15, 15, 15]
+                                             stack: preloadedPdfLogo && preloadedPdfLogo.dataURL 
+                                                ? [{ image: preloadedPdfLogo.dataURL, width: 140 }] 
+                                                : [{ text: 'ArelyShop', fontSize: 22, bold: true, color: 'white' }],
+                                             margin: [15, 10, 15, 10]
                                          },
                                          {
                                              stack: [
-                                                 { text: docType, fontSize: 18, bold: true, color: 'white', alignment: 'right' },
-                                                 { text: docIdentifier, fontSize: 11, color: 'white', alignment: 'right', margin: [0, 5, 0, 0] },
-                                                 { text: `Fecha: ${new Date().toLocaleDateString('es-BO')}`, fontSize: 11, color: 'white', alignment: 'right', margin: [0, 2, 0, 0] }
+                                                 { text: docType, fontSize: 18, bold: true, color: 'white', alignment: 'right', margin: [0, 5, 0, 0] }
                                              ],
-                                             margin: [15, 15, 15, 15]
+                                             margin: [15, 10, 15, 10]
                                          }
                                      ]
                                  ]
                              },
                              layout: { defaultBorder: false, fillColor: '#2c3c53' },
+                             margin: [0, 0, 0, 10]
+                         },
+                         // Información secundaria (Fondo blanco)
+                         {
+                             columns: [
+                                 {
+                                     text: 'Santa Cruz, Bolivia', 
+                                     fontSize: 11, 
+                                     color: '#4b5563',
+                                     margin: [5, 0, 0, 0]
+                                 },
+                                 {
+                                     stack: [
+                                         { text: docIdentifier, fontSize: 11, color: '#4b5563', alignment: 'right' },
+                                         { text: `Fecha: ${new Date().toLocaleDateString('es-BO')}`, fontSize: 11, color: '#4b5563', alignment: 'right', margin: [0, 2, 0, 0] }
+                                     ],
+                                     margin: [0, 0, 5, 0]
+                                 }
+                             ],
                              margin: [0, 0, 0, 20]
                          },
                          // Información Cliente
@@ -1136,34 +1174,14 @@
                              margin: [0, 0, 0, 20]
                          },
                          
-                         // Totales y Método de Pago
+                         // Totales y Método de Pago en la misma estructura invisible
                          {
-                             columns: [
-                                 {
-                                     width: '*',
-                                     text: data.paymentMethod ? `Método de Pago: ${data.paymentMethod}` : '',
-                                     color: '#4b5563',
-                                     fontSize: 11,
-                                     margin: [0, 10, 0, 0]
-                                 },
-                                 {
-                                     width: 200,
-                                     table: {
-                                         widths: ['*', 'auto'],
-                                         body: [
-                                             ...(totalSaved > 0 ? [[
-                                                 { text: 'Total Ahorrado:', color: '#16a34a', bold: true, alignment: 'right', border: [false, false, false, false], margin: [0, 2, 0, 2] },
-                                                 { text: `Bs ${totalSaved.toFixed(2)}`, color: '#16a34a', bold: true, alignment: 'right', border: [false, false, false, false], margin: [0, 2, 0, 2] }
-                                             ]] : []),
-                                             [
-                                                 { text: 'TOTAL:', bold: true, fontSize: 14, alignment: 'right', border: [false, false, false, false], margin: [0, 5, 0, 5] },
-                                                 { text: `Bs ${total.toFixed(2)}`, bold: true, fontSize: 14, alignment: 'right', border: [false, false, false, false], margin: [0, 5, 0, 5] }
-                                             ]
-                                         ]
-                                     },
-                                     layout: 'noBorders'
-                                 }
-                             ]
+                             table: {
+                                 widths: ['*', 'auto', 'auto', 'auto'],
+                                 body: footerTableBody
+                             },
+                             layout: 'noBorders',
+                             margin: [0, 0, 0, 0]
                          },
 
                          // Pie de página con QR
