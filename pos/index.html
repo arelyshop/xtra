@@ -9,9 +9,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- PDF Generation Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <!-- PDF Generation Libraries (Actualizado a pdfMake para máxima velocidad y calidad) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.9/vfs_fonts.min.js"></script>
     <!-- Barcode Scanner Library -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <style>
@@ -840,17 +840,17 @@
                 const result = await simpleFetch(`${API_BASE_URL}/sales`, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(saleData) });
                 
                 if (result.status === 'success' && result.data?.saleId) {
-                    // Cargar Base64 de las imagenes exclusivamente para el PDF DESPUÉS de guardar la venta
-                    // Para no enviar peso excesivo a la base de datos
-                    for (let item of saleData.items) {
+                    
+                    // Cargar Base64 de las imagenes EN PARALELO para que sea súper rápido
+                    await Promise.all(saleData.items.map(async (item) => {
                         const cartItem = cart.find(c => c.id === item.productId);
                         if (cartItem && cartItem.urlFoto1) {
                             const imgData = await loadImageAsJpegDataUrl(cartItem.urlFoto1);
                             item.base64Img = imgData ? imgData.dataURL : null;
                         }
-                    }
+                    }));
 
-                    const { pdfBlob, fileName } = generateSalePDF(result.data.saleId, saleData);
+                    const { pdfBlob, fileName } = await generateSalePDF(result.data.saleId, saleData);
                     showShareOptions(pdfBlob, fileName, 'Venta Completada', 'Venta guardada y PDF generado.');
                     
                     // Refresh data for next sale
@@ -888,30 +888,34 @@
                     total: cart.reduce((sum, item) => sum + ((item?.quantity ?? 0) * (item?.customPrice ?? 0)), 0)
                 };
                 
-                for (const item of cart) {
+                // Carga de imágenes optimizada en paralelo
+                const itemsWithImages = await Promise.all(cart.map(async (item) => {
                     if ((item?.quantity ?? 0) > 0) {
                         let base64Img = null;
                         if (item.urlFoto1) {
                             const imgData = await loadImageAsJpegDataUrl(item.urlFoto1);
                             base64Img = imgData ? imgData.dataURL : null;
                         }
-                        saleData.items.push({ 
+                        return {
                             Nombre: item?.nombre || '', 
                             SKU: item?.sku || '', 
                             cantidad: item?.quantity ?? 0, 
                             precio: item?.customPrice ?? 0, 
                             precioRegular: parseFloat(item?.precioVenta || item?.customPrice || 0),
                             base64Img: base64Img
-                        });
+                        };
                     }
-                }
+                    return null;
+                }));
+                
+                saleData.items = itemsWithImages.filter(i => i !== null);
 
                 if (saleData.items.length === 0) { showNotification("No hay productos válidos.", "error"); return; }
                 
                 const saleIdEl = document.getElementById('current-sale-id');
                 const saleId = saleIdEl ? saleIdEl.textContent : `VR_${Date.now()}`;
 
-                const { pdfBlob, fileName } = generateDocumentPDF('Nota de Venta', `Nr: ${saleId}`, saleData, 'Venta_Rapida');
+                const { pdfBlob, fileName } = await generateDocumentPDF('Nota de Venta', `Nr: ${saleId}`, saleData, 'Venta_Rapida');
                 if(pdfBlob && fileName) { 
                     showShareOptions(pdfBlob, fileName, 'Venta Rápida Generada', 'PDF generado (sin registro).'); 
                     cart = [];
@@ -928,9 +932,9 @@
             }
         }
 
-        function generateSalePDF(saleId, saleData) {
+        async function generateSalePDF(saleId, saleData) {
             const validSaleData = { ...saleData, items: Array.isArray(saleData.items) ? saleData.items : [] };
-            return generateDocumentPDF('Nota de Venta', `Nr: ${saleId}`, validSaleData);
+            return await generateDocumentPDF('Nota de Venta', `Nr: ${saleId}`, validSaleData);
         }
 
         async function handleGenerateQuote() {
@@ -957,28 +961,33 @@
                     total: cart.reduce((sum, item) => sum + ((item?.quantity ?? 0) * (item?.customPrice ?? 0)), 0)
                 };
                 
-                for (const item of cart) {
+                // Carga optimizada en paralelo
+                const itemsWithImages = await Promise.all(cart.map(async (item) => {
                     if ((item?.quantity ?? 0) > 0) {
                         let base64Img = null;
                         if (item.urlFoto1) {
                             const imgData = await loadImageAsJpegDataUrl(item.urlFoto1);
                             base64Img = imgData ? imgData.dataURL : null;
                         }
-                        quoteData.items.push({ 
+                        return {
                             Nombre: item?.nombre || '', 
                             SKU: item?.sku || '', 
                             cantidad: item?.quantity ?? 0, 
                             precio: item?.customPrice ?? 0, 
                             precioRegular: parseFloat(item?.precioVenta || item?.customPrice || 0),
                             base64Img: base64Img
-                        });
+                        };
                     }
-                }
+                    return null;
+                }));
+                
+                quoteData.items = itemsWithImages.filter(i => i !== null);
 
-                 if (quoteData.items.length === 0) { showNotification("No hay productos válidos.", "error"); return; }
-                const { pdfBlob, fileName } = generateQuotePDF(quoteData);
-                 if(pdfBlob && fileName) { showShareOptions(pdfBlob, fileName, 'Cotización Generada', 'PDF generado.'); }
-                 else { showNotification("Error al generar PDF.", "error"); }
+                if (quoteData.items.length === 0) { showNotification("No hay productos válidos.", "error"); return; }
+                
+                const { pdfBlob, fileName } = await generateQuotePDF(quoteData);
+                if(pdfBlob && fileName) { showShareOptions(pdfBlob, fileName, 'Cotización Generada', 'PDF generado.'); }
+                else { showNotification("Error al generar PDF.", "error"); }
                  
             } catch (e) {
                 console.error("Error al generar cotización:", e);
@@ -990,201 +999,188 @@
         }
 
 
-        function generateQuotePDF(quoteData) {
+        async function generateQuotePDF(quoteData) {
              const validQuoteData = { ...quoteData, items: Array.isArray(quoteData.items) ? quoteData.items : [] };
-            return generateDocumentPDF('Cotización', 'Válido por 24hrs.', validQuoteData, 'Cotizacion');
+            return await generateDocumentPDF('Cotización', 'Válido por 24hrs.', validQuoteData, 'Cotizacion');
         }
 
+        // MOTOR DE GENERACIÓN PDF REESCRITO CON PDFMAKE PARA MÁXIMA VELOCIDAD Y CALIDAD
         function generateDocumentPDF(docType, docIdentifier, data, filePrefix = 'Nota_Venta') {
-             if (!data || typeof data !== 'object') { console.error("generateDocumentPDF: Datos inválidos", data); return { pdfBlob: null, fileName: 'error.pdf' }; }
-             data.customer = data.customer || {};
-            if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') { console.error("jsPDF no cargado."); showNotification("Error: Librería PDF.", "error"); return { pdfBlob: null, fileName: 'error.pdf'}; }
-            const { jsPDF } = window.jspdf; let doc; try { doc = new jsPDF(); } catch (e) { console.error("Error jsPDF:", e); return { pdfBlob: null, fileName: 'error.pdf'}; }
+            return new Promise((resolve) => {
+                 if (!data || typeof data !== 'object') { console.error("Datos inválidos", data); return resolve({ pdfBlob: null, fileName: 'error.pdf' }); }
+                 data.customer = data.customer || {};
 
-            const pageW = doc.internal.pageSize.getWidth(); const margin = 14; const headerW = pageW - (margin * 2); const headerH = 32; const r = 3;
-            doc.setFillColor('#303c54'); doc.roundedRect(margin, margin, headerW, headerH, r, r, 'F'); doc.setTextColor('#FFFFFF');
-            let textStartX = margin + 5;
-            
-            // Fuentes aumentadas ~10% aprox (helvetica como estandar compatible sans-serif)
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(20); doc.text("ArelyShop", textStartX, margin + 15); 
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(10); doc.text("Santa Cruz, Bolivia", textStartX, margin + 22);
-            
-            doc.setFont("helvetica", "bold");
-            doc.setFontSize(18); doc.text(docType, pageW - margin - 5, margin + 12, { align: 'right' }); 
-            doc.setFont("helvetica", "normal");
-            doc.setFontSize(11); doc.text(docIdentifier, pageW - margin - 5, margin + 19, { align: 'right' }); 
-            doc.text(`Fecha: ${new Date().toLocaleDateString('es-BO')}`, pageW - margin - 5, margin + 25, { align: 'right' });
-            
-            const startY = margin + headerH + 10; doc.setTextColor('#000000'); 
-            doc.setFontSize(13); doc.setFont("helvetica", "bold"); doc.text("Cliente:", margin, startY); 
-            doc.setFont("helvetica", "normal"); doc.setFontSize(11); 
-            const customerInfo = `Nombre: ${data.customer.name || 'N/A'} | Contacto: ${data.customer.contact || 'N/A'} | NIT/CI: ${data.customer.id || 'N/A'}`; 
-            doc.text(customerInfo, margin, startY + 8);
-            
-            // Nueva columna para la Imagen en primera posición
-            const tableColumn = ["Img", "Cant.", "Desc.", "P.U.", "Subt."]; 
-            const tableRows = [];
-            let totalSaved = 0;
-            
-            if (Array.isArray(data.items)) { 
-                data.items.forEach(item => { 
-                    if (!item || typeof item !== 'object') return; 
-                    const price = parseFloat(item.precio || 0); 
-                    const regularPrice = parseFloat(item.precioRegular !== undefined ? item.precioRegular : price);
-                    const quantity = parseInt(item.cantidad || 0, 10); 
-                    
-                    const hasDiscount = regularPrice > price && Math.abs(price - regularPrice) > 0.001;
-                    
-                    let priceStr = `Bs ${price.toFixed(2)}`;
-                    let subtotalStr = `Bs ${(price * quantity).toFixed(2)}`;
+                 const total = typeof data.total === 'number' ? data.total : 0;
+                 let totalSaved = 0;
 
-                    if (hasDiscount) {
-                        // Añadimos un salto de línea para empujar el precio de descuento hacia abajo
-                        // El espacio libre arriba lo llenaremos dibujando el precio viejo en gris desde didDrawCell
-                        priceStr = `\nBs ${price.toFixed(2)}`;
-                        subtotalStr = `\nBs ${(price * quantity).toFixed(2)}`;
-                        totalSaved += (regularPrice - price) * quantity;
-                    }
+                 // Cabecera de la tabla
+                 const tableBody = [
+                     [
+                         { text: 'Img', bold: true, color: '#333333', fillColor: '#e5e7eb', margin: [5, 5] },
+                         { text: 'Cant.', bold: true, color: '#333333', fillColor: '#e5e7eb', margin: [5, 5], alignment: 'center' },
+                         { text: 'Desc.', bold: true, color: '#333333', fillColor: '#e5e7eb', margin: [5, 5] },
+                         { text: 'P.U.', bold: true, color: '#333333', fillColor: '#e5e7eb', margin: [5, 5], alignment: 'right' },
+                         { text: 'Subt.', bold: true, color: '#333333', fillColor: '#e5e7eb', margin: [5, 5], alignment: 'right' }
+                     ]
+                 ];
 
-                    const description = `${item.Nombre || 'N/A'}\n(SKU: ${item.SKU || 'N/A'})`; 
-                    const itemData = ['', quantity, description, priceStr, subtotalStr ]; 
-                    tableRows.push(itemData); 
-                }); 
-            } else { 
-                console.error("items no es array:", data.items); 
-            }
-            if (typeof doc.autoTable !== 'function') { console.error("autoTable no cargado."); showNotification("Error: Tablas PDF.", "error"); return { pdfBlob: null, fileName: 'error.pdf'}; }
-             let finalY = startY + 15; 
-             try { 
-                 doc.autoTable({ 
-                     head: [tableColumn], 
-                     body: tableRows, 
-                     startY: startY + 15, 
-                     margin: { left: margin, right: margin }, 
-                     headStyles: { fillColor: '#cdcdcd', textColor: '#000000', fontSize: 9, font: 'helvetica' }, 
-                     styles: { cellPadding: 1.5, fontSize: 9, font: 'helvetica' }, 
-                     columnStyles: { 
-                         0: { cellWidth: 15, minCellHeight: 15, halign: 'center' }, // Img
-                         1: { halign: 'center', cellWidth: 12 }, // Cant.
-                         3: { halign: 'right', cellWidth: 23 },  // P.U.
-                         4: { halign: 'right', cellWidth: 23 }   // Subt.
-                     }, 
-                     didDrawCell: (cellData) => {
-                         // Lógica para pintar la imagen precargada
-                         if (cellData.section === 'body' && cellData.column.index === 0) {
-                             const item = data.items[cellData.row.index];
-                             if (item && item.base64Img) {
-                                 try {
-                                     // Centrar la imagen de 11x11 dentro de la celda
-                                     const dim = 11;
-                                     const xOffset = cellData.cell.x + (cellData.cell.width - dim) / 2;
-                                     const yOffset = cellData.cell.y + (cellData.cell.height - dim) / 2;
-                                     doc.addImage(item.base64Img, 'JPEG', xOffset, yOffset, dim, dim);
-                                 } catch (e) {
-                                     console.error("Error al pintar imagen PDF:", e);
-                                 }
-                             }
+                 if (Array.isArray(data.items)) {
+                     data.items.forEach(item => {
+                         if (!item || typeof item !== 'object') return;
+                         const price = parseFloat(item.precio || 0);
+                         const regularPrice = parseFloat(item.precioRegular !== undefined ? item.precioRegular : price);
+                         const quantity = parseInt(item.cantidad || 0, 10);
+                         
+                         const hasDiscount = regularPrice > price && Math.abs(price - regularPrice) > 0.001;
+                         
+                         let puStack = [];
+                         let subtStack = [];
+
+                         if (hasDiscount) {
+                             puStack.push({ text: `Bs ${regularPrice.toFixed(2)}`, decoration: 'lineThrough', color: '#6b7280', fontSize: 9 });
+                             puStack.push({ text: `Bs ${price.toFixed(2)}`, color: '#dc2626', bold: true });
+                             
+                             subtStack.push({ text: `Bs ${(regularPrice * quantity).toFixed(2)}`, decoration: 'lineThrough', color: '#6b7280', fontSize: 9 });
+                             subtStack.push({ text: `Bs ${(price * quantity).toFixed(2)}`, color: '#dc2626', bold: true });
+                             
+                             totalSaved += (regularPrice - price) * quantity;
+                         } else {
+                             puStack.push({ text: `Bs ${price.toFixed(2)}`, margin: [0, 5, 0, 0] });
+                             subtStack.push({ text: `Bs ${(price * quantity).toFixed(2)}`, margin: [0, 5, 0, 0] });
                          }
 
-                         // Dibujar de forma manual el precio original (Gris y Tachado)
-                         if (cellData.section === 'body' && (cellData.column.index === 3 || cellData.column.index === 4)) {
-                             const item = data.items[cellData.row.index];
-                             if (item) {
-                                 const pBase = parseFloat(item.precioRegular !== undefined ? item.precioRegular : item.precio || 0);
-                                 const pAct = parseFloat(item.precio || 0);
-                                 if (pBase > pAct && Math.abs(pAct - pBase) > 0.001) {
-                                     const oldPriceVal = cellData.column.index === 3 ? pBase : pBase * item.cantidad;
-                                     const oldPriceStr = `Bs ${oldPriceVal.toFixed(2)}`;
-                                     
-                                     const currentFontSize = doc.internal.getFontSize();
-                                     const currentTextColor = doc.getTextColor ? doc.getTextColor() : '#000000';
-                                     
-                                     doc.setFontSize(8.5);
-                                     doc.setFont("helvetica", "normal");
-                                     doc.setTextColor(140, 140, 140); // Gris Oscuro
-                                     
-                                     const textWidth = doc.getTextWidth(oldPriceStr);
-                                     
-                                     const padding = cellData.cell.padding;
-                                     const padRight = typeof padding === 'object' ? padding.right : padding;
-                                     const padTop = typeof padding === 'object' ? padding.top : padding;
-
-                                     const startX = cellData.cell.x + cellData.cell.width - padRight - textWidth;
-                                     const startY = cellData.cell.y + padTop + 2.5; 
-                                     
-                                     doc.text(oldPriceStr, startX, startY);
-                                     
-                                     doc.setDrawColor(140, 140, 140);
-                                     doc.setLineWidth(0.3);
-                                     doc.line(startX, startY - 1.2, startX + textWidth, startY - 1.2);
-                                     
-                                     // Restaurar valores para la siguiente celda
-                                     doc.setFontSize(currentFontSize);
-                                 }
-                             }
+                         let imgCell = {};
+                         if (item.base64Img) {
+                             imgCell = { image: item.base64Img, width: 35, height: 35, alignment: 'center' };
+                         } else {
+                             imgCell = { text: 'Sin Img', fontSize: 8, color: '#9ca3af', alignment: 'center', margin: [0, 10, 0, 0] };
                          }
-                     },
-                     didParseCell: (cellData) => { 
-                         if (cellData.column.index === 2) cellData.cell.styles.fontSize = 8; 
-                         if (cellData.section === 'body') {
-                             const item = data.items[cellData.row.index];
-                             if (item) {
-                                 const pBase = parseFloat(item.precioRegular !== undefined ? item.precioRegular : item.precio || 0);
-                                 const pAct = parseFloat(item.precio || 0);
-                                 // Colorear el texto de la celda de rojo si hay descuento
-                                 if (pBase > pAct && Math.abs(pAct - pBase) > 0.001 && (cellData.column.index === 3 || cellData.column.index === 4)) {
-                                     cellData.cell.styles.textColor = [220, 38, 38]; // Color rojo (red-600)
-                                     cellData.cell.styles.fontStyle = 'bold';
+
+                         tableBody.push([
+                             { stack: [imgCell], margin: [0, 5, 0, 5] },
+                             { text: quantity.toString(), alignment: 'center', margin: [0, 15, 0, 0] },
+                             { text: `${item.Nombre || 'N/A'}\n(SKU: ${item.SKU || 'N/A'})`, margin: [0, 10, 0, 0] },
+                             { stack: puStack, alignment: 'right', margin: [0, hasDiscount ? 10 : 10, 0, 0] },
+                             { stack: subtStack, alignment: 'right', margin: [0, hasDiscount ? 10 : 10, 0, 0] }
+                         ]);
+                     });
+                 }
+
+                 const customerName = (data.customer.name || '').trim().replace(/\s+/g, "_") || "sin-cliente"; 
+                 let fileName; 
+                 if (filePrefix === 'Nota_Venta' || filePrefix === 'Venta_Rapida') { 
+                     const saleIdClean = (docIdentifier.split(': ')[1] || '').replace(/\s+/g, "_"); 
+                     fileName = `${filePrefix}_${saleIdClean}_${customerName}.pdf`; 
+                 } else { 
+                     fileName = `${filePrefix}_${customerName}.pdf`; 
+                 } 
+                 fileName = fileName.replace(/[^a-zA-Z0-9_.-]/g, '');
+
+                 // Estructura declarativa del PDF usando PdfMake
+                 const docDefinition = {
+                     pageSize: 'A4',
+                     pageMargins: [30, 30, 30, 30],
+                     content: [
+                         // Banner Superior
+                         {
+                             table: {
+                                 widths: ['*', '*'],
+                                 body: [
+                                     [
+                                         {
+                                             stack: [
+                                                 { text: 'ArelyShop', fontSize: 22, bold: true, color: 'white' },
+                                                 { text: 'Santa Cruz, Bolivia', fontSize: 11, color: 'white', margin: [0, 5, 0, 0] }
+                                             ],
+                                             margin: [15, 15, 15, 15]
+                                         },
+                                         {
+                                             stack: [
+                                                 { text: docType, fontSize: 18, bold: true, color: 'white', alignment: 'right' },
+                                                 { text: docIdentifier, fontSize: 11, color: 'white', alignment: 'right', margin: [0, 5, 0, 0] },
+                                                 { text: `Fecha: ${new Date().toLocaleDateString('es-BO')}`, fontSize: 11, color: 'white', alignment: 'right', margin: [0, 2, 0, 0] }
+                                             ],
+                                             margin: [15, 15, 15, 15]
+                                         }
+                                     ]
+                                 ]
+                             },
+                             layout: { defaultBorder: false, fillColor: '#2c3c53' },
+                             margin: [0, 0, 0, 20]
+                         },
+                         // Información Cliente
+                         { text: 'Cliente:', fontSize: 13, bold: true, margin: [0, 0, 0, 5] },
+                         { text: `Nombre: ${data.customer.name || 'N/A'} | Contacto: ${data.customer.contact || 'N/A'} | NIT/CI: ${data.customer.id || 'N/A'}`, fontSize: 11, margin: [0, 0, 0, 15] },
+                         
+                         // Tabla de Productos
+                         {
+                             table: {
+                                 headerRows: 1,
+                                 widths: [45, 35, '*', 70, 70],
+                                 body: tableBody
+                             },
+                             layout: {
+                                 hLineWidth: function (i, node) { return (i === 0 || i === node.table.body.length) ? 0 : 0.5; },
+                                 vLineWidth: function (i, node) { return 0; },
+                                 hLineColor: function (i, node) { return '#e5e7eb'; },
+                                 paddingLeft: function(i, node) { return 5; },
+                                 paddingRight: function(i, node) { return 5; }
+                             },
+                             margin: [0, 0, 0, 20]
+                         },
+                         
+                         // Totales y Método de Pago
+                         {
+                             columns: [
+                                 {
+                                     width: '*',
+                                     text: data.paymentMethod ? `Método de Pago: ${data.paymentMethod}` : '',
+                                     color: '#4b5563',
+                                     fontSize: 11,
+                                     margin: [0, 10, 0, 0]
+                                 },
+                                 {
+                                     width: 200,
+                                     table: {
+                                         widths: ['*', 'auto'],
+                                         body: [
+                                             ...(totalSaved > 0 ? [[
+                                                 { text: 'Total Ahorrado:', color: '#16a34a', bold: true, alignment: 'right', border: [false, false, false, false], margin: [0, 2, 0, 2] },
+                                                 { text: `Bs ${totalSaved.toFixed(2)}`, color: '#16a34a', bold: true, alignment: 'right', border: [false, false, false, false], margin: [0, 2, 0, 2] }
+                                             ]] : []),
+                                             [
+                                                 { text: 'TOTAL:', bold: true, fontSize: 14, alignment: 'right', border: [false, false, false, false], margin: [0, 5, 0, 5] },
+                                                 { text: `Bs ${total.toFixed(2)}`, bold: true, fontSize: 14, alignment: 'right', border: [false, false, false, false], margin: [0, 5, 0, 5] }
+                                             ]
+                                         ]
+                                     },
+                                     layout: 'noBorders'
                                  }
-                             }
+                             ]
+                         },
+
+                         // Pie de página con QR
+                         {
+                             stack: [
+                                 { text: filePrefix === 'Cotizacion' ? "¡Gracias por su interés!" : "¡Gracias por su compra!", alignment: 'center', fontSize: 10, margin: [0, 30, 0, 5] },
+                                 { text: "Visítanos: www.arelyshop.com", alignment: 'center', fontSize: 10, margin: [0, 0, 0, 15] },
+                                 ...(preloadedPdfQr && preloadedPdfQr.dataURL ? [{ image: preloadedPdfQr.dataURL, width: 60, alignment: 'center' }] : [])
+                             ]
                          }
-                     } 
-                 }); 
-                 // CORRECCIÓN: Obtener correctamente la posición final de la tabla en Y
-                 finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY : (doc.autoTable.previous ? doc.autoTable.previous.finalY : startY + 30);
-             } catch (e) { 
-                 console.error("Error autoTable:", e); 
-                 // Fallback seguro en caso de que falle la tabla
-                 finalY = startY + 40; 
-             }
-             
-             finalY += 10;
-             const total = typeof data.total === 'number' ? data.total : 0; 
+                     ],
+                     defaultStyle: { font: 'Roboto', fontSize: 10 }
+                 };
 
-             doc.setFontSize(11);
-             doc.setFont(undefined, 'normal');
-             doc.setTextColor(80, 80, 80);
-             if (data.paymentMethod) {
-                 doc.text(`Método de Pago: ${data.paymentMethod}`, margin, finalY);
-             }
-
-             // Mostrar el Total Ahorrado si es mayor a cero
-             if (totalSaved > 0) {
-                 doc.setTextColor(34, 197, 94); // Verde (green-500)
-                 doc.setFont(undefined, 'bold');
-                 doc.text("Total Ahorrado:", pageW - margin - 35, finalY, { align: 'right' });
-                 doc.text(`Bs ${totalSaved.toFixed(2)}`, pageW - margin, finalY, { align: 'right' });
-                 finalY += 8; // Mayor espacio entre el ahorro y el total general
-             } else {
-                 finalY += 6;
-             }
-
-             // Mostrar el Total general
-             doc.setTextColor(0, 0, 0);
-             doc.setFontSize(14); // Aumentado en tamaño
-             doc.setFont(undefined, 'bold'); 
-             // Ajustado el "TOTAL:" hacia la derecha
-             doc.text("TOTAL:", pageW - margin - 35, finalY + 2, { align: 'right' }); 
-             doc.text(`Bs ${total.toFixed(2)}`, pageW - margin, finalY + 2, { align: 'right' }); 
-             doc.setFont(undefined, 'normal');
-
-            doc.setFontSize(10); const thankYou = filePrefix === 'Cotizacion' ? "¡Gracias por su interés!" : "¡Gracias por su compra!"; doc.text(thankYou, pageW / 2, finalY + 20, { align: 'center' }); doc.text("Visítanos: www.arelyshop.com", pageW / 2, finalY + 25, { align: 'center' });
-            if (preloadedPdfQr && preloadedPdfQr.dataURL) { const qrSize = 20; const qrX = (pageW - qrSize) / 2; const qrY = finalY + 30; try { doc.addImage(preloadedPdfQr.dataURL, 'JPEG', qrX, qrY, qrSize, qrSize, undefined, 'FAST'); } catch (e) { console.error("Error QR PDF:", e); } }
-            const customerName = (data.customer.name || '').trim().replace(/\s+/g, "_") || "sin-cliente"; let fileName; if (filePrefix === 'Nota_Venta') { const saleId = (docIdentifier.split(': ')[1] || '').replace(/\s+/g, "_"); fileName = `${filePrefix}_${saleId}_${customerName}.pdf`; } else { fileName = `${filePrefix}_${customerName}.pdf`; } fileName = fileName.replace(/[^a-zA-Z0-9_.-]/g, '');
-            let pdfBlob = null; try { pdfBlob = doc.output('blob'); } catch (e) { console.error("Error generando Blob:", e); showNotification("Error al generar PDF.", "error"); }
-            return { pdfBlob, fileName };
+                 try {
+                     // Generación de PDF instantánea
+                     pdfMake.createPdf(docDefinition).getBlob((blob) => {
+                         resolve({ pdfBlob: blob, fileName: fileName });
+                     });
+                 } catch (e) {
+                     console.error("Error generando PDF con pdfMake:", e);
+                     resolve({ pdfBlob: null, fileName: 'error.pdf' });
+                 }
+            });
         }
 
         function showProductModal(product) {
