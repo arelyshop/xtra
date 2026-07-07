@@ -1066,26 +1066,6 @@
                      });
                  }
 
-                 let footerTableBody = [];
-                 
-                 // Fila de Total Ahorrado (si aplica)
-                 if (totalSaved > 0) {
-                     footerTableBody.push([
-                         { text: '', border: [false, false, false, false] },
-                         { text: '', border: [false, false, false, false] },
-                         { text: 'Total Ahorrado:', color: '#16a34a', bold: true, alignment: 'right', border: [false, false, false, false], margin: [0, 2, 5, 2] },
-                         { text: `Bs ${totalSaved.toFixed(2)}`, color: '#16a34a', bold: true, alignment: 'right', border: [false, false, false, false], margin: [0, 2, 0, 2] }
-                     ]);
-                 }
-                 
-                 // Fila principal con Método de Pago en la misma línea y justo antes que el TOTAL
-                 footerTableBody.push([
-                     { text: '', border: [false, false, false, false] },
-                     { text: data.paymentMethod ? `Método de Pago: ${data.paymentMethod}` : '', color: '#4b5563', fontSize: 11, alignment: 'right', border: [false, false, false, false], margin: [0, 7, 20, 5] },
-                     { text: 'TOTAL:', bold: true, fontSize: 14, alignment: 'right', border: [false, false, false, false], margin: [0, 5, 5, 5] },
-                     { text: `Bs ${total.toFixed(2)}`, bold: true, fontSize: 14, alignment: 'right', border: [false, false, false, false], margin: [0, 5, 0, 5] }
-                 ]);
-
                  const customerName = (data.customer.name || '').trim().replace(/\s+/g, "_") || "sin-cliente"; 
                  let fileName; 
                  if (filePrefix === 'Nota_Venta' || filePrefix === 'Venta_Rapida') { 
@@ -1149,14 +1129,34 @@
                              margin: [0, 0, 0, 20]
                          },
                          
-                         // Totales y Método de Pago en la misma estructura invisible
+                         // Totales y Método de Pago
                          {
-                             table: {
-                                 widths: ['*', 'auto', 'auto', 'auto'],
-                                 body: footerTableBody
-                             },
-                             layout: 'noBorders',
-                             margin: [0, 0, 0, 0]
+                             columns: [
+                                 {
+                                     width: '*',
+                                     text: data.paymentMethod ? `Método de Pago: ${data.paymentMethod}` : '',
+                                     color: '#4b5563',
+                                     fontSize: 11,
+                                     margin: [0, 10, 0, 0]
+                                 },
+                                 {
+                                     width: 200,
+                                     table: {
+                                         widths: ['*', 'auto'],
+                                         body: [
+                                             ...(totalSaved > 0 ? [[
+                                                 { text: 'Total Ahorrado:', color: '#16a34a', bold: true, alignment: 'right', border: [false, false, false, false], margin: [0, 2, 0, 2] },
+                                                 { text: `Bs ${totalSaved.toFixed(2)}`, color: '#16a34a', bold: true, alignment: 'right', border: [false, false, false, false], margin: [0, 2, 0, 2] }
+                                             ]] : []),
+                                             [
+                                                 { text: 'TOTAL:', bold: true, fontSize: 14, alignment: 'right', border: [false, false, false, false], margin: [0, 5, 0, 5] },
+                                                 { text: `Bs ${total.toFixed(2)}`, bold: true, fontSize: 14, alignment: 'right', border: [false, false, false, false], margin: [0, 5, 0, 5] }
+                                             ]
+                                         ]
+                                     },
+                                     layout: 'noBorders'
+                                 }
+                             ]
                          },
 
                          // Pie de página con QR
