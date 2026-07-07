@@ -1137,15 +1137,17 @@
                                  body: [
                                      [
                                          preloadedPdfLogo && preloadedPdfLogo.dataURL 
-                                            ? { image: preloadedPdfLogo.dataURL, width: 130, margin: [15, 6, 0, 6] } 
-                                            : { text: 'ArelyShop', fontSize: 22, bold: true, color: 'white', margin: [15, 6, 0, 6] },
+                                            // Alineación centrada manual con margen uniforme [left, top, right, bottom]
+                                            ? { image: preloadedPdfLogo.dataURL, width: 130, margin: [15, 8, 0, 8] } 
+                                            : { text: 'ArelyShop', fontSize: 22, bold: true, color: 'white', margin: [15, 8, 0, 8] },
                                          { 
                                              text: docType, 
                                              fontSize: 18, 
                                              bold: true, 
                                              color: 'white', 
                                              alignment: 'right', 
-                                             margin: [0, 10, 15, 0] 
+                                             // El mismo margen vertical [15, 8, 15, 8] fuerza a ambos a compartir la misma altura en la celda
+                                             margin: [0, 8, 15, 8] 
                                          }
                                      ]
                                  ]
