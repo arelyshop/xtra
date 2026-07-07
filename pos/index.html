@@ -127,6 +127,13 @@
                                     <div><label for="customer-name" class="block text-sm font-medium text-gray-700">Nombre</label><input type="text" id="customer-name" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg"></div>
                                     <div><label for="customer-contact" class="block text-sm font-medium text-gray-700">Contacto</label><input type="text" id="customer-contact" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg"></div>
                                     <div><label for="customer-id" class="block text-sm font-medium text-gray-700">NIT/CI</label><input type="text" id="customer-id" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg"></div>
+                                    <div>
+                                        <label for="payment-method" class="block text-sm font-medium text-gray-700">Método de Pago</label>
+                                        <select id="payment-method" class="mt-1 w-full px-3 py-2 border border-gray-300 rounded-lg bg-white">
+                                            <option value="Efectivo">Efectivo</option>
+                                            <option value="Transferencia QR">Transferencia QR</option>
+                                        </select>
+                                    </div>
                                 </form>
                                 <div class="border-t border-gray-200 mt-6 pt-6">
                                     <div class="flex justify-between items-center text-2xl font-bold text-gray-800"><span>TOTAL:</span><span id="total-amount">Bs 0.00</span></div>
@@ -140,6 +147,13 @@
                                     <button id="generate-quote-button" class="mt-2 w-full inline-flex items-center justify-center px-8 py-3 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition duration-200 shadow-lg disabled:bg-gray-400">
                                         <i class="fa-solid fa-receipt mr-2"></i>
                                         Solo Cotización
+                                    </button>
+                                    <button id="quick-sale-button" class="mt-2 w-full inline-flex items-center justify-center px-8 py-3 bg-purple-600 text-white font-bold rounded-lg hover:bg-purple-700 transition duration-200 shadow-lg disabled:bg-gray-400">
+                                        <span id="quick-sale-button-text" class="inline-flex items-center justify-center">
+                                            <i class="fa-solid fa-heart mr-2"></i>
+                                            Venta Rápida
+                                        </span>
+                                        <div id="quick-sale-loader" class="loader hidden"></div>
                                     </button>
                                 </div>
                             </div>
@@ -420,10 +434,16 @@
         function setupEventListeners() {
             const searchInput = document.getElementById('search-product');
             if (searchInput) { searchInput.addEventListener('input', handleSearch); searchInput.addEventListener('keydown', handleBarcodeScan); }
+            
             const completeSaleBtn = document.getElementById('complete-sale-button');
-            if(completeSaleBtn) completeSaleBtn.addEventListener('click', completeSale);
+            if(completeSaleBtn) completeSaleBtn.addEventListener('click', () => completeSale(false));
+            
+            const quickSaleBtn = document.getElementById('quick-sale-button');
+            if(quickSaleBtn) quickSaleBtn.addEventListener('click', () => completeSale(true));
+            
             const generateQuoteBtn = document.getElementById('generate-quote-button');
             if(generateQuoteBtn) generateQuoteBtn.addEventListener('click', handleGenerateQuote);
+            
             const cartItemsEl = document.getElementById('cart-items');
             if(cartItemsEl) {
                 cartItemsEl.addEventListener('click', (e) => {
@@ -759,39 +779,63 @@
              const totalAmountEl = document.getElementById('total-amount');
              if(totalAmountEl) totalAmountEl.textContent = `Bs ${total.toFixed(2)}`;
             const isEmpty = cart.length === 0;
+            
              const completeBtn = document.getElementById('complete-sale-button');
              if(completeBtn) completeBtn.disabled = isEmpty;
              const quoteBtn = document.getElementById('generate-quote-button');
              if(quoteBtn) quoteBtn.disabled = isEmpty;
+             const quickBtn = document.getElementById('quick-sale-button');
+             if(quickBtn) quickBtn.disabled = isEmpty;
         }
 
 
-        async function completeSale() {
+        async function completeSale(isQuick = false) {
+            const isQuickSale = isQuick === true;
             if (cart.length === 0) return;
             if (!currentUser || !currentUser.id) { showNotification("Error: Sesión inválida.", "error"); return; }
 
-            const button = document.getElementById('complete-sale-button');
-            const buttonText = document.getElementById('sale-button-text');
-            const loader = document.getElementById('sale-loader');
-             if (!button || !buttonText || !loader) { console.error("Elementos del botón no encontrados."); return; }
+            const buttonId = isQuickSale ? 'quick-sale-button' : 'complete-sale-button';
+            const textId = isQuickSale ? 'quick-sale-button-text' : 'sale-button-text';
+            const loaderId = isQuickSale ? 'quick-sale-loader' : 'sale-loader';
+
+            const button = document.getElementById(buttonId);
+            const buttonText = document.getElementById(textId);
+            const loader = document.getElementById(loaderId);
+            
+            if (!button || !buttonText || !loader) { console.error("Elementos del botón no encontrados."); return; }
 
             buttonText.classList.add('hidden'); loader.classList.remove('hidden'); button.disabled = true;
 
             const saleIdEl = document.getElementById('current-sale-id');
             const saleId = saleIdEl ? saleIdEl.textContent : `AS_ERR_${Date.now()}`;
 
+            let customerData = { name: '', contact: '', id: '' };
+            if (isQuickSale) {
+                customerData = { name: 'Cliente Ocasional', contact: 'S/N', id: '0' };
+            } else {
+                customerData = {
+                    name: document.getElementById('customer-name')?.value || '',
+                    contact: document.getElementById('customer-contact')?.value || '',
+                    id: document.getElementById('customer-id')?.value || ''
+                };
+            }
+
+            const paymentMethod = document.getElementById('payment-method')?.value || 'Efectivo';
+
             const saleData = {
                 saleId: saleId,
-                customer: { name: document.getElementById('customer-name')?.value || '', contact: document.getElementById('customer-contact')?.value || '', id: document.getElementById('customer-id')?.value || '' },
-                 items: cart.map(item => ({ productId: item.id, Nombre: item.nombre, SKU: item.sku, cantidad: item.quantity, precio: item.customPrice, precioRegular: item.precioVenta, 'Precio (Compra)': item.precioCompra })).filter(item => item.productId && item.cantidad > 0),
+                customer: customerData,
+                paymentMethod: paymentMethod,
+                items: cart.map(item => ({ productId: item.id, Nombre: item.nombre, SKU: item.sku, cantidad: item.quantity, precio: item.customPrice, precioRegular: item.precioVenta, 'Precio (Compra)': item.precioCompra })).filter(item => item.productId && item.cantidad > 0),
                 total: cart.reduce((sum, item) => sum + ((item?.quantity ?? 0) * (item?.customPrice ?? 0)), 0),
                 user: { id: currentUser.id, fullName: currentUser.name || currentUser.full_name }
             };
-             if (saleData.items.length === 0) {
+            
+            if (saleData.items.length === 0) {
                  showNotification("Error: No hay productos válidos.", "error");
                  buttonText.classList.remove('hidden'); loader.classList.add('hidden'); button.disabled = false;
                  return;
-             }
+            }
 
             try {
                 // Generar registro
@@ -809,7 +853,7 @@
                     }
 
                     const { pdfBlob, fileName } = generateSalePDF(result.data.saleId, saleData);
-                    showShareOptions(pdfBlob, fileName, 'Venta Completada', 'Venta guardada y PDF generado.');
+                    showShareOptions(pdfBlob, fileName, isQuickSale ? 'Venta Rápida Completada' : 'Venta Completada', 'Venta guardada y PDF generado.');
                     
                     // Refresh data for next sale
                     await fetchSalesForNextId();
@@ -840,8 +884,17 @@
             quoteBtn.disabled = true;
 
             try {
+                const customerData = {
+                    name: document.getElementById('customer-name')?.value || '',
+                    contact: document.getElementById('customer-contact')?.value || '',
+                    id: document.getElementById('customer-id')?.value || ''
+                };
+                
+                const paymentMethod = document.getElementById('payment-method')?.value || 'Efectivo';
+
                 const quoteData = {
-                    customer: { name: document.getElementById('customer-name')?.value || '', contact: document.getElementById('customer-contact')?.value || '', id: document.getElementById('customer-id')?.value || '' },
+                    customer: customerData,
+                    paymentMethod: paymentMethod,
                     items: [],
                     total: cart.reduce((sum, item) => sum + ((item?.quantity ?? 0) * (item?.customPrice ?? 0)), 0)
                 };
@@ -890,27 +943,52 @@
             if (typeof window.jspdf === 'undefined' || typeof window.jspdf.jsPDF === 'undefined') { console.error("jsPDF no cargado."); showNotification("Error: Librería PDF.", "error"); return { pdfBlob: null, fileName: 'error.pdf'}; }
             const { jsPDF } = window.jspdf; let doc; try { doc = new jsPDF(); } catch (e) { console.error("Error jsPDF:", e); return { pdfBlob: null, fileName: 'error.pdf'}; }
 
-            const pageW = doc.internal.pageSize.getWidth(); const margin = 14; const headerW = pageW - (margin * 2); const headerH = 30; const r = 3;
+            const pageW = doc.internal.pageSize.getWidth(); const margin = 14; const headerW = pageW - (margin * 2); const headerH = 32; const r = 3;
             doc.setFillColor('#303c54'); doc.roundedRect(margin, margin, headerW, headerH, r, r, 'F'); doc.setTextColor('#FFFFFF');
             let textStartX = margin + 5;
             
-            doc.setFontSize(17.6); doc.text("ArelyShop", textStartX, margin + 15); doc.setFontSize(8.8); doc.text("Santa Cruz, Bolivia", textStartX, margin + 21);
-            doc.setFontSize(16); doc.text(docType, pageW - margin - 5, margin + 12, { align: 'right' }); doc.setFontSize(10); doc.text(docIdentifier, pageW - margin - 5, margin + 18, { align: 'right' }); doc.text(`Fecha: ${new Date().toLocaleDateString('es-BO')}`, pageW - margin - 5, margin + 24, { align: 'right' });
-            const startY = margin + headerH + 10; doc.setTextColor('#000000'); doc.setFontSize(12); doc.text("Cliente:", margin, startY); doc.setFontSize(10); 
-            const customerInfo = `Nombre: ${data.customer.name || 'N/A'} | Contacto: ${data.customer.contact || 'N/A'} | NIT/CI: ${data.customer.id || 'N/A'}`; doc.text(customerInfo, margin, startY + 8);
+            // Fuentes aumentadas ~10% aprox (helvetica como estandar compatible sans-serif)
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(20); doc.text("ArelyShop", textStartX, margin + 15); 
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(10); doc.text("Santa Cruz, Bolivia", textStartX, margin + 22);
+            
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(18); doc.text(docType, pageW - margin - 5, margin + 12, { align: 'right' }); 
+            doc.setFont("helvetica", "normal");
+            doc.setFontSize(11); doc.text(docIdentifier, pageW - margin - 5, margin + 19, { align: 'right' }); 
+            doc.text(`Fecha: ${new Date().toLocaleDateString('es-BO')}`, pageW - margin - 5, margin + 25, { align: 'right' });
+            
+            const startY = margin + headerH + 10; doc.setTextColor('#000000'); 
+            doc.setFontSize(13); doc.setFont("helvetica", "bold"); doc.text("Cliente:", margin, startY); 
+            doc.setFont("helvetica", "normal"); doc.setFontSize(11); 
+            const customerInfo = `Nombre: ${data.customer.name || 'N/A'} | Contacto: ${data.customer.contact || 'N/A'} | NIT/CI: ${data.customer.id || 'N/A'}`; 
+            doc.text(customerInfo, margin, startY + 8);
             
             // Nueva columna para la Imagen en primera posición
             const tableColumn = ["Img", "Cant.", "Desc.", "P.U.", "Subt."]; 
             const tableRows = [];
+            let totalSaved = 0;
             
             if (Array.isArray(data.items)) { 
                 data.items.forEach(item => { 
                     if (!item || typeof item !== 'object') return; 
                     const price = typeof item.precio === 'number' ? item.precio : 0; 
+                    const regularPrice = typeof item.precioRegular === 'number' ? item.precioRegular : price;
                     const quantity = typeof item.cantidad === 'number' ? item.cantidad : 0; 
-                    const subtotal = quantity * price; 
+                    
+                    const hasDiscount = regularPrice > price && Math.abs(price - regularPrice) > 0.001;
+                    let priceStr = `Bs ${price.toFixed(2)}`;
+                    let subtotalStr = `Bs ${(price * quantity).toFixed(2)}`;
+
+                    if (hasDiscount) {
+                        priceStr = `Bs ${regularPrice.toFixed(2)}\nBs ${price.toFixed(2)}`;
+                        subtotalStr = `Bs ${(regularPrice * quantity).toFixed(2)}\nBs ${(price * quantity).toFixed(2)}`;
+                        totalSaved += (regularPrice - price) * quantity;
+                    }
+
                     const description = `${item.Nombre || 'N/A'}\n(SKU: ${item.SKU || 'N/A'})`; 
-                    const itemData = ['', quantity, description, `Bs ${price.toFixed(2)}`, `Bs ${subtotal.toFixed(2)}` ]; 
+                    const itemData = ['', quantity, description, priceStr, subtotalStr ]; 
                     tableRows.push(itemData); 
                 }); 
             } else { 
@@ -924,13 +1002,13 @@
                      body: tableRows, 
                      startY: startY + 15, 
                      margin: { left: margin, right: margin }, 
-                     headStyles: { fillColor: '#cdcdcd', textColor: '#000000', fontSize: 8 }, 
-                     styles: { cellPadding: 1.5, fontSize: 8 }, 
+                     headStyles: { fillColor: '#cdcdcd', textColor: '#000000', fontSize: 9, font: 'helvetica' }, 
+                     styles: { cellPadding: 1.5, fontSize: 9, font: 'helvetica' }, 
                      columnStyles: { 
                          0: { cellWidth: 15, minCellHeight: 15, halign: 'center' }, // Img
-                         1: { halign: 'center', cellWidth: 10 }, // Cant.
-                         3: { halign: 'right', cellWidth: 20 },  // P.U.
-                         4: { halign: 'right', cellWidth: 20 }   // Subt.
+                         1: { halign: 'center', cellWidth: 12 }, // Cant.
+                         3: { halign: 'right', cellWidth: 23 },  // P.U.
+                         4: { halign: 'right', cellWidth: 23 }   // Subt.
                      }, 
                      didDrawCell: (cellData) => {
                          // Lógica para pintar la imagen precargada
@@ -948,17 +1026,39 @@
                                  }
                              }
                          }
+
+                         // Tachado para los precios originales cuando hay descuento
+                         if (cellData.section === 'body' && (cellData.column.index === 3 || cellData.column.index === 4)) {
+                             const item = data.items[cellData.row.index];
+                             if (item) {
+                                 const pBase = parseFloat(item.precioRegular || 0);
+                                 const pAct = parseFloat(item.precio || 0);
+                                 if (pBase > pAct && Math.abs(pAct - pBase) > 0.001) {
+                                     const oldPriceVal = cellData.column.index === 3 ? pBase : pBase * item.cantidad;
+                                     const oldPriceStr = `Bs ${oldPriceVal.toFixed(2)}`;
+                                     doc.setFontSize(9);
+                                     const textWidth = doc.getTextWidth(oldPriceStr);
+                                     const startX = cellData.cell.x + cellData.cell.width - cellData.cell.padding('right') - textWidth;
+                                     // Y position approximation for the strikethrough (middle of first line)
+                                     const startY = cellData.cell.y + cellData.cell.padding('top') + 1.6; 
+                                     
+                                     doc.setDrawColor(100, 100, 100);
+                                     doc.setLineWidth(0.3);
+                                     doc.line(startX, startY, startX + textWidth, startY);
+                                 }
+                             }
+                         }
                      },
                      didParseCell: (cellData) => { 
-                         if (cellData.column.index === 2) cellData.cell.styles.fontSize = 7; 
+                         if (cellData.column.index === 2) cellData.cell.styles.fontSize = 8; 
                          if (cellData.section === 'body') {
                              const item = data.items[cellData.row.index];
                              if (item) {
                                  const pBase = parseFloat(item.precioRegular || 0);
                                  const pAct = parseFloat(item.precio || 0);
-                                 // Check column index 3 (PU) and 4 (Subtotal) instead of 2 and 3
-                                 if (Math.abs(pAct - pBase) > 0.001 && (cellData.column.index === 3 || cellData.column.index === 4)) {
-                                     cellData.cell.styles.textColor = [220, 38, 38]; // Color rojo de Tailwind (red-600)
+                                 // Modificar color si hay descuento
+                                 if (pBase > pAct && Math.abs(pAct - pBase) > 0.001 && (cellData.column.index === 3 || cellData.column.index === 4)) {
+                                     cellData.cell.styles.textColor = [220, 38, 38]; // Color rojo (red-600)
                                      cellData.cell.styles.fontStyle = 'bold';
                                  }
                              }
@@ -967,9 +1067,39 @@
                  }); 
                  finalY = doc.autoTable.previous.finalY; 
              } catch (e) { console.error("Error autoTable:", e); }
-             const total = typeof data.total === 'number' ? data.total : 0; doc.setFontSize(12); doc.setFont(undefined, 'bold'); doc.text("TOTAL:", margin, finalY + 10); doc.text(`Bs ${total.toFixed(2)}`, pageW - margin, finalY + 10, { align: 'right' }); doc.setFont(undefined, 'normal');
-            doc.setFontSize(9); const thankYou = filePrefix === 'Cotizacion' ? "¡Gracias por su interés!" : "¡Gracias por su compra!"; doc.text(thankYou, pageW / 2, finalY + 20, { align: 'center' }); doc.text("Visítanos: www.arelyshop.com", pageW / 2, finalY + 24, { align: 'center' });
-            if (preloadedPdfQr && preloadedPdfQr.dataURL) { const qrSize = 20; const qrX = (pageW - qrSize) / 2; const qrY = finalY + 28; try { doc.addImage(preloadedPdfQr.dataURL, 'JPEG', qrX, qrY, qrSize, qrSize, undefined, 'FAST'); } catch (e) { console.error("Error QR PDF:", e); } }
+             
+             finalY += 8;
+             const total = typeof data.total === 'number' ? data.total : 0; 
+
+             doc.setFontSize(11);
+             doc.setFont(undefined, 'normal');
+             doc.setTextColor(80, 80, 80);
+             if (data.paymentMethod) {
+                 doc.text(`Método de Pago: ${data.paymentMethod}`, margin, finalY);
+             }
+
+             // Mostrar el Total Ahorrado si es mayor a cero
+             if (totalSaved > 0) {
+                 doc.setTextColor(34, 197, 94); // Verde (green-500)
+                 doc.setFont(undefined, 'bold');
+                 doc.text("Total Ahorrado:", pageW - margin - 35, finalY, { align: 'right' });
+                 doc.text(`Bs ${totalSaved.toFixed(2)}`, pageW - margin, finalY, { align: 'right' });
+                 finalY += 6;
+             } else {
+                 finalY += 5;
+             }
+
+             // Mostrar el Total general
+             doc.setTextColor(0, 0, 0);
+             doc.setFontSize(13); // Aumentado en tamaño
+             doc.setFont(undefined, 'bold'); 
+             // Ajustado el "TOTAL:" hacia la derecha
+             doc.text("TOTAL:", pageW - margin - 35, finalY + 2, { align: 'right' }); 
+             doc.text(`Bs ${total.toFixed(2)}`, pageW - margin, finalY + 2, { align: 'right' }); 
+             doc.setFont(undefined, 'normal');
+
+            doc.setFontSize(10); const thankYou = filePrefix === 'Cotizacion' ? "¡Gracias por su interés!" : "¡Gracias por su compra!"; doc.text(thankYou, pageW / 2, finalY + 20, { align: 'center' }); doc.text("Visítanos: www.arelyshop.com", pageW / 2, finalY + 25, { align: 'center' });
+            if (preloadedPdfQr && preloadedPdfQr.dataURL) { const qrSize = 20; const qrX = (pageW - qrSize) / 2; const qrY = finalY + 30; try { doc.addImage(preloadedPdfQr.dataURL, 'JPEG', qrX, qrY, qrSize, qrSize, undefined, 'FAST'); } catch (e) { console.error("Error QR PDF:", e); } }
             const customerName = (data.customer.name || '').trim().replace(/\s+/g, "_") || "sin-cliente"; let fileName; if (filePrefix === 'Nota_Venta') { const saleId = (docIdentifier.split(': ')[1] || '').replace(/\s+/g, "_"); fileName = `${filePrefix}_${saleId}_${customerName}.pdf`; } else { fileName = `${filePrefix}_${customerName}.pdf`; } fileName = fileName.replace(/[^a-zA-Z0-9_.-]/g, '');
             let pdfBlob = null; try { pdfBlob = doc.output('blob'); } catch (e) { console.error("Error generando Blob:", e); showNotification("Error al generar PDF.", "error"); }
             return { pdfBlob, fileName };
