@@ -878,7 +878,12 @@
             text.classList.add('hidden'); loader.classList.remove('hidden'); btn.disabled = true;
 
             try {
-                const customerData = { name: 'Cliente Ocasional', contact: 'S/N', id: '0' };
+                const nameVal = document.getElementById('customer-name')?.value.trim();
+                const customerData = {
+                    name: nameVal !== '' ? nameVal : 'Cliente Ocasional',
+                    contact: document.getElementById('customer-contact')?.value.trim() || (nameVal !== '' ? '' : 'S/N'),
+                    id: document.getElementById('customer-id')?.value.trim() || (nameVal !== '' ? '' : '0')
+                };
                 const paymentMethod = document.getElementById('payment-method')?.value || 'Efectivo';
 
                 const saleData = {
@@ -920,6 +925,8 @@
                     showShareOptions(pdfBlob, fileName, 'Venta Rápida Generada', 'PDF generado (sin registro).'); 
                     cart = [];
                     renderCart();
+                    const customerForm = document.getElementById('customer-form'); 
+                    if(customerForm) customerForm.reset(); 
                 } else { 
                     showNotification("Error al generar PDF.", "error"); 
                 }
