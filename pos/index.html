@@ -1128,10 +1128,15 @@
                          }
                      } 
                  }); 
-                 finalY = doc.autoTable.previous.finalY; 
-             } catch (e) { console.error("Error autoTable:", e); }
+                 // CORRECCIÓN: Obtener correctamente la posición final de la tabla en Y
+                 finalY = doc.lastAutoTable ? doc.lastAutoTable.finalY : (doc.autoTable.previous ? doc.autoTable.previous.finalY : startY + 30);
+             } catch (e) { 
+                 console.error("Error autoTable:", e); 
+                 // Fallback seguro en caso de que falle la tabla
+                 finalY = startY + 40; 
+             }
              
-             finalY += 8;
+             finalY += 10;
              const total = typeof data.total === 'number' ? data.total : 0; 
 
              doc.setFontSize(11);
@@ -1147,14 +1152,14 @@
                  doc.setFont(undefined, 'bold');
                  doc.text("Total Ahorrado:", pageW - margin - 35, finalY, { align: 'right' });
                  doc.text(`Bs ${totalSaved.toFixed(2)}`, pageW - margin, finalY, { align: 'right' });
-                 finalY += 6;
+                 finalY += 8; // Mayor espacio entre el ahorro y el total general
              } else {
-                 finalY += 5;
+                 finalY += 6;
              }
 
              // Mostrar el Total general
              doc.setTextColor(0, 0, 0);
-             doc.setFontSize(13); // Aumentado en tamaño
+             doc.setFontSize(14); // Aumentado en tamaño
              doc.setFont(undefined, 'bold'); 
              // Ajustado el "TOTAL:" hacia la derecha
              doc.text("TOTAL:", pageW - margin - 35, finalY + 2, { align: 'right' }); 
