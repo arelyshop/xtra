@@ -1103,16 +1103,14 @@
                  if (totalSaved > 0) {
                      footerTableBody.push([
                          { text: '', border: [false, false, false, false] },
-                         { text: '', border: [false, false, false, false] },
                          { text: 'Total Ahorrado:', color: '#16a34a', bold: true, alignment: 'right', border: [false, false, false, false], margin: [0, 2, 5, 2] },
                          { text: `Bs ${totalSaved.toFixed(2)}`, color: '#16a34a', bold: true, alignment: 'right', border: [false, false, false, false], margin: [0, 2, 0, 2] }
                      ]);
                  }
                  
-                 // Fila principal con Método de Pago en la misma línea y justo antes que el TOTAL
+                 // Fila de Total Final
                  footerTableBody.push([
                      { text: '', border: [false, false, false, false] },
-                     { text: data.paymentMethod ? `Método de Pago: ${data.paymentMethod}` : '', color: '#4b5563', fontSize: 11, alignment: 'right', border: [false, false, false, false], margin: [0, 7, 20, 5] },
                      { text: 'TOTAL:', bold: true, fontSize: 14, alignment: 'right', border: [false, false, false, false], margin: [0, 5, 5, 5] },
                      { text: `Bs ${total.toFixed(2)}`, bold: true, fontSize: 14, alignment: 'right', border: [false, false, false, false], margin: [0, 5, 0, 5] }
                  ]);
@@ -1140,15 +1138,16 @@
                                      [
                                          {
                                              stack: preloadedPdfLogo && preloadedPdfLogo.dataURL 
-                                                ? [{ image: preloadedPdfLogo.dataURL, width: 140 }] 
-                                                : [{ text: 'ArelyShop', fontSize: 22, bold: true, color: 'white' }],
-                                             margin: [15, 10, 15, 10]
+                                                // Mismo margen superior para forzar la alineación visual
+                                                ? [{ image: preloadedPdfLogo.dataURL, width: 140, margin: [0, 2, 0, 0] }] 
+                                                : [{ text: 'ArelyShop', fontSize: 22, bold: true, color: 'white', margin: [0, 4, 0, 0] }],
+                                             margin: [15, 8, 15, 8] // Reducidos los márgenes verticales
                                          },
                                          {
                                              stack: [
-                                                 { text: docType, fontSize: 18, bold: true, color: 'white', alignment: 'right', margin: [0, 5, 0, 0] }
+                                                 { text: docType, fontSize: 16, bold: true, color: 'white', alignment: 'right', margin: [0, 6, 0, 0] } // Tamaño y márgenes compensados
                                              ],
-                                             margin: [15, 10, 15, 10]
+                                             margin: [15, 8, 15, 8] // Reducidos los márgenes verticales
                                          }
                                      ]
                                  ]
@@ -1193,17 +1192,30 @@
                                  paddingLeft: function(i, node) { return 5; },
                                  paddingRight: function(i, node) { return 5; }
                              },
-                             margin: [0, 0, 0, 20]
+                             margin: [0, 0, 0, 15]
                          },
                          
-                         // Totales y Método de Pago en la misma estructura invisible
+                         // Totales a la derecha y Método de pago a la izquierda
                          {
-                             table: {
-                                 widths: ['*', 'auto', 'auto', 'auto'],
-                                 body: footerTableBody
-                             },
-                             layout: 'noBorders',
-                             margin: [0, 0, 0, 0]
+                             columns: [
+                                 {
+                                     width: '*',
+                                     // Método de Pago restaurado a su posición original
+                                     text: data.paymentMethod ? `Método de Pago: ${data.paymentMethod}` : '',
+                                     color: '#4b5563',
+                                     fontSize: 11,
+                                     margin: [5, 10, 0, 0] // Alineado al inicio
+                                 },
+                                 {
+                                     width: 250,
+                                     table: {
+                                         widths: ['*', 'auto', 'auto'],
+                                         body: footerTableBody
+                                     },
+                                     layout: 'noBorders',
+                                     margin: [0, 0, 0, 0]
+                                 }
+                             ]
                          },
 
                          // Pie de página con QR
