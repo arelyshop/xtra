@@ -1153,6 +1153,7 @@
                          {
                              table: {
                                  widths: ['*', '*'],
+                                 heights: ['auto', 5], // La segunda fila mide exactamente 5px
                                  body: [
                                      [
                                          headerLogo,
@@ -1165,15 +1166,20 @@
                                              // Reducimos el margen superior de 24 a 10 para alinear con el logo y reducir el alto
                                              margin: [0, 10, 15, 10] 
                                          }
+                                     ],
+                                     // Fila verde pegada al encabezado
+                                     [
+                                         { text: '', colSpan: 2, margin: 0 },
+                                         {}
                                      ]
                                  ]
                              },
                              layout: { 
                                  defaultBorder: false, 
-                                 fillColor: '#111827', 
-                                 // Usamos hLineWidth para crear un borde inferior perfecto de 5px, garantizando 0 separación
-                                 hLineWidth: function(i, node) { return (i === node.table.body.length) ? 5 : 0; },
-                                 hLineColor: function(i, node) { return '#32CD32'; },
+                                 fillColor: function(rowIndex) {
+                                     // Fila 0 es el encabezado oscuro, Fila 1 es la línea verde
+                                     return rowIndex === 0 ? '#111827' : '#32CD32';
+                                 },
                                  paddingLeft: function() { return 0; },
                                  paddingRight: function() { return 0; },
                                  paddingTop: function() { return 0; },
@@ -1240,11 +1246,11 @@
                                      },
                                      layout: {
                                          hLineWidth: function (i, node) {
-                                             // Línea separadora más suave y delgada (0.5) justo arriba del TOTAL
+                                             // Línea separadora muy delgada (0.5) justo arriba del TOTAL
                                              return (i === node.table.body.length - 1) ? 0.5 : 0;
                                          },
                                          vLineWidth: function (i, node) { return 0; },
-                                         hLineColor: function (i, node) { return '#d1d5db'; }, // Gris mucho más suave
+                                         hLineColor: function (i, node) { return '#e5e7eb'; }, // Gris muy suave
                                          paddingTop: function(i, node) {
                                              return (i === node.table.body.length - 1) ? 6 : 2;
                                          },
