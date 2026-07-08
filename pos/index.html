@@ -1108,6 +1108,13 @@
                      ]);
                  }
                  
+                 // Línea separadora antes del TOTAL
+                 footerTableBody.push([
+                     { text: '', border: [false, false, false, false] },
+                     { text: '', border: [false, true, false, false], borderColor: ['#e5e7eb', '#e5e7eb', '#e5e7eb', '#e5e7eb'], margin: [0, 5, 0, 0] },
+                     { text: '', border: [false, true, false, false], borderColor: ['#e5e7eb', '#e5e7eb', '#e5e7eb', '#e5e7eb'], margin: [0, 5, 0, 0] }
+                 ]);
+
                  // Fila de Total Final
                  footerTableBody.push([
                      { text: '', border: [false, false, false, false] },
@@ -1247,7 +1254,7 @@
                          {
                              stack: [
                                  { text: filePrefix === 'Cotizacion' ? "¡Gracias por su interés!" : "¡Gracias por su compra!", alignment: 'center', fontSize: 10, margin: [0, 30, 0, 5] },
-                                 { text: "Visítanos: www.arelyshop.com", alignment: 'center', fontSize: 10, margin: [0, 0, 0, 15] },
+                                 { text: `© ${new Date().getFullYear()} ArelyShop. Todos los derechos reservados.`, alignment: 'center', fontSize: 10, margin: [0, 0, 0, 15] },
                                  ...(preloadedPdfQr && preloadedPdfQr.dataURL ? [{ image: preloadedPdfQr.dataURL, width: 60, alignment: 'center' }] : [])
                              ]
                          }
