@@ -1139,8 +1139,10 @@
                  if (preloadedPdfLogo && preloadedPdfLogo.dataURL) {
                      headerLogo = {
                          image: preloadedPdfLogo.dataURL,
-                         width: 168, // Tamaño aumentado un 20% (de 140 a 168)
-                         margin: [15, 20, 0, 10] // Bajado 10px (margen superior de 10 a 20)
+                         width: 168, 
+                         // [izquierda, arriba, derecha, abajo]
+                         // Aumentamos 'arriba' a 28 para bajarlo, y reducimos 'abajo' a 0 para no estirar la barra
+                         margin: [15, 28, 0, 0] 
                      };
                  }
 
@@ -1162,15 +1164,15 @@
                                              bold: true, 
                                              color: 'white', 
                                              alignment: 'right', 
-                                             // Margen superior ajustado ligeramente (12) para alinear el texto de 18pt con el de 22pt
-                                             margin: [0, 12, 15, 10] 
+                                             // Ajustamos el margen superior (24) y el inferior (10) para centrar el texto con el logo bajado
+                                             margin: [0, 24, 15, 10] 
                                          }
                                      ]
                                  ]
                              },
                              layout: { 
                                  defaultBorder: false, 
-                                 fillColor: '#111827', // Fondo del encabezado actualizado
+                                 fillColor: '#111827', 
                                  paddingLeft: function() { return 0; },
                                  paddingRight: function() { return 0; },
                                  paddingTop: function() { return 0; },
