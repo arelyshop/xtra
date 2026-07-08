@@ -1102,17 +1102,17 @@
                  // Fila de Total Ahorrado (si aplica)
                  if (totalSaved > 0) {
                      footerTableBody.push([
-                         { text: '', border: [false, false, false, false] },
-                         { text: 'Total Ahorrado:', color: '#16a34a', bold: true, alignment: 'right', border: [false, false, false, false], margin: [0, 2, 5, 2] },
-                         { text: `Bs ${totalSaved.toFixed(2)}`, color: '#16a34a', bold: true, alignment: 'right', border: [false, false, false, false], margin: [0, 2, 0, 2] }
+                         { text: '' },
+                         { text: 'Total Ahorrado:', color: '#16a34a', bold: true, alignment: 'right', margin: [0, 2, 5, 2] },
+                         { text: `Bs ${totalSaved.toFixed(2)}`, color: '#16a34a', bold: true, alignment: 'right', margin: [0, 2, 0, 2] }
                      ]);
                  }
                  
                  // Fila de Total Final
                  footerTableBody.push([
-                     { text: '', border: [false, false, false, false] },
-                     { text: 'TOTAL:', bold: true, fontSize: 14, alignment: 'right', border: [false, false, false, false], margin: [0, 5, 5, 5] },
-                     { text: `Bs ${total.toFixed(2)}`, bold: true, fontSize: 14, alignment: 'right', border: [false, false, false, false], margin: [0, 5, 0, 5] }
+                     { text: '' },
+                     { text: 'TOTAL:', bold: true, fontSize: 14, alignment: 'right', margin: [0, 8, 5, 5] },
+                     { text: `Bs ${total.toFixed(2)}`, bold: true, fontSize: 14, alignment: 'right', margin: [0, 8, 0, 5] }
                  ]);
 
                  const customerName = (data.customer.name || '').trim().replace(/\s+/g, "_") || "sin-cliente"; 
@@ -1141,6 +1141,7 @@
                          image: preloadedPdfLogo.dataURL,
                          width: 168, 
                          // [izquierda, arriba, derecha, abajo]
+                         // Reducimos el margen superior de 28 a 10 para hacer la barra más delgada arriba
                          margin: [15, 10, 0, 0] 
                      };
                  }
@@ -1171,8 +1172,8 @@
                              layout: { 
                                  defaultBorder: false, 
                                  fillColor: '#111827', 
-                                 // Agregamos un borde verde de 4px al inferior de la tabla (índice 1)
-                                 hLineWidth: function(i, node) { return (i === 1) ? 4 : 0; },
+                                 // Agregamos un borde verde de 5px al inferior de la tabla (índice 1)
+                                 hLineWidth: function(i, node) { return (i === 1) ? 5 : 0; },
                                  hLineColor: function(i, node) { return (i === 1) ? '#32CD32' : null; },
                                  paddingLeft: function() { return 0; },
                                  paddingRight: function() { return 0; },
@@ -1238,7 +1239,17 @@
                                          widths: ['*', 'auto', 'auto'],
                                          body: footerTableBody
                                      },
-                                     layout: 'noBorders',
+                                     layout: {
+                                         defaultBorder: false,
+                                         hLineWidth: function(i, node) {
+                                             // Línea separadora justo arriba de la última fila (TOTAL)
+                                             return (i === node.table.body.length - 1) ? 1 : 0;
+                                         },
+                                         hLineColor: function(i, node) {
+                                             return '#9ca3af'; // Color de la línea separadora gris
+                                         },
+                                         vLineWidth: function(i, node) { return 0; }
+                                     },
                                      margin: [0, 0, 0, 0]
                                  }
                              ]
