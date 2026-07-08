@@ -1171,25 +1171,14 @@
                              layout: { 
                                  defaultBorder: false, 
                                  fillColor: '#111827', 
+                                 // Usamos hLineWidth para crear un borde inferior perfecto de 5px, garantizando 0 separación
+                                 hLineWidth: function(i, node) { return (i === node.table.body.length) ? 5 : 0; },
+                                 hLineColor: function(i, node) { return '#32CD32'; },
                                  paddingLeft: function() { return 0; },
                                  paddingRight: function() { return 0; },
                                  paddingTop: function() { return 0; },
                                  paddingBottom: function() { return 0; }
                              },
-                             margin: [0, 0, 0, 0]
-                         },
-                         // Línea verde de 10px justo debajo del encabezado
-                         {
-                             canvas: [
-                                 {
-                                     type: 'rect',
-                                     x: 0,
-                                     y: 0,
-                                     w: 535.28, // Ancho exacto descontando los márgenes (595.28 - 60)
-                                     h: 10,
-                                     color: '#32CD32'
-                                 }
-                             ],
                              margin: [0, 0, 0, 10]
                          },
                          // Información secundaria (Fondo blanco)
@@ -1251,11 +1240,11 @@
                                      },
                                      layout: {
                                          hLineWidth: function (i, node) {
-                                             // Línea separadora justo arriba del TOTAL (última fila)
-                                             return (i === node.table.body.length - 1) ? 1 : 0;
+                                             // Línea separadora más suave y delgada (0.5) justo arriba del TOTAL
+                                             return (i === node.table.body.length - 1) ? 0.5 : 0;
                                          },
                                          vLineWidth: function (i, node) { return 0; },
-                                         hLineColor: function (i, node) { return '#9ca3af'; }, // Gris neutro
+                                         hLineColor: function (i, node) { return '#d1d5db'; }, // Gris mucho más suave
                                          paddingTop: function(i, node) {
                                              return (i === node.table.body.length - 1) ? 6 : 2;
                                          },
