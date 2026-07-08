@@ -1141,8 +1141,8 @@
                          image: preloadedPdfLogo.dataURL,
                          width: 168, 
                          // [izquierda, arriba, derecha, abajo]
-                         // Aumentamos 'arriba' a 28 para bajarlo, y reducimos 'abajo' a 0 para no estirar la barra
-                         margin: [15, 28, 0, 0] 
+                         // Reducimos el margen superior de 28 a 10 para hacer la barra más delgada arriba
+                         margin: [15, 10, 0, 0] 
                      };
                  }
 
@@ -1164,8 +1164,8 @@
                                              bold: true, 
                                              color: 'white', 
                                              alignment: 'right', 
-                                             // Ajustamos el margen superior (24) y el inferior (10) para centrar el texto con el logo bajado
-                                             margin: [0, 24, 15, 10] 
+                                             // Reducimos el margen superior de 24 a 10 para alinear con el logo y reducir el alto
+                                             margin: [0, 10, 15, 10] 
                                          }
                                      ]
                                  ]
